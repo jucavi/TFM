@@ -1,8 +1,10 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
 
 db = SQLAlchemy()
+migrate = Migrate()
 
 
 def create_app(environment='develop'):
@@ -13,6 +15,7 @@ def create_app(environment='develop'):
     app.config.from_object(config.get(environment))
 
     db.init_app(app)
+    migrate.init_app(app, db)
 
     @app.route('/welcome')
     def welcome():
