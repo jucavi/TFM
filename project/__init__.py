@@ -17,8 +17,9 @@ def create_app(environment='develop'):
     db.init_app(app)
     migrate.init_app(app, db)
 
-    @app.route('/welcome')
-    def welcome():
-        return 'Welcome to Flask!'
+    with app.app_context():
+        from .home import home
+
+        app.register_blueprint(home.home_bp)
 
     return app
