@@ -32,10 +32,10 @@
       <div class="collapse navbar-collapse" id="user-account">
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Login</a>
+            <a class="nav-link active" href="{{ url_for('auth.login') }}">Login</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Signup</a>
+            <a class="nav-link" href="{{ url_for('auth.signup') }}">Signup</a>
           </li>
         </ul>
       </div>
@@ -55,19 +55,6 @@
       {% endfor %}
     {% endif %}
   {% endwith %}
-
-  {#% with errors = get_flashed_messages(category_filter=["error"]) %}
-  {% if errors %}
-  <div class="alert-message block-message error">
-    <a class="close" href="#">×</a>
-    <ul>
-      {%- for msg in errors %}
-      <li>{{ msg }}</li>
-      {% endfor -%}
-    </ul>
-  </div>
-  {% endif %}
-  {% endwith %#}
 
   {% block header %}{% endblock %}
 
