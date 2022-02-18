@@ -4,7 +4,6 @@
 body {
     font-family: 'Montserrat', sans-serif;
     line-height: 1.8;
-    /* color: #f5f6f7; */
 }
 
 .bg-1{
@@ -27,6 +26,10 @@ body {
     letter-spacing: .1em;
 }
 
+.nav-item {
+    font-weight: 200;
+}
+
 .footer-container {
     padding-top: 2em;
     padding-bottom: 2em;
@@ -39,6 +42,7 @@ body {
 
 .surround-text {
     padding-inline: .4em;
+    font-weight: 100;
 }
 
 a, a:visited, a:active {
@@ -49,15 +53,6 @@ a, a:visited, a:active {
 a:hover {
     color: #ffb703 !important;
 }
-
-/* .custom-toggler.navbar-toggler {
-    color: rgb(142, 202, 230);
-}
-
-.custom-toggler .navbar-toggler-icon {
-            background-image: url(
-"data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(142, 202, 230, 0.8)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
-} */
 
 .custom-toggler .navbar-toggler-icon {
   background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(142,202,230, 0.5)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
@@ -73,4 +68,8 @@ a:hover {
 
 .custom-toggler.navbar-toggler:hover {
   border-color: #ffb703 !important;
+}
+
+.message {
+    margin: .2em;
 }
