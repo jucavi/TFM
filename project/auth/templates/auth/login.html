@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  {{ tile }}
+{% endblock %}
+
+
+{% block header %}
+  <h1 class="display-1 text-center mt-5">Log In</h1>
+{% endblock %}
+
+
+{% block content %}
+<form method="POST">
+  {{ form.csrf_token }}
+
+  <fieldset class="">
+    {{ form.username.label }}
+    {{ form.username(placeholder='Username') }}
+    {% if form.username.errors %}
+      <ul class="errors">
+        {% for error in form.username.errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </fieldset>
+
+  <fieldset class="">
+    {{ form.password.label }}
+    {{ form.password(placeholder='Password') }}
+    {% if form.password.errors %}
+      <ul class="">
+        {% for error in form.password.errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </fieldset>
+
+  <div class="">
+    {{ form.submit }}
+  </div>
+
+  <div class="">
+    <span>Don't have an account yet? </span>
+    <a href="{{ url_for('auth.signup') }}">Sign up.</a>
+  </div>
+
+</form>
+{% endblock %}

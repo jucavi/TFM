@@ -1,6 +1,8 @@
 from flask_wtf import FlaskForm
+from .user_model import User
 from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import DataRequired, Email, EqualTo, Regexp
+from wtforms.validators import DataRequired, Email, EqualTo, Regexp, ValidationError
+
 
 class SignUpForm(FlaskForm):
     firstname = StringField(
@@ -52,5 +54,47 @@ class LogInForm(FlaskForm):
     submit = SubmitField('Log In')
 
 
-class ProfileForm(FlaskForm):
-    pass
+class EditProfileForm(FlaskForm):
+    firstname = StringField(
+        'First Name',
+        validators=[DataRequired()]
+    )
+    lastname = StringField(
+        'Last Name',
+        validators=[DataRequired()]
+    )
+    username = StringField(
+        'Username',
+        validators=[DataRequired()]
+    )
+    email = StringField(
+        'Email',
+        validators=[
+            DataRequired(),
+            Email(message='Invalid email.')
+        ]
+    )
+    # TODO about, preferences
+    submit = SubmitField('Edit Profile')
+
+
+    def __init__(self, current_username, current_email, *args, **kwargs):
+        super(EditProfileForm, self).__init__(*args, **kwargs)
+        self.current_username = current_username
+        self.current_email = current_email
+
+
+    def validate_username(self, username):
+        if username.data != self.current_username:
+            user = User.query.filter_by(username=self.username.data).first()
+
+            if user is not None:
+                raise ValidationError('Username already in use.')
+
+
+    def validate_email(self, email):
+        if email.data != self.current_email:
+            user = User.query.filter_by(email=self.email.data).first()
+
+            if user is not None:
+                raise ValidationError('Email already in use.')
