@@ -62,7 +62,7 @@
 
   <fieldset class="">
     {{ form.password.label }}
-    {{ form.password }}
+    {{ form.password(placeholder='Password') }}
     {% if form.password.errors %}
       <ul class="errors">
         {% for error in form.password.errors %}
@@ -74,7 +74,7 @@
 
   <fieldset class="">
     {{ form.confirm.label }}
-    {{ form.confirm }}
+    {{ form.confirm(placeholder='Confirm') }}
     {% if form.confirm.errors %}
       <ul class="errors">
         {% for error in form.confirm.errors %}
