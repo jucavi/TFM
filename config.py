@@ -8,7 +8,21 @@ load_dotenv(path.join(basedir, '.env'))
 class Config:
     SECRET_KEY = environ.get('SECRET_KEY', 'Remember set your secret key!')
     FLASK_APP = environ.get('FLASK_APP')
+
+    SESSION_COOKIE_SECURE = True
+
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    MAIL_SERVER = 'smtp.gmail.com'
+    MAIL_PORT = 587
+    MAIL_USE_TLS = True
+    MAIL_USE_SSL = False
+    MAIL_DEBUG = True
+    MAIL_USERNAME = environ.get('MAIL_USERNAME')
+    MAIL_PASSWORD = environ.get('MAIL_PASSWORD')
+    MAIL_DEFAULT_SENDER = environ.get('MAIL_DEFAULT_SENDER')
+    MAIL_MAX_EMAILS = None
+    MAIL_ASCII_ATTACHMENTS = False
 
 
 
@@ -16,6 +30,7 @@ class ProdConfig(Config):
     FLASK_ENV = 'production'
     DEBUG = False
     TESTING = False
+
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + path.join(basedir, 'production.db')
 
 
@@ -23,7 +38,8 @@ class ProdConfig(Config):
 class DevConfig(Config):
     FLASK_ENV = 'development'
     DEBUG = True
-    TESTING = True
+    TESTING = False
+
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + path.join(basedir, 'development.db')
 
 

@@ -1,8 +1,9 @@
 from flask import Blueprint, flash, redirect, render_template, url_for, request
 from project import login_manager, db
-from .user_model import User
-from .forms import EditProfileForm, LogInForm, SignUpForm
+from project.auth.user_model import User
+from project.auth.forms import EditProfileForm, LogInForm, SignUpForm, RequestNewPasswordForm, SetNewPasswordForm
 from flask_login import current_user, login_required, login_user, logout_user
+from project.helpers.mail import send_password_reset_email
 
 
 auth_bp = Blueprint('auth', __name__, static_folder='static', template_folder='templates')
@@ -37,7 +38,7 @@ def signup():
                 return redirect(url_for('auth.login'))
 
         flash('User already exists!')
-    return render_template('auth/signup.html', form=form, title='Sign Up', header='Sign Up')
+    return render_template('signup.html', form=form, title='Sign Up')
 
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
@@ -47,14 +48,14 @@ def login():
 
     form = LogInForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
+        user = User.query.filter_by(email=form.email.data).first()
         if user and user.check_password(form.password.data):
             login_user(user)
-            return redirect(url_for('home.workspace'))
 
+            return redirect(url_for('home.workspace'))
         flash('Invalid username/password.', category='warning')
 
-    return render_template('auth/login.html', form=form, title='Log In')
+    return render_template('login.html', form=form, title='Log In')
 
 
 
@@ -78,6 +79,7 @@ def profile():
 
         db.session.commit()
         flash('Your changes have been saved.', category='success')
+
         return redirect(url_for('auth.profile'))
 
     elif request.method == 'GET':
@@ -85,7 +87,45 @@ def profile():
         form.lastname.data = current_user.lastname
         form.username.data = current_user.username
         form.email.data = current_user.email
-    return render_template('auth/profile.html', form=form, title='Edit Profile', header='Edit Profile')
+
+    return render_template('profile.html', form=form, title='Edit Profile')
+
+
+@auth_bp.route('/request_new_password', methods=['GET', 'POST'])
+def request_new_password():
+    form  = RequestNewPasswordForm()
+
+    if form.validate_on_submit():
+        email = form.email.data
+        user = User.query.filter_by(email=email).first()
+
+        if user:
+            send_password_reset_email(user)
+            flash(f'We sent a recovery link to you at {user.email}', category='success')
+
+            return redirect(url_for('home.home'))
+        flash(f'Not user found by {email}!')
+
+    return render_template('request_new_password.html', form=form, title='Reset Password')
+
+
+@auth_bp.route('/new_password/<token>', methods=['GET', 'POST'])
+def new_password(token):
+    user = User.check_resert_password_token(token)
+
+    if not user:
+        flash('Expired/invalid token!', category='danger')
+        return redirect(url_for('auth.request_new_password'))
+
+    form  = SetNewPasswordForm()
+    if form.validate_on_submit():
+        user.set_password(form.password.data)
+        db.session.commit()
+        flash('Your password have been reset successfully.', category='success')
+
+        return redirect(url_for('auth.login'))
+
+    return render_template('new_password.html', form=form, title='New Password')
 
 
 @login_manager.user_loader
@@ -95,5 +135,5 @@ def load_user(user_id):
 
 @login_manager.unauthorized_handler
 def unauthorized():
-    flash('You must be logged in.', category='warning')
+    flash('You need to sign in or sign up before continuing.', category='warning')
     return redirect(url_for('auth.login'))
