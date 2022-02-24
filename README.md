@@ -14,3 +14,4 @@ if error no folder versions found, create create /migrations/versions folder
 
 
 
+send_email: https://j2logo.com/tutorial-flask-leccion-14-enviar-emails-con-flask/
