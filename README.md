@@ -1,8 +1,5 @@
 $ git clone https://github.com/jucavi/TFM.git
-<<<<<<< HEAD
-=======
 
->>>>>>> develop
 $ cd TFM
 
 $ python3 -m venv .venv
