@@ -1,5 +1,5 @@
-$ git clone https://github.com/jucavi/TFM1.git
-$ cd TFM1
+$ git clone https://github.com/jucavi/TFM.git
+$ cd TFM
 
 $ python3 -m venv .venv
 $ pip3 install -r requirements.txt
