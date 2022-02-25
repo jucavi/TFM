@@ -3,7 +3,7 @@
 body {
     font-family: 'Open Sans', sans-serif;;
     line-height: 1.8;
-    background-color: #f4f1de;
+    background-color: #f8f9fb;
 }
 
 .nav-container {
@@ -25,8 +25,12 @@ body {
     font-weight: 400;
 }
 
+.nav-item-icon {
+    transform: scale(1.8);
+}
+
 .nav-bg {
-    background-color: inherit;
+    background-color: #f4f1de;
 }
 
 .footer-container {
