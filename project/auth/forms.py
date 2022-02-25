@@ -100,4 +100,4 @@ class SetNewPasswordForm(FlaskForm):
             EqualTo('password', message='Passwords must match.')
         ]
     )
-    submit = SubmitField('New Password')
+    submit = SubmitField('Set Password')

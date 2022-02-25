@@ -106,7 +106,7 @@ def request_new_password():
             return redirect(url_for('home.home'))
         flash(f'Not user found by {email}!')
 
-    return render_template('request_new_password.html', form=form, title='Reset Password')
+    return render_template('request_new_password.html', form=form, title='Reset Password', back=request.referrer)
 
 
 @auth_bp.route('/new_password/<token>', methods=['GET', 'POST'])
@@ -125,7 +125,7 @@ def new_password(token):
 
         return redirect(url_for('auth.login'))
 
-    return render_template('new_password.html', form=form, title='New Password')
+    return render_template('new_password.html', form=form, title='New Password', back=request.referrer)
 
 
 @login_manager.user_loader

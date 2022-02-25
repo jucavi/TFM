@@ -1,16 +1,11 @@
-/* body {
-    font-family: 'Montserrat', sans-serif;
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600&family=Open+Sans:wght@300;400;500;600&family=Raleway:wght@800&display=swap');
+
+body {
+    font-family: 'Open Sans', sans-serif;;
     line-height: 1.8;
-    background-color: #CED4DA;
-    color: #212529;
 }
 
-.bg-1{
-    background-color: #E9ECEF;
-    color: var(--main-color);
-}
-
-.nav-container {
+/* .nav-container {
     padding-top: 1.5em;
     padding-bottom: 1.5em;
     padding-inline: 6%;
@@ -67,11 +62,11 @@ a:hover {
 
 .custom-toggler.navbar-toggler:hover {
     border-color:  #e07a5f !important;
-}
+} */
 
 .message {
     margin: .2em;
-} */
+}
 
 .auth-card-border {
     border-radius: 1rem;
@@ -79,4 +74,10 @@ a:hover {
 
 .auth-card-img-border {
     border-radius: 1rem 0 0 1rem;
+}
+
+.errors {
+    font-weight: 100;
+    color: #e76f51;
+    list-style-type: none;
 }
