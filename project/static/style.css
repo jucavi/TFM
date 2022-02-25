@@ -3,12 +3,13 @@
 body {
     font-family: 'Open Sans', sans-serif;;
     line-height: 1.8;
+    background-color: #f4f1de;
 }
 
-/* .nav-container {
-    padding-top: 1.5em;
-    padding-bottom: 1.5em;
-    padding-inline: 6%;
+.nav-container {
+    padding-top: 1em;
+    padding-bottom: 1em;
+    padding-inline: 4%;
 }
 
 .navbar {
@@ -21,17 +22,16 @@ body {
 }
 
 .nav-item {
-    font-weight: 300;
+    font-weight: 400;
+}
+
+.nav-bg {
+    background-color: inherit;
 }
 
 .footer-container {
-    padding-top: 2em;
-    padding-bottom: 2em;
-}
-
-
-.icon-large {
-    transform: scale(1.9);
+    padding-top: 1.5em;
+    padding-bottom: 1.5em;
 }
 
 .surround-text {
@@ -44,6 +44,7 @@ a, a:visited, a:active {
     text-decoration: none;
 }
 
+/*
 a:hover {
     color: #e07a5f !important;
 }
@@ -72,12 +73,43 @@ a:hover {
     border-radius: 1rem;
 }
 
+.auth-bg {
+    background-color: #f2cc8f;
+}
+
 .auth-card-img-border {
     border-radius: 1rem 0 0 1rem;
 }
 
+.auth-btn-bg {
+    background-color: #264653;
+    color: white;
+}
+
+.btn-font {
+    font-weight: 200;
+}
+
 .errors {
     font-weight: 100;
-    color: #e76f51;
+    color: #e07a5f;
     list-style-type: none;
+}
+
+a, a:visited, a:active {
+    color: #3d405b;;
+    text-decoration: none;
+}
+
+::placeholder {
+    font-weight: 100;
+    font-size: .8em;
+}
+
+.icon-brick {
+    transform: scale(1.5);
+}
+
+.icon-lg {
+    transform: scale(1.9);
 }

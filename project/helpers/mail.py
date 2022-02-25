@@ -8,6 +8,7 @@ from flask import render_template
 
 logger = logging.getLogger(__name__)
 
+# code from https://j2logo.com/tutorial-flask-leccion-14-enviar-emails-con-flask
 def _send_async_email(app, msg):
     with app.app_context():
         try:

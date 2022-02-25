@@ -6,7 +6,7 @@ from flask_login import current_user, login_required, login_user, logout_user
 from project.helpers.mail import send_password_reset_email
 
 
-auth_bp = Blueprint('auth', __name__, static_folder='static', template_folder='templates')
+auth_bp = Blueprint('auth', __name__, static_folder='static', template_folder='templates', static_url_path="/auth/static")
 
 
 @auth_bp.route('/signup', methods=['GET', 'POST'])
