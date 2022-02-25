@@ -26,11 +26,11 @@ body {
 }
 
 .nav-item-icon {
-    transform: scale(1.8);
+    transform: scale(1.6);
 }
 
 .nav-bg {
-    background-color: #f4f1de;
+    background-color: #e7ecef;
 }
 
 .footer-container {
