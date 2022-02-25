@@ -30,11 +30,9 @@ def send_password_reset_email(user):
     token = user.set_reset_password_token()
 
     send_email(
-        subject='TFTe Password Reset',
-        sender=('TFTe', current_app.config['MAIL_DEFAULT_SENDER']),
+        subject='TFT Password Reset',
+        sender=('TFT', current_app.config['MAIL_DEFAULT_SENDER']),
         recipients=[user.email],
         text_body=render_template('mailer/reset_password.html', token=token, user=user),
         html_body=render_template('mailer/reset_password.html', token=token, user=user)
     )
-
-
