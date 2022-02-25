@@ -72,3 +72,11 @@ a:hover {
 .message {
     margin: .2em;
 } */
+
+.auth-card-border {
+    border-radius: 1rem;
+}
+
+.auth-card-img-border {
+    border-radius: 1rem 0 0 1rem;
+}
