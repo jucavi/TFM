@@ -88,7 +88,7 @@ def profile():
         form.username.data = current_user.username
         form.email.data = current_user.email
 
-    return render_template('profile.html', form=form, title='Edit Profile')
+    return render_template('profile.html', form=form, title='Edit Profile', back=request.referrer)
 
 
 @auth_bp.route('/request_new_password', methods=['GET', 'POST'])
