@@ -98,6 +98,8 @@ a:hover {
     font-weight: 100;
     color: #e07a5f;
     list-style-type: none;
+    padding: 0;
+    margin-bottom: 0;
 }
 
 a, a:visited, a:active {
