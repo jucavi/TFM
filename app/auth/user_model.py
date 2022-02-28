@@ -1,4 +1,4 @@
-from project import db
+from app import db
 from sqlalchemy_utils import UUIDType
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
@@ -77,4 +77,4 @@ class User(UserMixin, db.Model):
 
 
     def __repr__(self):
-        return f'User {self.username}'
+        return f'<User: {self.username}>'

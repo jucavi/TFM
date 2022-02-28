@@ -27,8 +27,8 @@ def create_app(environment='develop'):
     mail.init_app(app)
 
     with app.app_context():
-        from project.home import home
-        from project.auth import auth, user_model
+        from app.home import home
+        from app.auth import auth, user_model
 
         app.register_blueprint(home.home_bp)
         app.register_blueprint(auth.auth_bp)

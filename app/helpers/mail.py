@@ -3,7 +3,7 @@ from smtplib import SMTPException
 from threading import Thread
 from flask import current_app
 from flask_mail import Message
-from project import mail
+from app import mail
 from flask import render_template
 
 logger = logging.getLogger(__name__)

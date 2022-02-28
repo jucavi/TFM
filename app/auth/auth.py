@@ -1,9 +1,9 @@
 from flask import Blueprint, flash, redirect, render_template, url_for, request
-from project import login_manager, db
-from project.auth.user_model import User
-from project.auth.forms import EditProfileForm, LogInForm, SignUpForm, RequestNewPasswordForm, SetNewPasswordForm
+from app import login_manager, db
+from app.auth.user_model import User
+from app.auth.forms import EditProfileForm, LogInForm, SignUpForm, RequestNewPasswordForm, SetNewPasswordForm
 from flask_login import current_user, login_required, login_user, logout_user
-from project.helpers.mail import send_password_reset_email
+from app.helpers.mail import send_password_reset_email
 
 
 auth_bp = Blueprint('auth', __name__, static_folder='static', template_folder='templates', static_url_path="/auth/static")
