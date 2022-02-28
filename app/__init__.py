@@ -29,6 +29,7 @@ def create_app(environment='develop'):
     with app.app_context():
         from app.home import home
         from app.auth import auth, user_model
+        from app.project import project_model
 
         app.register_blueprint(home.home_bp)
         app.register_blueprint(auth.auth_bp)
