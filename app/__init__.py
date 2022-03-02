@@ -16,7 +16,6 @@ mail = Mail()
 def create_app(environment='develop'):
     from config import config
 
-
     app = Flask(__name__)
     app.config.from_object(config.get(environment))
 
@@ -28,12 +27,15 @@ def create_app(environment='develop'):
 
     with app.app_context():
         from app.home import home
-        from app.auth import auth, user_model
-        from app.project import project_model
+        from app.auth import auth
+        from app.project import project
+
+        from app.auth.user_model import User
+        from app.project.project_model import Project, Team
 
         app.register_blueprint(home.home_bp)
         app.register_blueprint(auth.auth_bp)
-
+        app.register_blueprint(project.project_bp, url_prefix='/projects')
 
     @app.shell_context_processor
     def make_shell_context():

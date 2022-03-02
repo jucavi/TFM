@@ -6,7 +6,13 @@ from flask_login import current_user, login_required, login_user, logout_user
 from app.helpers.mail import send_password_reset_email
 
 
-auth_bp = Blueprint('auth', __name__, static_folder='static', template_folder='templates', static_url_path="/auth/static")
+auth_bp = Blueprint(
+    'auth',
+    __name__,
+    static_folder='static',
+    template_folder='templates',
+    static_url_path="/auth/static"
+)
 
 
 @auth_bp.route('/signup', methods=['GET', 'POST'])
@@ -37,7 +43,7 @@ def signup():
                 login_user(user)
                 return redirect(url_for('auth.login'))
 
-        flash('User already exists!')
+        flash('User already exists!', category='warning')
     return render_template('signup.html', form=form, title='Sign Up')
 
 

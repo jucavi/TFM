@@ -1,8 +1,10 @@
 from app import db
+from sqlalchemy import Column, String
+from sqlalchemy.orm import relationship
 from sqlalchemy_utils import UUIDType
+import uuid
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
-import uuid
 from datetime import datetime, timezone, timedelta
 from flask import current_app
 import jwt
@@ -10,40 +12,46 @@ import jwt
 class User(UserMixin, db.Model):
 
     __tablename__ = 'user'
-    id = db.Column(
+    id = Column(
         UUIDType(binary=False),
         primary_key=True,
         index = True,
         default=uuid.uuid4
     )
-    firstname = db.Column(
-        db.String(40),
+    firstname = Column(
+        String(40),
         index = True,
         nullable = False
     )
-    lastname = db.Column(
-        db.String(40),
+    lastname = Column(
+        String(40),
         index = True,
         nullable = False
     )
-    username = db.Column(
-        db.String(40),
-        index = True,
-        unique = True,
-        nullable = False
-    )
-    email = db.Column(
-        db.String(40),
+    username = Column(
+        String(40),
         index = True,
         unique = True,
         nullable = False
     )
-    password = db.Column(
-        db.String(250),
+    email = Column(
+        String(40),
+        index = True,
+        unique = True,
+        nullable = False
+    )
+    password = Column(
+        String(250),
         index = True,
         unique=False,
         nullable=False
 	)
+
+    projects = relationship(
+        'Project',
+        secondary='team',
+        viewonly=True
+        )
 
 
     def set_password(self, password):
@@ -65,10 +73,24 @@ class User(UserMixin, db.Model):
         )
 
 
+    # @property
+    # def projects_owner(self):
+    #     projects = self.projects
+    #     owner = [project for project in projects if project.owner and self == project.owner[0]]
+    #     return owner
+
+    # @property
+    # def projects_owner(self):
+    #     projects = self.projects
+    #     owner = [project for project in projects if project.owner and self == project.owner[0]]
+    #     return owner
+
+
+
     @staticmethod
     def check_resert_password_token(token):
         try:
-            _id = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])['reset_password']
+            _id = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])['reset_password']
             user_id = uuid.UUID(_id)
         except Exception:
             return None
@@ -76,5 +98,19 @@ class User(UserMixin, db.Model):
         return User.query.get(user_id)
 
 
+
+    projects_owner = relationship(
+        'Project',
+         secondary='team', primaryjoin=('and_(User.id==Team.user_id, Team.is_owner==True)'),
+          viewonly=True
+        )
+    projects_guest = relationship(
+        'Project',
+         secondary='team', primaryjoin=('and_(User.id==Team.user_id, Team.is_owner==False)'),
+          viewonly=True
+        )
+
+
+
     def __repr__(self):
-        return f'<User: {self.username}>'
+        return f'<User: {self.username!r}>'

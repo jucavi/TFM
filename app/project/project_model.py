@@ -1,47 +1,65 @@
 from app import db
 from sqlalchemy_utils import UUIDType
+from sqlalchemy import Column, String, Text, DateTime, ForeignKey, Boolean
+from sqlalchemy.orm import relationship, backref
 import uuid
 from datetime import datetime
 
 
-user_projects = db.Table('user_projects',
-    db.Column('user_id', UUIDType(binary=False), db.ForeignKey('user.id'), nullable=False),
-    db.Column('project_id', UUIDType(binary=False), db.ForeignKey('project.id'), nullable=False),
-    db.Column('is_owner', db.Boolean, default=False)
-)
-
 class Project(db.Model):
 
     __tablename__ = 'project'
-    id = db.Column(
+    id = Column(
         UUIDType(binary=False),
         primary_key=True,
         index = True,
         default=uuid.uuid4
     )
-    projectname = db.Column(
-        db.String(40),
+    project_name = Column(
+        String(40),
         index = True,
         unique=True,
-        nullable = False
+        nullable = True
     )
-    projectdesc = db.Column(
-        db.Text()
+    project_desc = Column(
+        Text(),
+        nullable = True
     )
-    created_at = db.Column(
-        db.DateTime,
-        nullable = False
+    created_at = Column(
+        DateTime,
+        default=datetime.utcnow
     )
-    updated_at = db.Column(
-        db.DateTime,
-        nullable = False
+    updated_at = Column(
+        DateTime,
+        default=datetime.utcnow
     )
-    users = db.relationship('User', secondary=user_projects, lazy='subquery', backref=db.backref('projects', lazy=True))
 
-    def __init__(self, projectname):
-        self.projectname = projectname
-        self.created_at = self.updated_at = datetime.now()
+    owner = relationship(
+        'User', secondary='team',
+        primaryjoin=('and_(Project.id==Team.project_id, Team.is_owner==True)'),
+        viewonly=True)
 
+    collaborators = relationship(
+        'User', secondary='team',
+        primaryjoin=('and_(Project.id==Team.project_id, Team.is_owner==False)'),
+        viewonly=True)
 
     def __repr__(self):
-        return f'<Project: {self.projectname!r} created_at: {self.created_at}>'
+        return f'<Project: {self.project_name!r}>'
+
+
+class Team(db.Model):
+    __tablename__ = 'team'
+
+    id = Column(
+        UUIDType(binary=False),
+        primary_key=True,
+        index = True,
+        default=uuid.uuid4
+    )
+    user_id = Column(UUIDType(binary=False), ForeignKey('user.id'))
+    project_id = Column(UUIDType(binary=False), ForeignKey('project.id'))
+    is_owner = Column(Boolean, default=False)
+
+    user = relationship('User', backref=backref('teams'), lazy=True)
+    project = relationship('Project', backref=backref('team', cascade='all, delete-orphan'))

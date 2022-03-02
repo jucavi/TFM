@@ -22,6 +22,8 @@
             {{ current_user.username}}
           </a>
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userActions">
+            <a class="dropdown-item" href="{{ url_for('project.new') }}">New project</a>
+            <a class="dropdown-item" href="{{ url_for('project.all') }}">Projects</a>
             <a class="dropdown-item" href="{{ url_for('auth.profile') }}">Profile</a>
             <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a>
           </div>
