@@ -4,6 +4,8 @@ from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect
 from flask_login import LoginManager
 from flask_mail import Mail
+import click
+from flask.cli import with_appcontext
 
 
 db = SQLAlchemy()
@@ -12,12 +14,22 @@ crsf = CSRFProtect()
 login_manager = LoginManager()
 mail = Mail()
 
+@click.command()
+@with_appcontext
+def populate():
+    from app import seed
+
+    print('Populating users:')
+    print(f'Password for all users: {seed.PASSWORD!r}')
+    seed.users()
+
 
 def create_app(environment='develop'):
     from config import config
 
     app = Flask(__name__)
     app.config.from_object(config.get(environment))
+    app.cli.add_command(populate)
 
     db.init_app(app)
     migrate.init_app(app, db)
@@ -39,6 +51,9 @@ def create_app(environment='develop'):
 
     @app.shell_context_processor
     def make_shell_context():
-       return {'db': db, 'mail': mail}
+       return {'db': db, 'mail': mail, 'app': app}
+
 
     return app
+
+

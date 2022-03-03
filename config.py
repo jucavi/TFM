@@ -13,16 +13,16 @@ class Config:
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    MAIL_SERVER = 'smtp.gmail.com'
-    MAIL_PORT = 587
-    MAIL_USE_TLS = True
-    MAIL_USE_SSL = False
-    MAIL_DEBUG = True
-    MAIL_USERNAME = environ.get('MAIL_USERNAME')
-    MAIL_PASSWORD = environ.get('MAIL_PASSWORD')
-    MAIL_DEFAULT_SENDER = environ.get('MAIL_DEFAULT_SENDER')
-    MAIL_MAX_EMAILS = None
-    MAIL_ASCII_ATTACHMENTS = False
+    # MAIL_SERVER = 'smtp.gmail.com'
+    # MAIL_PORT = 587
+    # MAIL_USE_TLS = True
+    # MAIL_USE_SSL = False
+    # MAIL_DEBUG = True
+    # MAIL_USERNAME = environ.get('MAIL_USERNAME')
+    # MAIL_PASSWORD = environ.get('MAIL_PASSWORD')
+    # MAIL_DEFAULT_SENDER = environ.get('MAIL_DEFAULT_SENDER')
+    # MAIL_MAX_EMAILS = None
+    # MAIL_ASCII_ATTACHMENTS = False
 
 
 
@@ -41,6 +41,15 @@ class DevConfig(Config):
     TESTING = False
 
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + path.join(basedir, 'development.db')
+
+    # Mailtrap conf
+    MAIL_SERVER = 'smtp.mailtrap.io'
+    MAIL_PORT = 2525
+    MAIL_USERNAME = '8d723d7c957936'
+    MAIL_PASSWORD = '83ebc0b9992ffd'
+    MAIL_DEFAULT_SENDER = 'tft@mailtrap.io'
+    MAIL_USE_TLS = True
+    MAIL_USE_SSL = False
 
 
 config = dict(
