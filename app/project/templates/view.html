@@ -9,23 +9,18 @@
 {% endblock %}
 
 {% block content %}
-  <div>Your Projects</div>
-  {% if projects_owner %}
-    {% for project in projects_owner %}
-      <div><a
-          href="{{ url_for('project.view', _id=project.id) }}">{{ project.project_name }}</a>
-      </div>
+  <div>Collaborators</div>
+  {% if project.collaborators %}
+    {% for collaborator in project.collaborators %}
+      <div>{{ collaborator.username }}</div>
     {% endfor %}
   {% endif %}
 
-  <div>Collaborating</div>
-  {% if projects_guest %}
-    {% for project in projects_guest%}
-      <div><a
-          href="{{ url_for('project.view', _id=project.id) }}">{{ project.project_name }}</a>
-      </div>
-    {% endfor %}
-  {% endif %}
+  <div>Project</div>
+  <ul>
+    <li>{{ project.project_name }}</li>
+    <li>{{ project.project_desc }}</li>
+  </ul>
 {% endblock %}
 
 {% block footer %}

@@ -2,6 +2,7 @@ from flask import Blueprint
 from flask_login import login_required
 from app.project.forms import NewProjectForm
 from app.project.project_model import Project, Team
+from app.auth.user_model import User
 from flask_login import current_user
 from flask import flash, render_template, redirect, url_for
 from app import db
@@ -56,14 +57,18 @@ def all():
 @project_bp.route('project/<_id>')
 @login_required
 def view(_id):
-    project = Project.query.get(_id)
-    if project:
+    try:
+        project = Project.query.get(_id)
+        if project:
 
-        return render_template(
-            'view.html',
-            title=f'Project {project.project_name}',
-            project=project
-        )
+            return render_template(
+                'view.html',
+                title=f'Project {project.project_name}',
+                project=project
+            )
+
+    except Exception as e:
+        print(e)
 
     flash('No project found!', category='warning')
     return redirect(url_for('project.all'))

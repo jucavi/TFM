@@ -4,43 +4,27 @@
   {% include '_navbar.html'%}
 {% endblock %}
 
-{% block header %}
-  <h1>New Project</h1>
-{% endblock %}
-
 {% block content %}
-  <form method="POST" class="align-items-center">
-    {{ form.csrf_token }}
-    <h5 class="fw-normal mb-3 pb-3">
+  <section class="align-items-center">
+
+    <h4 class="text-center fw-normal my-3 pb-3">
       Create New project
-    </h5>
+    </h4>
 
-    <fieldset class="form-outline mb-4">
-      {{ form.project_name(class= 'form-control form-control-lg', placeholder='Poject name') }}
-      {% if form.project_name.errors %}
-      <ul class="errors">
-        {% for error in form.project_name.errors %}
-        <li>{{ error }}</li>
-        {% endfor %}
-      </ul>
-      {% endif %}
-    </fieldset>
+    {% from "_formhelpers.html" import render_field %}
+    <form method=post>
+      {{ form.csrf_token }}
 
-    <fieldset class="form-outline mb-4">
-      {{ form.project_desc(class='form-control form-control-lg', placeholder='Description') }}
-      {% if form.project_desc.errors %}
-      <ul class="errors">
-        {% for error in form.project_desc.errors %}
-        <li>{{ error }}</li>
-        {% endfor %}
-      </ul>
-      {% endif %}
-    </fieldset>
+      <dl>
+        {{ render_field(form.project_name, class='form-control form-control-lg', placeholder='Poject name') }}
+        {{ render_field(form.project_desc, class='form-control form-control-lg', placeholder='Description') }}
+      </dl>
 
-    <div class="pt-1 mb-4">
-      {{ form.submit(class='btn auth-btn-bg btn-lg btn-block btn-font w-100') }}
-    </div>
-  </form>
+      <div class="pt-1 mb-4">
+        {{ form.submit(class='btn auth-btn-bg btn-lg btn-block btn-font w-100') }}
+      </div>
+    </form>
+  </section>
 {% endblock %}
 
 {% block footer %}
