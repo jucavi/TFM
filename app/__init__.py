@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect
@@ -10,7 +10,7 @@ from flask.cli import with_appcontext
 
 db = SQLAlchemy()
 migrate = Migrate()
-crsf = CSRFProtect()
+csrf = CSRFProtect()
 login_manager = LoginManager()
 mail = Mail()
 
@@ -20,7 +20,7 @@ def populate():
     from app import seed
 
     print('Populating users:')
-    print(f'Password for all users: {seed.PASSWORD!r}')
+    print(f'Password for all users: {seed.PASSWORD!r}, you can change it later')
     seed.users()
 
 
@@ -33,7 +33,7 @@ def create_app(environment='develop'):
 
     db.init_app(app)
     migrate.init_app(app, db)
-    crsf.init_app(app)
+    csrf.init_app(app)
     login_manager.init_app(app)
     mail.init_app(app)
 

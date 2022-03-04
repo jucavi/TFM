@@ -30,14 +30,17 @@ USERS = {
 
 def users():
     for user in USERS.get('users', []):
-        user = User(
-            firstname=user.get('firstname'),
-            lastname=user.get('lastname'),
-            username=user.get('username'),
-            email=user.get('email')
-        )
-        user.set_password(PASSWORD)
+        try:
+            user = User(
+                firstname=user.get('firstname'),
+                lastname=user.get('lastname'),
+                username=user.get('username'),
+                email=user.get('email')
+            )
+            user.set_password(PASSWORD)
 
-        db.session.add(user)
-        db.session.commit()
-        print(f'{user} created!')
+            db.session.add(user)
+            db.session.commit()
+            print(f'{user} created!')
+        except Exception as e:
+            print('Error:', e)
