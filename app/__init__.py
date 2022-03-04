@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, flash, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect
@@ -45,6 +45,12 @@ def create_app(environment='develop'):
         app.register_blueprint(home.home_bp)
         app.register_blueprint(auth.auth_bp)
         app.register_blueprint(project.project_bp, url_prefix='/projects')
+
+
+    @app.errorhandler(404)
+    def invalid_route(e):
+        flash('Invalid route!', category='warning')
+        return redirect(url_for('home.workspace'))
 
     @app.shell_context_processor
     def make_shell_context():
