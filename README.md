@@ -39,7 +39,12 @@ Read [this](https://support.google.com/accounts/answer/185833?hl=en) before set 
 $ flask db upgrade
 ```
 
-6. Start server
+6. You can populate users for testing purposes
+```bash
+$ flask populate
+```
+
+7. Start server
 ```bash
 $ flask run
 ```

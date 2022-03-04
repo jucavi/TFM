@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block navbar %}
+{% include '_navbar.html'%}
+{% endblock %}
+
+{% block header %}
+  <h1>{{ project.project_name }}</h1>
+{% endblock %}
+
+{% block content %}
+  <div>Collaborators</div>
+  {% if project.collaborators %}
+    {% for collaborator in project.collaborators %}
+      <div>{{ collaborator.username }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <div>Project</div>
+  <ul>
+    <li>{{ project.project_name }}</li>
+    <li>{{ project.project_desc }}</li>
+  </ul>
+
+  <a href="{{ url_for('project.delete', project_id=project.id)}}">Delete</a>
+{% endblock %}
+
+{% block footer %}
+  {% include '_footer.html' %}
+{% endblock %}

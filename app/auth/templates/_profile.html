@@ -1,0 +1,26 @@
+{% extends 'base_auth.html'%}
+
+{% block form_for %}
+
+  <h4 class="fw-normal mb-3 pb-3">
+    Edit your profile
+  </h4>
+
+  {% from "_formhelpers.html" import render_field %}
+  <form method=post>
+    {{ form.csrf_token }}
+
+    <dl>
+      {{ render_field(form.firstname, class= 'form-control form-control-lg') }}
+      {{ render_field(form.lastname, class= 'form-control form-control-lg') }}
+      {{ render_field(form.username, class= 'form-control form-control-lg') }}
+      {{ render_field(form.email, class= 'form-control form-control-lg') }}
+    </dl>
+
+    <div class="pt-1 mb-4">
+      {{ form.submit(class='btn auth-btn-bg btn-lg btn-block btn-font w-100') }}
+    </div>
+  </form>
+
+  {% include '_back.html' %}
+{% endblock %}

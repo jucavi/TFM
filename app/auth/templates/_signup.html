@@ -1,0 +1,31 @@
+{% extends 'base_auth.html'%}
+
+{% block form_for %}
+
+  <h4 class="fw-normal mb-3 pb-3">
+    Create your account
+  </h4>
+
+  {% from "_formhelpers.html" import render_field %}
+  <form method=post>
+    {{ form.csrf_token }}
+
+    <dl>
+      {{ render_field(form.firstname, class= 'form-control form-control-lg', placeholder='First name') }}
+      {{ render_field(form.lastname, class= 'form-control form-control-lg', placeholder='Last name') }}
+      {{ render_field(form.username, class= 'form-control form-control-lg', placeholder='Username') }}
+      {{ render_field(form.email, class= 'form-control form-control-lg', placeholder='email@email.com') }}
+      {{ render_field(form.password, class='form-control form-control-lg', placeholder='Password') }}
+      {{ render_field(form.confirm, class='form-control form-control-lg', placeholder='Confirm password') }}
+    </dl>
+
+    <div class="pt-1 mb-4">
+      {{ form.submit(class='btn auth-btn-bg btn-lg btn-block w-100 btn-font') }}
+    </div>
+  </form>
+
+  <div class="mb-5 pb-lg-2">
+    <span>You have an account? </span>
+    <a href="{{ url_for('auth.login') }}">Log In.</a>
+  </div>
+{% endblock %}
