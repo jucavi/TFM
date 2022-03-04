@@ -18,10 +18,7 @@ mail = Mail()
 @with_appcontext
 def populate():
     from app import seed
-
-    print('Populating users:')
-    print(f'Password for all users: {seed.PASSWORD!r}, you can change it later')
-    seed.users()
+    seed.seed()
 
 
 def create_app(environment='develop'):
@@ -42,8 +39,8 @@ def create_app(environment='develop'):
         from app.auth import auth
         from app.project import project
 
-        from app.auth.user_model import User
-        from app.project.project_model import Project, Team
+        from app.auth.models import User
+        from app.project.models import Project, Team
 
         app.register_blueprint(home.home_bp)
         app.register_blueprint(auth.auth_bp)
