@@ -73,20 +73,6 @@ class User(UserMixin, db.Model):
         )
 
 
-    # @property
-    # def projects_owner(self):
-    #     projects = self.projects
-    #     owner = [project for project in projects if project.owner and self == project.owner[0]]
-    #     return owner
-
-    # @property
-    # def projects_owner(self):
-    #     projects = self.projects
-    #     owner = [project for project in projects if project.owner and self == project.owner[0]]
-    #     return owner
-
-
-
     @staticmethod
     def check_resert_password_token(token):
         try:
@@ -96,7 +82,6 @@ class User(UserMixin, db.Model):
             return None
 
         return User.query.get(user_id)
-
 
 
     projects_owner = relationship(
@@ -109,7 +94,6 @@ class User(UserMixin, db.Model):
          secondary='team', primaryjoin=('and_(User.id==Team.user_id, Team.is_owner==False)'),
           viewonly=True
         )
-
 
 
     def __repr__(self):

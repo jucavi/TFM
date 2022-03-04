@@ -23,7 +23,6 @@ def new():
     if form.validate_on_submit():
         project_name = form.project_name.data
         project_desc = form.project_desc.data
-
         db_project = Project.query.filter_by(project_name=project_name).first()
         if not db_project:
             project = Project(project_name=project_name, project_desc=project_desc)
