@@ -1,6 +1,6 @@
 from flask import Blueprint, flash, render_template, redirect, url_for
 from flask_login import login_required, current_user
-from app.project.forms import NewProjectForm
+from app.project.forms import NewProjectForm, EditProjectForm
 from app.project.models import Project, Team
 from app import db
 
@@ -70,6 +70,7 @@ def view(project_id):
 @login_required
 def delete(project_id):
     project = Project.query.get(project_id)
+
     if current_user.is_owner(project):
         db.session.delete(project)
         db.session.commit()
@@ -77,4 +78,29 @@ def delete(project_id):
     else:
         flash('No project found!', category='warning')
 
+    return redirect(url_for('project.all'))
+
+
+@project_bp.route('project/edit/<uuid:project_id>', methods=['GET', 'POST'])
+@login_required
+def edit(project_id):
+    form = EditProjectForm()
+    project = Project.query.get(project_id)
+
+    if current_user.is_owner(project):
+        if form.validate_on_submit():
+            project.project_name = form.project_name.data
+            project.project_desc = form.project_desc.data
+
+            db.session.commit()
+            flash('Your changes have been saved.', category='success')
+
+            return redirect(url_for('project.all'))
+        else:
+            form.project_name.data = project.project_name
+            form.project_desc.data = project.project_desc
+
+            return render_template('edit.html', form=form, title='Edit Project')
+
+    flash('No project found!', category='warning')
     return redirect(url_for('project.all'))
