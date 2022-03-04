@@ -12,14 +12,14 @@
   <div>Your Projects</div>
   {% if projects_owner %}
     {% for project in projects_owner %}
-      <div><a href="{{ url_for('project.view', _id=project.id) }}">{{ project.project_name }}</a></div>
+      <div><a href="{{ url_for('project.view', project_id=project.id) }}">{{ project.project_name }}</a></div>
     {% endfor %}
   {% endif %}
 
   <div>Collaborating</div>
   {% if projects_guest %}
     {% for project in projects_guest%}
-      <div><a href="{{ url_for('project.view', _id=project.id) }}">{{ project.project_name }}</a></div>
+      <div><a href="{{ url_for('project.view', project_id=project.id) }}">{{ project.project_name }}</a></div>
     {% endfor %}
   {% endif %}
 {% endblock %}

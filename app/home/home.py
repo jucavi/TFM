@@ -19,8 +19,3 @@ def home():
 @login_required
 def workspace():
     return render_template('workspace.html')
-
-
-@home_bp.route('/<_>')
-def missing_route(_):
-    return render_template('home.html')

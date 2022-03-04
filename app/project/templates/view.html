@@ -21,6 +21,8 @@
     <li>{{ project.project_name }}</li>
     <li>{{ project.project_desc }}</li>
   </ul>
+
+  <a href="{{ url_for('project.delete', project_id=project.id)}}">Delete</a>
 {% endblock %}
 
 {% block footer %}

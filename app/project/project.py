@@ -1,10 +1,7 @@
-from flask import Blueprint
-from flask_login import login_required
+from flask import Blueprint, flash, render_template, redirect, url_for
+from flask_login import login_required, current_user
 from app.project.forms import NewProjectForm
 from app.project.models import Project, Team
-from app.auth.models import User
-from flask_login import current_user
-from flask import flash, render_template, redirect, url_for
 from app import db
 
 project_bp = Blueprint(
@@ -53,21 +50,31 @@ def all():
         projects_guest=projects_guest
     )
 
-@project_bp.route('project/<_id>')
+@project_bp.route('project/<uuid:project_id>')
 @login_required
-def view(_id):
-    try:
-        project = Project.query.get(_id)
-        if project:
+def view(project_id):
+    project = Project.query.get(project_id)
 
-            return render_template(
-                'view.html',
-                title=f'Project {project.project_name}',
-                project=project
-            )
-
-    except Exception as e:
-        print(e)
+    if current_user.is_owner(project):
+        return render_template(
+            'view.html',
+            title=f'Project {project.project_name}',
+            project=project
+        )
 
     flash('No project found!', category='warning')
+    return redirect(url_for('project.all'))
+
+
+@project_bp.route('delete/<uuid:project_id>')
+@login_required
+def delete(project_id):
+    project = Project.query.get(project_id)
+    if current_user.is_owner(project):
+        db.session.delete(project)
+        db.session.commit()
+        flash(f'Project {project.project_name} successfully deleted.', category='success')
+    else:
+        flash('No project found!', category='warning')
+
     return redirect(url_for('project.all'))
