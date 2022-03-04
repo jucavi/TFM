@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from .user_model import User
+from .models import User
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Email, EqualTo, Regexp, ValidationError
 

@@ -1,8 +1,8 @@
 from flask import Blueprint
 from flask_login import login_required
 from app.project.forms import NewProjectForm
-from app.project.project_model import Project, Team
-from app.auth.user_model import User
+from app.project.models import Project, Team
+from app.auth.models import User
 from flask_login import current_user
 from flask import flash, render_template, redirect, url_for
 from app import db
