@@ -22,5 +22,10 @@
     </div>
   </form>
 
+  <div class="small mb-2">
+    <a class="text-muted"
+      href="{{ url_for('auth.request_new_password') }}">Password reset?</a>
+  </div>
+
   {% include '_back.html' %}
 {% endblock %}
