@@ -49,7 +49,7 @@ def create_app(environment='develop'):
 
     @app.errorhandler(404)
     def invalid_route(e):
-        # TODO kepp in actual page
+        # TODO kepp on actual page
         flash('Invalid route!', category='warning')
         return redirect(url_for('home.workspace'))
 

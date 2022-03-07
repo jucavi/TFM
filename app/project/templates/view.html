@@ -1,7 +1,14 @@
 {% extends 'base.html' %}
 
+{% block customstyle %}
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script type="text/javascript">
+    axios.defaults.headers.common["X-CSRFToken"] = "{{ csrf_token() }}";
+  </script>
+{% endblock %}
+
 {% block navbar %}
-{% include '_navbar.html'%}
+  {% include '_navbar.html'%}
 {% endblock %}
 
 {% block header %}
@@ -14,7 +21,16 @@
     {% for collaborator in project.collaborators %}
       <div>{{ collaborator.username }}</div>
     {% endfor %}
+  {% else %}
+    <div>You haven't invited any collaborators yet</div>
   {% endif %}
+  <input type="email" id="collab">
+  <a href="{{ url_for('project.edit', project_id=project.id)}}" id="add-collab">Invite
+    collaborator</a>
+  <div>
+    <small class="errors"></small>
+  </div>
+
 
   <div>Project</div>
   <ul>
@@ -22,7 +38,12 @@
     <li>{{ project.project_desc }}</li>
   </ul>
 
+  <a href="{{ url_for('project.edit', project_id=project.id)}}">Edit</a>
   <a href="{{ url_for('project.delete', project_id=project.id)}}">Delete</a>
+{% endblock %}
+
+{% block customjs %}
+  <script src="{{ url_for('.static', filename='js/collaborators.js') }}"></script>
 {% endblock %}
 
 {% block footer %}

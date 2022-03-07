@@ -1,7 +1,9 @@
-from flask import Blueprint, flash, render_template, redirect, url_for
+from flask import Blueprint, flash, render_template, redirect, url_for, request
 from flask_login import login_required, current_user
 from app.project.forms import NewProjectForm, EditProjectForm
+from app.auth.models import User
 from app.project.models import Project, Team
+from app.helpers.mail import send_project_invitation
 from app import db
 
 project_bp = Blueprint(
@@ -50,12 +52,27 @@ def all():
         projects_guest=projects_guest
     )
 
-@project_bp.route('project/<uuid:project_id>')
+@project_bp.route('project/<uuid:project_id>', methods=['GET', 'POST'])
+# @project_bp.route('project/<project_id>', methods=['GET', 'POST'])
 @login_required
 def view(project_id):
     project = Project.query.get(project_id)
 
-    if current_user.is_owner(project):
+    if request.method == 'POST':
+        form = request.get_json()
+        email = form.get('email')
+        collaborator = User.query.filter_by(email=email).first()
+        if collaborator:
+            if collaborator not in project.collaborators:
+                send_project_invitation(project, collaborator)
+                return {'success': True, 'msg': 'ok'}
+            else:
+                msg = 'User alredy invited.'
+        else:
+            msg = 'User not found.'
+        return {'success': False, 'msg': msg}
+
+    if project in current_user.projects:
         return render_template(
             'view.html',
             title=f'Project {project.project_name}',
@@ -81,7 +98,7 @@ def delete(project_id):
     return redirect(url_for('project.all'))
 
 
-@project_bp.route('project/edit/<uuid:project_id>', methods=['GET', 'POST'])
+@project_bp.route('/edit/<uuid:project_id>', methods=['GET', 'POST'])
 @login_required
 def edit(project_id):
     form = EditProjectForm()
@@ -104,3 +121,20 @@ def edit(project_id):
 
     flash('No project found!', category='warning')
     return redirect(url_for('project.all'))
+
+
+@project_bp.route('project/collaborator/<token>')
+def add_collaborator(token):
+    try:
+        project_id, user_id = Project.project_collaborator_token(token)
+        project = Project.query.get(project_id)
+        user = User.query.get(user_id)
+
+        db.session.add(Team(project=project, user=user))
+        db.session.commit()
+
+        flash(f'Great! You are now collaborating with {project.project_name!r}', category="success")
+    except Exception as e:
+        flash('Expired/invalid token!', category='danger')
+
+    return redirect(url_for('home.workspace'))

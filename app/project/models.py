@@ -3,11 +3,12 @@ from sqlalchemy_utils import UUIDType
 from sqlalchemy import Column, String, Text, DateTime, ForeignKey, Boolean
 from sqlalchemy.orm import relationship, backref
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
+from flask import current_app
+import jwt
 
 
 class Project(db.Model):
-
     __tablename__ = 'project'
     id = Column(
         UUIDType(binary=False),
@@ -43,6 +44,29 @@ class Project(db.Model):
         'User', secondary='team',
         primaryjoin=('and_(Project.id==Team.project_id, Team.is_owner==False)'),
         viewonly=True)
+
+    def collaborator_token(self, user, expires=604800):
+        return jwt.encode(
+            {
+                'project_id': self.id.hex,
+                'user_id': user.id.hex,
+                'exp': datetime.now(tz=timezone.utc) + timedelta(seconds=expires)
+            },
+            current_app.config['SECRET_KEY'],
+            algorithm='HS256'
+        )
+
+    @staticmethod
+    def project_collaborator_token(token):
+        try:
+            p_id = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])['project_id']
+            u_id = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])['user_id']
+            project_id = uuid.UUID(p_id)
+            user_id = uuid.UUID(u_id)
+        except Exception:
+            return None
+
+        return project_id, user_id
 
     def __repr__(self):
         return f'<Project: {self.project_name!r}>'

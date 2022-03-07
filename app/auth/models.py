@@ -53,14 +53,11 @@ class User(UserMixin, db.Model):
         viewonly=True
         )
 
-
     def set_password(self, password):
         self.password = generate_password_hash(password)
 
-
     def check_password(self, password):
         return check_password_hash(self.password, password)
-
 
     def set_reset_password_token(self, expires=600):
         return jwt.encode(
@@ -72,7 +69,6 @@ class User(UserMixin, db.Model):
             algorithm='HS256'
         )
 
-
     @staticmethod
     def check_resert_password_token(token):
         try:
@@ -83,10 +79,8 @@ class User(UserMixin, db.Model):
 
         return User.query.get(user_id)
 
-
     def is_owner(self, project):
         return project in self.projects_owner
-
 
     projects_owner = relationship(
         'Project',
@@ -98,7 +92,6 @@ class User(UserMixin, db.Model):
          secondary='team', primaryjoin=('and_(User.id==Team.user_id, Team.is_owner==False)'),
           viewonly=True
         )
-
 
     def __repr__(self):
         return f'<User: {self.username!r}>'
