@@ -53,7 +53,6 @@ def all():
     )
 
 @project_bp.route('project/<uuid:project_id>', methods=['GET', 'POST'])
-# @project_bp.route('project/<project_id>', methods=['GET', 'POST'])
 @login_required
 def view(project_id):
     project = Project.query.get(project_id)
