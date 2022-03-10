@@ -54,7 +54,7 @@ def all():
 
 @project_bp.route('project/<uuid:project_id>', methods=['GET', 'POST'])
 @login_required
-def view(project_id):
+def show(project_id):
     project = Project.query.get(project_id)
 
     if request.method == 'POST':
@@ -73,7 +73,7 @@ def view(project_id):
 
     if project in current_user.projects:
         return render_template(
-            'view.html',
+            'show.html',
             title=f'Project {project.project_name}',
             project=project
         )
