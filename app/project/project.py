@@ -6,13 +6,11 @@ from app.project.models import Project, Team
 from app.helpers.mail import send_project_invitation
 from app import db
 
-project_bp = Blueprint(
-    'project',
-    __name__,
-    static_folder='static',
-    template_folder='templates',
-    static_url_path="/project/static"
-)
+project_bp = Blueprint('project',
+                       __name__,
+                       static_folder='static',
+                       template_folder='templates',
+                       static_url_path="/project/static")
 
 @project_bp.route('/new', methods=['GET', 'POST'])
 @login_required
@@ -36,7 +34,10 @@ def new():
             return redirect(url_for('project.all'))
 
         flash('Project name already exists.', category='warning')
-    return render_template('new.html', form=form, title='New project')
+
+    return render_template('new.html',
+                           form=form,
+                           title='New project')
 
 
 @project_bp.route('/')
@@ -45,12 +46,10 @@ def all():
     projects_owner = current_user.projects_owner
     projects_guest = current_user.projects_guest
 
-    return render_template(
-        'all.html',
-        title='Projects',
-        projects_owner=projects_owner,
-        projects_guest=projects_guest
-    )
+    return render_template('all.html',
+                           title='Projects',
+                           projects_owner=projects_owner,
+                           projects_guest=projects_guest)
 
 @project_bp.route('project/<uuid:project_id>', methods=['GET', 'POST'])
 @login_required
@@ -72,11 +71,9 @@ def show(project_id):
         return {'success': False, 'msg': msg}
 
     if project in current_user.projects:
-        return render_template(
-            'show.html',
-            title=f'Project {project.project_name}',
-            project=project
-        )
+        return render_template('show.html',
+                               title=f'Project {project.project_name}',
+                               project=project)
 
     flash('No project found!', category='warning')
     return redirect(url_for('project.all'))
@@ -116,7 +113,9 @@ def edit(project_id):
             form.project_name.data = project.project_name
             form.project_desc.data = project.project_desc
 
-            return render_template('edit.html', form=form, title='Edit Project')
+            return render_template('edit.html',
+                                   form=form,
+                                   title='Edit Project')
 
     flash('No project found!', category='warning')
     return redirect(url_for('project.all'))

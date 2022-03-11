@@ -6,13 +6,11 @@ from flask_login import current_user, login_required, login_user, logout_user
 from app.helpers.mail import send_password_reset_email
 
 
-auth_bp = Blueprint(
-    'auth',
-    __name__,
-    static_folder='static',
-    template_folder='templates',
-    static_url_path="/auth/static"
-)
+auth_bp = Blueprint('auth',
+                    __name__,
+                    static_folder='static',
+                    template_folder='templates',
+                    static_url_path="/auth/static")
 
 
 @auth_bp.route('/signup', methods=['GET', 'POST'])
@@ -33,8 +31,8 @@ def signup():
                     firstname=firstname,
                     lastname=lastname,
                     username=username,
-                    email=email,
-                )
+                    email=email)
+
                 user.set_password(password)
 
                 db.session.add(user)
@@ -44,7 +42,10 @@ def signup():
                 return redirect(url_for('auth.login'))
 
         flash('User already exists!', category='warning')
-    return render_template('signup.html', form=form, title='Sign Up')
+
+    return render_template('signup.html',
+                           form=form,
+                           title='Sign Up')
 
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
@@ -61,7 +62,9 @@ def login():
             return redirect(url_for('home.workspace'))
         flash('Invalid username/password.', category='warning')
 
-    return render_template('login.html', form=form, title='Log In')
+    return render_template('login.html',
+                           form=form,
+                           title='Log In')
 
 
 
@@ -94,7 +97,10 @@ def profile():
         form.username.data = current_user.username
         form.email.data = current_user.email
 
-    return render_template('profile.html', form=form, title='Edit Profile', back=request.referrer)
+    return render_template('profile.html',
+                           form=form,
+                           title='Edit Profile',
+                           back=request.referrer)
 
 
 @auth_bp.route('/request_new_password', methods=['GET', 'POST'])
@@ -112,7 +118,9 @@ def request_new_password():
             return redirect(url_for('home.home'))
         flash(f'Not user found by {email}!')
 
-    return render_template('request_new_password.html', form=form, title='Reset Password', back=request.referrer)
+    return render_template('request_new_password.html',
+                           form=form, title='Reset Password',
+                           back=request.referrer)
 
 
 @auth_bp.route('/new_password/<token>', methods=['GET', 'POST'])
@@ -131,7 +139,10 @@ def new_password(token):
 
         return redirect(url_for('auth.login'))
 
-    return render_template('new_password.html', form=form, title='New Password', back=request.referrer)
+    return render_template('new_password.html',
+                           form=form,
+                           title='New Password',
+                           back=request.referrer)
 
 
 @login_manager.user_loader

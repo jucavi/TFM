@@ -30,22 +30,16 @@ def send_email(subject, sender, recipients, text_body, cc=None, bcc=None, html_b
 def send_password_reset_email(user):
     token = user.set_reset_password_token()
 
-    send_email(
-        subject='TFT Password Reset',
-        sender=('TFT', current_app.config['MAIL_DEFAULT_SENDER']),
-        recipients=[user.email],
-        text_body=render_template('mailer/auth/reset_password.txt', token=token, user=user),
-        html_body=render_template('mailer/auth/reset_password.html', token=token, user=user)
-    )
+    send_email(subject='TFT Password Reset',
+               sender=('TFT', current_app.config['MAIL_DEFAULT_SENDER']),
+               recipients=[user.email],text_body=render_template('mailer/auth/reset_password.txt', token=token, user=user),
+               html_body=render_template('mailer/auth/reset_password.html', token=token, user=user))
 
 
 def send_project_invitation(project, user):
     token = project.collaborator_token(user)
 
-    send_email(
-        subject='Project join invitation',
-        sender=('TFT', current_app.config['MAIL_DEFAULT_SENDER']),
-        recipients=[user.email],
-        text_body=render_template('mailer/project/project_invitation.txt', token=token, user=user, project=project),
-        html_body=render_template('mailer/project/project_invitation.html', token=token, user=user, project=project)
-    )
+    send_email(subject='Project join invitation',
+               sender=('TFT', current_app.config['MAIL_DEFAULT_SENDER']),
+               recipients=[user.email],text_body=render_template('mailer/project/project_invitation.txt', token=token, user=user, project=project),
+               html_body=render_template('mailer/project/project_invitation.html', token=token, user=user, project=project))

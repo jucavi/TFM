@@ -39,6 +39,7 @@ def create_app(environment='develop'):
         from app.home import home
         from app.auth import auth
         from app.project import project
+        from app.message import message
 
         # models
         from app.auth.models import User
@@ -49,6 +50,7 @@ def create_app(environment='develop'):
         app.register_blueprint(home.home_bp)
         app.register_blueprint(auth.auth_bp)
         app.register_blueprint(project.project_bp, url_prefix='/projects')
+        app.register_blueprint(message.msg_bp)
 
 
     @app.errorhandler(404)
@@ -59,8 +61,12 @@ def create_app(environment='develop'):
 
     @app.shell_context_processor
     def make_shell_context():
-       return {'db': db, 'mail': mail, 'app': app}
-
+       return {'db': db,
+               'User': User,
+               'Project': Project,
+               'Team': Team,
+               'Message': Message
+               }
 
     return app
 
