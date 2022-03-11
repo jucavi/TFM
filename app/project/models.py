@@ -10,40 +10,34 @@ import jwt
 
 class Project(db.Model):
     __tablename__ = 'project'
-    id = Column(
-        UUIDType(binary=False),
-        primary_key=True,
-        index = True,
-        default=uuid.uuid4
-    )
-    project_name = Column(
-        String(40),
-        index = True,
-        unique=True,
-        nullable = True
-    )
-    project_desc = Column(
-        Text(),
-        nullable = True
-    )
-    created_at = Column(
-        DateTime,
-        default=datetime.utcnow
-    )
-    updated_at = Column(
-        DateTime,
-        default=datetime.utcnow
-    )
+    id = Column(UUIDType(binary=False),
+                primary_key=True,
+                index = True,
+                default=uuid.uuid4)
 
-    owner = relationship(
-        'User', secondary='team',
-        primaryjoin=('and_(Project.id==Team.project_id, Team.is_owner==True)'),
-        viewonly=True)
+    project_name = Column(String(40),
+                          index = True,
+                          unique=True,
+                          nullable = True)
 
-    collaborators = relationship(
-        'User', secondary='team',
-        primaryjoin=('and_(Project.id==Team.project_id, Team.is_owner==False)'),
-        viewonly=True)
+    project_desc = Column(Text(),
+                          nullable = True)
+
+    created_at = Column(DateTime,
+                        default=datetime.utcnow)
+
+    updated_at = Column(DateTime,
+                        default=datetime.utcnow)
+
+    owner = relationship('User',
+                         secondary='team',
+                         primaryjoin=('and_(Project.id==Team.project_id, Team.is_owner==True)'),
+                         viewonly=True)
+
+    collaborators = relationship('User',
+                                 secondary='team',
+                                 primaryjoin=('and_(Project.id==Team.project_id, Team.is_owner==False)'),
+                                 viewonly=True)
 
     def collaborator_token(self, user, expires=604800):
         return jwt.encode(
@@ -75,15 +69,22 @@ class Project(db.Model):
 class Team(db.Model):
     __tablename__ = 'team'
 
-    id = Column(
-        UUIDType(binary=False),
-        primary_key=True,
-        index = True,
-        default=uuid.uuid4
-    )
-    user_id = Column(UUIDType(binary=False), ForeignKey('user.id'))
-    project_id = Column(UUIDType(binary=False), ForeignKey('project.id'))
-    is_owner = Column(Boolean, default=False)
+    id = Column(UUIDType(binary=False),
+                primary_key=True,
+                index = True,
+                default=uuid.uuid4)
 
-    user = relationship('User', backref=backref('teams'), lazy=True)
-    project = relationship('Project', backref=backref('team', cascade='all, delete-orphan'))
+    user_id = Column(UUIDType(binary=False),
+                     ForeignKey('user.id'))
+
+    project_id = Column(UUIDType(binary=False),
+                        ForeignKey('project.id'))
+
+    is_owner = Column(Boolean,
+                      default=False)
+
+    user = relationship('User',
+                        backref=backref('teams'),
+                        lazy=True)
+    project = relationship('Project',
+                           backref=backref('team', cascade='all, delete-orphan'))

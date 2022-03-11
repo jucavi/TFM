@@ -35,13 +35,17 @@ def create_app(environment='develop'):
     mail.init_app(app)
 
     with app.app_context():
+        # routes
         from app.home import home
         from app.auth import auth
         from app.project import project
 
+        # models
         from app.auth.models import User
         from app.project.models import Project, Team
+        from app.message.models import Message
 
+        #blueprints
         app.register_blueprint(home.home_bp)
         app.register_blueprint(auth.auth_bp)
         app.register_blueprint(project.project_bp, url_prefix='/projects')
