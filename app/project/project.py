@@ -5,6 +5,7 @@ from app.auth.models import User
 from app.project.models import Project, Team
 from app.helpers.mail import send_project_invitation
 from app import db
+from datetime import datetime
 
 project_bp = Blueprint('project',
                        __name__,
@@ -50,6 +51,7 @@ def all():
                            title='Projects',
                            projects_owner=projects_owner,
                            projects_guest=projects_guest)
+
 
 @project_bp.route('project/<uuid:project_id>', methods=['GET', 'POST'])
 @login_required
@@ -104,6 +106,7 @@ def edit(project_id):
         if form.validate_on_submit():
             project.project_name = form.project_name.data
             project.project_desc = form.project_desc.data
+            project.updated_at = datetime.utcnow()
 
             db.session.commit()
             flash('Your changes have been saved.', category='success')
