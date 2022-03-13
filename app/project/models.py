@@ -6,6 +6,7 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from flask import current_app
 import jwt
+from app.helpers.date import local_time
 
 
 class Project(db.Model):
@@ -38,6 +39,14 @@ class Project(db.Model):
                                  secondary='team',
                                  primaryjoin=('and_(Project.id==Team.project_id, Team.is_owner==False)'),
                                  viewonly=True)
+
+    @property
+    def created(self):
+        return local_time(self.created_at)
+
+    @property
+    def updated(self):
+        return local_time(self.updated_at)
 
     def collaborator_token(self, user, expires=604800):
         return jwt.encode(
