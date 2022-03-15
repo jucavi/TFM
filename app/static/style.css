@@ -18,7 +18,7 @@ body {
     border: 0;
     border-radius: 0;
     margin-bottom: 0;
-    letter-spacing: .1em;
+    /* letter-spacing: .05em; */
 }
 
 .nav-item {
@@ -39,7 +39,7 @@ body {
 }
 
 hr {
-  border-color: #e07a5f !important;;
+  border-color: #a35c48 !important;;
 }
 
 #logo {
@@ -85,6 +85,10 @@ a, a:visited, a:active {
 
 .message {
     margin: .2em;
+}
+
+.inbox-messages {
+    padding: 0;
 }
 
 .auth-card-border {
@@ -136,4 +140,35 @@ a, a:visited, a:active {
 
 .form-control {
     font-weight: 200;
+}
+
+td {
+  /* border: 2px solid #ccd2ff; */
+  position: relative;
+  padding: 18px;
+}
+
+tr:hover,
+tr:focus-within {
+  background: #f2f3ff;
+  outline: none;
+}
+
+td > .row-link {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-decoration: none;
+  color: inherit;
+/*
+  &:focus {
+    outline: 0;
+  } */
+}
+
+td > a:not(.row-link) {
+  position: relative;
+  z-index: 1;
 }
