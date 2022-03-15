@@ -141,4 +141,4 @@ def add_collaborator(token):
     except Exception as e:
         flash('Expired/invalid token!', category='danger')
 
-    return redirect(url_for('home.workspace'))
+    return redirect(url_for('home.index'))

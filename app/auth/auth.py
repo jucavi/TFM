@@ -51,7 +51,7 @@ def signup():
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('home.workspace'))
+        return redirect(url_for('home.index'))
 
     form = LogInForm()
     if form.validate_on_submit():
@@ -59,7 +59,7 @@ def login():
         if user and user.check_password(form.password.data):
             login_user(user)
 
-            return redirect(url_for('home.workspace'))
+            return redirect(url_for('home.index'))
         flash('Invalid username/password.', category='warning')
 
     return render_template('login.html',

@@ -9,11 +9,6 @@ home_bp = Blueprint('home',
 
 
 @home_bp.route('/')
-def home():
+def index():
     return render_template('home.html')
 
-
-@home_bp.route('/workspace')
-@login_required
-def workspace():
-    return render_template('workspace.html')

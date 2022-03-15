@@ -40,6 +40,8 @@ def create_app(environment='develop'):
         from app.auth import auth
         from app.project import project
         from app.message import message
+        from app.errors import handler
+
 
         # models
         from app.auth.models import User
@@ -51,13 +53,8 @@ def create_app(environment='develop'):
         app.register_blueprint(auth.auth_bp)
         app.register_blueprint(project.project_bp, url_prefix='/projects')
         app.register_blueprint(message.msg_bp)
+        app.register_blueprint(handler.errors)
 
-
-    @app.errorhandler(404)
-    def invalid_route(e):
-        # TODO kepp on actual page
-        flash('Invalid route!', category='warning')
-        return redirect(url_for('home.workspace'))
 
     @app.shell_context_processor
     def make_shell_context():

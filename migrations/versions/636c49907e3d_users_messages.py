@@ -23,7 +23,7 @@ def upgrade():
     sa.Column('id', sqlalchemy_utils.types.uuid.UUIDType(binary=False), nullable=False),
     sa.Column('sender_id', sqlalchemy_utils.types.uuid.UUIDType(binary=False), nullable=True),
     sa.Column('recipient_id', sqlalchemy_utils.types.uuid.UUIDType(binary=False), nullable=True),
-    sa.Column('body', sa.String(length=140), nullable=True),
+    sa.Column('body', sa.String(), nullable=True),
     sa.Column('timestamp', sa.DateTime(), nullable=True),
     sa.Column('read', sa.Boolean(), nullable=True),
     sa.ForeignKeyConstraint(['recipient_id'], ['user.id'], ),
