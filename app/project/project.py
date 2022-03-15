@@ -1,6 +1,6 @@
 from flask import Blueprint, flash, render_template, redirect, url_for, request
 from flask_login import login_required, current_user
-from app.project.forms import NewProjectForm, EditProjectForm
+from app.project.forms import NewProjectForm, EditProjectForm, AddCollaboratorsForm
 from app.auth.models import User
 from app.project.models import Project, Team
 from app.helpers.mail import send_project_invitation
@@ -57,25 +57,28 @@ def all():
 @login_required
 def show(project_id):
     project = Project.query.get(project_id)
+    form = AddCollaboratorsForm()
+    form.subjects.choices = [(str(user.id), user.username) for user in User.query.all() if user != current_user]
 
-    if request.method == 'POST':
-        form = request.get_json()
-        email = form.get('email')
-        collaborator = User.query.filter_by(email=email).first()
-        if collaborator:
-            if collaborator not in project.collaborators:
-                send_project_invitation(project, collaborator)
-                return {'success': True, 'msg': 'ok'}
-            else:
-                msg = 'User alredy invited.'
-        else:
-            msg = 'User not found.'
-        return {'success': False, 'msg': msg}
+    if form.validate_on_submit():
+        subjects = form.subjects.data
+        print(subjects)
+
+        # if collaborator:
+        #     if collaborator not in project.collaborators:
+        #         send_project_invitation(project, collaborator)
+        #         return {'success': True, 'msg': 'ok'}
+        #     else:
+        #         msg = 'User alredy invited.'
+        # else:
+        #     msg = 'User not found.'
+        # return {'success': False, 'msg': msg}
 
     if project in current_user.projects:
         return render_template('show.html',
-                               title=f'Project {project.project_name}',
-                               project=project)
+                               title=project.project_name,
+                               project=project,
+                               form=form)
 
     flash('No project found!', category='warning')
     return redirect(url_for('project.all'))

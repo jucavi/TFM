@@ -1,21 +1,17 @@
 {% extends 'base.html' %}
 
-{% block customstyle %}
-  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+{% block header %}
   <script type="text/javascript">
     axios.defaults.headers.common["X-CSRFToken"] = "{{ csrf_token() }}";
   </script>
-{% endblock %}
+{% endblock header %}
 
 {% block navbar %}
-  {% include '_navbar.html'%}
-{% endblock %}
-
-{% block header %}
-  <h1>{{ project.project_name }}</h1>
-{% endblock %}
+  {% include '_navbar.html' %}
+{% endblock navbar %}
 
 {% block content %}
+  <h1>{{ project.project_name }}</h1>
   <div>Collaborators</div>
   {% if project.collaborators %}
     {% for collaborator in project.collaborators %}
@@ -24,12 +20,24 @@
   {% else %}
     <div>You haven't invited any collaborators yet</div>
   {% endif %}
-  <input type="email" id="collab">
-  <a href="{{ url_for('project.edit', project_id=project.id)}}" id="add-collab">Invite
+  <!-- <input type="email" id="collab">
+  <a href="{# url_for('project.edit', project_id=project.id)#}" id="add-collab">Invite
     collaborator</a>
   <div>
     <small class="errors"></small>
-  </div>
+  </div> -->
+  {% from "_formhelpers.html" import render_field %}
+  <form method=post>
+    {{ form.csrf_token }}
+
+    <dl>
+      {{ render_field(form.subjects, class='add-collab') }}
+    </dl>
+
+    <div class="pt-1 mb-4">
+      {{ form.submit(class='btn auth-btn-bg btn-lg btn-block btn-font w-100') }}
+    </div>
+  </form>
 
 
   <div>Project</div>
@@ -42,12 +50,12 @@
 
   <a href="{{ url_for('project.edit', project_id=project.id)}}">Edit</a>
   <a href="{{ url_for('project.delete', project_id=project.id)}}">Delete</a>
-{% endblock %}
+{% endblock content %}
 
 {% block customjs %}
   <script src="{{ url_for('.static', filename='js/collaborators.js') }}"></script>
-{% endblock %}
+{% endblock customjs %}
 
 {% block footer %}
   {% include '_footer.html' %}
-{% endblock %}
+{% endblock footer %}

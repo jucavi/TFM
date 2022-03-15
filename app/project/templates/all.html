@@ -1,11 +1,7 @@
 {% extends 'base.html' %}
 
 {% block navbar %}
-{% include '_navbar.html'%}
-{% endblock %}
-
-{% block header %}
-  <h1>Projects</h1>
+  {% include '_navbar.html'%}
 {% endblock %}
 
 {% block content %}
@@ -22,8 +18,10 @@
       <div><a href="{{ url_for('project.show', project_id=project.id) }}">{{ project.project_name }}</a></div>
     {% endfor %}
   {% endif %}
+
+  <div class="inbox"></div>
 {% endblock %}
 
 {% block footer %}
-{% include '_footer.html' %}
+  {% include '_footer.html' %}
 {% endblock %}
