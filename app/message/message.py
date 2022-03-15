@@ -49,6 +49,10 @@ def all_messages():
 def show_message(message_id):
     message = Message.query.get(message_id)
     if message in current_user.messages_received:
+        message.read = True
+        db.session.add(message)
+        db.session.commit()
+        
         return render_template('show_message.html',
                            message=message,
                            title='Message')
