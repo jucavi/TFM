@@ -7,13 +7,13 @@ from app.auth.models import User
 from app import db
 
 
-msg_bp = Blueprint('message',
+messages = Blueprint('messages',
                     __name__,
                     static_folder='static',
                     template_folder='templates')
 
 
-@msg_bp.route('/send_message', methods=['GET', 'POST'])
+@messages.route('/send_message', methods=['GET', 'POST'])
 @login_required
 def send_message():
     # users = User.query.all()
@@ -34,9 +34,9 @@ def send_message():
                            form=form)
 
 
-@msg_bp.route('/messages')
+@messages.route('/messages')
 @login_required
-def messages():
+def all_messages():
     current_user.last_message_read_time = datetime.utcnow()
     db.session.commit()
 
@@ -44,9 +44,9 @@ def messages():
     return render_template('_inbox_messages.html', messages=messages)
 
 
-@msg_bp.route('/message/<uuid:message_id>')
+@messages.route('/message/<uuid:message_id>')
 @login_required
-def message(message_id):
+def show_message(message_id):
     message = Message.query.get(message_id)
     if message in current_user.messages_received:
         return render_template('show_message.html',

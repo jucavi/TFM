@@ -1,6 +1,6 @@
 Hi {{ user.firstname }},
 
-{{ project.owner[0] }} send you an invitation to collaborate in {{ project.project_name }}
+{{ project.owner[0].username|capitalize }} send you an invitation to collaborate in {{ project.project_name }}
 Please follow this link if you want to colaborate:
 
-{{ url_for('project.add_collaborator', token=token, _external=True) }}
+{{ url_for('projects.add_collaborator', token=token, _external=True) }}

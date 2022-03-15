@@ -115,7 +115,7 @@ def request_new_password():
             send_password_reset_email(user)
             flash(f'We sent a recovery link to you at {user.email}', category='success')
 
-            return redirect(url_for('home.home'))
+            return redirect(url_for('home.index'))
         flash(f'Not user found by {email}!')
 
     return render_template('request_new_password.html',
