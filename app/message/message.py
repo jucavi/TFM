@@ -26,7 +26,7 @@ def send_message():
             db.session.add(message)
             db.session.commit()
             flash('Your message has been sent.', category='success')
-            return redirect(url_for('project.all'))
+            return redirect(url_for('projects.all_projects'))
         else:
             flash('User not found.', category='warning')
     return render_template('send_message.html',

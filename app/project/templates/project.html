@@ -21,7 +21,7 @@
     <div>You haven't invited any collaborators yet</div>
   {% endif %}
   <!-- <input type="email" id="collab">
-  <a href="{# url_for('project.edit', project_id=project.id)#}" id="add-collab">Invite
+  <a href="{# url_for('projects.edit', project_id=project.id)#}" id="add-collab">Invite
     collaborator</a>
   <div>
     <small class="errors"></small>
@@ -48,8 +48,8 @@
     <li>{{ project.updated }}</li>
   </ul>
 
-  <a href="{{ url_for('project.edit', project_id=project.id)}}">Edit</a>
-  <a href="{{ url_for('project.delete', project_id=project.id)}}">Delete</a>
+  <a href="{{ url_for('projects.edit_project', project_id=project.id)}}">Edit</a>
+  <a href="{{ url_for('projects.delete_project', project_id=project.id)}}">Delete</a>
 {% endblock content %}
 
 {% block customjs %}

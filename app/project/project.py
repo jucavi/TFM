@@ -7,15 +7,15 @@ from app.helpers.mail import send_project_invitation
 from app import db
 from datetime import datetime
 
-project_bp = Blueprint('project',
+projects = Blueprint('projects',
                        __name__,
                        static_folder='static',
                        template_folder='templates',
                        static_url_path="/project/static")
 
-@project_bp.route('/new', methods=['GET', 'POST'])
+@projects.route('/new', methods=['GET', 'POST'])
 @login_required
-def new():
+def new_project():
     form = NewProjectForm()
 
     if form.validate_on_submit():
@@ -32,30 +32,30 @@ def new():
             db.session.commit()
 
             flash('Project successfully created.', category='success')
-            return redirect(url_for('project.all'))
+            return redirect(url_for('projects.all_projects'))
 
         flash('Project name already exists.', category='warning')
 
-    return render_template('new.html',
+    return render_template('new_project.html',
                            form=form,
                            title='New project')
 
 
-@project_bp.route('/')
+@projects.route('/')
 @login_required
-def all():
+def all_projects():
     projects_owner = current_user.projects_owner
     projects_guest = current_user.projects_guest
 
-    return render_template('all.html',
+    return render_template('projects.html',
                            title='Projects',
                            projects_owner=projects_owner,
                            projects_guest=projects_guest)
 
 
-@project_bp.route('project/<uuid:project_id>', methods=['GET', 'POST'])
+@projects.route('project/<uuid:project_id>', methods=['GET', 'POST'])
 @login_required
-def show(project_id):
+def show_project(project_id):
     project = Project.query.get(project_id)
     form = AddCollaboratorsForm()
     form.subjects.choices = [(str(user.id), user.username) for user in User.query.all() if user != current_user]
@@ -64,6 +64,7 @@ def show(project_id):
         subjects = form.subjects.data
         print(subjects)
 
+        # TODO multiselect field
         # if collaborator:
         #     if collaborator not in project.collaborators:
         #         send_project_invitation(project, collaborator)
@@ -75,18 +76,18 @@ def show(project_id):
         # return {'success': False, 'msg': msg}
 
     if project in current_user.projects:
-        return render_template('show.html',
+        return render_template('project.html',
                                title=project.project_name,
                                project=project,
                                form=form)
 
     flash('No project found!', category='warning')
-    return redirect(url_for('project.all'))
+    return redirect(url_for('projects.all_projects'))
 
 
-@project_bp.route('delete/<uuid:project_id>')
+@projects.route('delete/<uuid:project_id>')
 @login_required
-def delete(project_id):
+def delete_project(project_id):
     project = Project.query.get(project_id)
 
     if current_user.is_owner(project):
@@ -96,12 +97,12 @@ def delete(project_id):
     else:
         flash('No project found!', category='warning')
 
-    return redirect(url_for('project.all'))
+    return redirect(url_for('projects.all_projects'))
 
 
-@project_bp.route('/edit/<uuid:project_id>', methods=['GET', 'POST'])
+@projects.route('/edit/<uuid:project_id>', methods=['GET', 'POST'])
 @login_required
-def edit(project_id):
+def edit_project(project_id):
     form = EditProjectForm()
     project = Project.query.get(project_id)
 
@@ -114,20 +115,20 @@ def edit(project_id):
             db.session.commit()
             flash('Your changes have been saved.', category='success')
 
-            return redirect(url_for('project.all'))
+            return redirect(url_for('projects.all_projects'))
         else:
             form.project_name.data = project.project_name
             form.project_desc.data = project.project_desc
 
-            return render_template('edit.html',
+            return render_template('edit_project.html',
                                    form=form,
                                    title='Edit Project')
 
     flash('No project found!', category='warning')
-    return redirect(url_for('project.all'))
+    return redirect(url_for('projects.all_projects'))
 
 
-@project_bp.route('project/collaborator/<token>')
+@projects.route('project/collaborator/<token>')
 def add_collaborator(token):
     try:
         project_id, user_id = Project.project_collaborator_token(token)
