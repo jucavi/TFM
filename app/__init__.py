@@ -49,8 +49,8 @@ def create_app(environment='develop'):
         from app.message.models import Message
 
         #blueprints
-        app.register_blueprint(home.home_bp)
-        app.register_blueprint(auth.auth_bp)
+        app.register_blueprint(home.home)
+        app.register_blueprint(auth.auth)
         app.register_blueprint(project.projects, url_prefix='/projects')
         app.register_blueprint(message.msg_bp)
         app.register_blueprint(handler.errors)

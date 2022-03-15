@@ -6,14 +6,14 @@ from flask_login import current_user, login_required, login_user, logout_user
 from app.helpers.mail import send_password_reset_email
 
 
-auth_bp = Blueprint('auth',
+auth = Blueprint('auth',
                     __name__,
                     static_folder='static',
                     template_folder='templates',
                     static_url_path="/auth/static")
 
 
-@auth_bp.route('/signup', methods=['GET', 'POST'])
+@auth.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = SignUpForm()
     if form.validate_on_submit():
@@ -48,7 +48,7 @@ def signup():
                            title='Sign Up')
 
 
-@auth_bp.route('/login', methods=['GET', 'POST'])
+@auth.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('home.index'))
@@ -68,14 +68,14 @@ def login():
 
 
 
-@auth_bp.route('/logout')
+@auth.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('auth.login'))
 
 
-@auth_bp.route('/profile', methods=['GET', 'POST'])
+@auth.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
     form = EditProfileForm(current_user.username, current_user.email)
@@ -103,7 +103,7 @@ def profile():
                            back=request.referrer)
 
 
-@auth_bp.route('/request_new_password', methods=['GET', 'POST'])
+@auth.route('/request_new_password', methods=['GET', 'POST'])
 def request_new_password():
     form  = RequestNewPasswordForm()
 
@@ -123,7 +123,7 @@ def request_new_password():
                            back=request.referrer)
 
 
-@auth_bp.route('/new_password/<token>', methods=['GET', 'POST'])
+@auth.route('/new_password/<token>', methods=['GET', 'POST'])
 def new_password(token):
     user = User.check_resert_password_token(token)
 
