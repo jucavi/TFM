@@ -1,0 +1,14 @@
+<table class="">
+  <tbody>
+    {%  for message in messages %}
+      <tr>
+        <td>{{message.author.username}}<a href="{{ url_for('message.message', message_id=message.id) }}" class="row-link"></a></td>
+        <td>{{message.body[:100]}}<a href="{{ url_for('message.message', message_id=message.id) }}" tabindex="-1" class="row-link"></a></td>
+        <td>{{message.received}}<a href="{{ url_for('message.message', message_id=message.id) }}" tabindex="-1" class="row-link"></a></td>
+        <td>{{message.read}}<a href="{{ url_for('message.message', message_id=message.id) }}" tabindex="-1" class="row-link"></a></td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+
