@@ -21,7 +21,10 @@ def send_message():
     if form.validate_on_submit():
         recipient = User.query.filter_by(email=form.email.data).first()
         if recipient:
-            message = Message(author=current_user, recipient=recipient, body=form.message.data)
+            message = Message(author=current_user,
+                              recipient=recipient,
+                              subject=form.subject.data, 
+                              body=form.message.data)
 
             db.session.add(message)
             db.session.commit()
@@ -49,10 +52,11 @@ def all_messages():
 def show_message(message_id):
     message = Message.query.get(message_id)
     if message in current_user.messages_received:
+        print('im in')
         message.read = True
         db.session.add(message)
         db.session.commit()
-        
+
         return render_template('show_message.html',
                            message=message,
                            title='Message')
