@@ -52,7 +52,7 @@ def create_app(environment='develop'):
         app.register_blueprint(home.home)
         app.register_blueprint(auth.auth)
         app.register_blueprint(project.projects, url_prefix='/projects')
-        app.register_blueprint(message.messages)
+        app.register_blueprint(message.message, url_prefix='/messages')
         app.register_blueprint(handler.errors)
 
 
