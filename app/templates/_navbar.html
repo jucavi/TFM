@@ -13,7 +13,7 @@
         <li class="nav-item">
           <div class="nav-link position-relative">
             {% set new_messages = current_user.inbox_messages() %}
-            <a class="inbox-messages" href="{{ url_for('messages.all_messages') }}">
+            <a class="inbox-messages" href="{{ url_for('message.all_messages') }}">
               Inbox
               {% if new_messages %}
                 <small class="badge rounded-pill auth-bg">
@@ -32,7 +32,7 @@
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userActions">
             <a class="dropdown-item" href="{{ url_for('projects.new_project') }}">New project</a>
             <a class="dropdown-item" href="{{ url_for('projects.all_projects') }}">Projects</a>
-            <a class="dropdown-item" href="{{ url_for('messages.send_message') }}">Send Message</a>
+            <a class="dropdown-item" href="{{ url_for('message.send_message') }}">Send Message</a>
             <a class="dropdown-item" href="{{ url_for('auth.profile') }}">Profile</a>
             <hr class="my-0 mx-2">
             <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a>

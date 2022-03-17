@@ -2,11 +2,11 @@
   <tbody>
     {%  for message in messages %}
       <tr>
-        <td>{{message.author.username}}<a href="{{ url_for('messages.show_message', message_id=message.id) }}" class="row-link"></a></td>
-        <td>{{message.body[:100]}}<a href="{{ url_for('messages.show_message', message_id=message.id) }}" tabindex="-1" class="row-link"></a></td>
-        <td>{{message.received}}<a href="{{ url_for('messages.show_message', message_id=message.id) }}" tabindex="-1" class="row-link"></a></td>
-        <td>{{message.read}}<a href="{{ url_for('messages.show_message', message_id=message.id) }}" tabindex="-1" class="row-link"></a></td>
-        <a href="{{ url_for('messages.show_message', message_id=message.id) }}"
+        <td>{{message.author.username}}<a href="{{ url_for('message.show_message', message_id=message.id) }}" class="row-link"></a></td>
+        <td>{{message.body[:100]}}<a href="{{ url_for('message.show_message', message_id=message.id) }}" tabindex="-1" class="row-link"></a></td>
+        <td>{{message.received}}<a href="{{ url_for('message.show_message', message_id=message.id) }}" tabindex="-1" class="row-link"></a></td>
+        <td>{{message.read}}<a href="{{ url_for('message.show_message', message_id=message.id) }}" tabindex="-1" class="row-link"></a></td>
+        <a href="{{ url_for('message.show_message', message_id=message.id) }}"
         class="">Link</a>
       </tr>
       {% endfor %}

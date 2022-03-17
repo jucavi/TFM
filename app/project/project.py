@@ -68,11 +68,11 @@ def show_project(project_id):
             if collab:
                 if collab not in project.collaborators:
                     send_project_invitation(project, collab)
-                    flash(f'Invitation sed to {email}.', category='success')
+                    flash(f'Invitation sed to {email!r}.', category='success')
                 else:
-                    flash(f'{email} already collaborate.', category='info')
+                    flash(f'{email!r} already collaborate.', category='info')
             else:
-                flash(f'{email} not found.', category='danger')
+                flash(f'{email!r} not found.', category='danger')
 
     if project in current_user.projects:
         return render_template('project.html',

@@ -116,7 +116,7 @@ a, a:visited, a:active {
 }
 
 .btn-font {
-    font-weight: 200;
+    font-weight: 200 !important;
 }
 
 .errors {

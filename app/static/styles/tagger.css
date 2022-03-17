@@ -1,3 +1,5 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600&family=Open+Sans:wght@300;400;500;600&family=Raleway:wght@800&display=swap'); */
+
 #hidden_elements {
     display: none;
 }
@@ -5,9 +7,17 @@
 .tags_container {
     height:2.5em;
     background-color: white;
+    font-size: inherit;
+    appearance: none;
+    min-height: calc(1.5em + 1rem + 2px);
+    /* font-size: 1rem; */
+    margin-bottom: .5rem;
 }
 
 .tag_container {
+    padding: 0.5rem 1rem !important;
+    border-radius: .3rem;
+    border: 1px solid #ced4da !important;
     height: 100%;
     cursor: pointer;
 }
@@ -16,6 +26,7 @@
     background-color: #e7ecef;
     border-radius: 1em;
     padding: 0em 0.4em;
+    font-weight: 200;
 }
 
 #search-wrapper {
@@ -26,6 +37,7 @@
 
 #label_input {
     position: absolute;
+    font-weight: 200;
     top: 0;
     right: 0;
     height: 100%;
@@ -41,5 +53,6 @@
 }
 
 #text_suggest {
+    font-weight: 200;
     color: rgb(199, 194, 194);
 }

@@ -1,13 +1,12 @@
 from flask_wtf import FlaskForm
-from wtforms import TextAreaField, SubmitField, StringField
-from wtforms.validators import DataRequired, Length, Email
+from wtforms import TextAreaField, SubmitField, StringField, FieldList
+from wtforms.validators import DataRequired, Length
 
 
 class MessageForm(FlaskForm):
-    email = StringField('Email',
-                        validators=[DataRequired(), Email(message='Invalid email.')])
+    recipients = FieldList(StringField(), validators=[DataRequired(message='Email required.')])
     subject = StringField('Subject',
-                          validators=[DataRequired(message='Subject required'), Length(min=0, max=100, message='No more than 100 characters')])
-    message = TextAreaField('Message',
-                            validators=[DataRequired(message='Empty message')])
+                          validators=[DataRequired(message='Subject required.'), Length(min=0, max=100, message='No more than 100 characters')])
+    body = TextAreaField('Body',
+                            validators=[DataRequired(message='Empty message.')])
     submit = SubmitField('Submit')
