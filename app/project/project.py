@@ -1,10 +1,12 @@
+from xml.dom import InvalidAccessErr
 from flask import Blueprint, flash, render_template, redirect, url_for, request
 from flask_login import login_required, current_user
-from app.project.forms import NewProjectForm, EditProjectForm, AddCollaboratorsForm
+from app.project.forms import NewProjectForm, EditProjectForm, AddCollabForm
 from app.auth.models import User
 from app.project.models import Project, Team
 from app.helpers.mail import send_project_invitation
 from app import db
+import json
 from datetime import datetime
 
 projects = Blueprint('projects',
@@ -57,29 +59,27 @@ def all_projects():
 @login_required
 def show_project(project_id):
     project = Project.query.get(project_id)
-    form = AddCollaboratorsForm()
-    form.subjects.choices = [(str(user.id), user.username) for user in User.query.all() if user != current_user]
+    form = AddCollabForm()
+    emails = {'elements': [user.email for user in User.query.all() if user != current_user]}
 
     if form.validate_on_submit():
-        subjects = form.subjects.data
-        print(subjects)
-
-        # TODO multiselect field
-        # if collaborator:
-        #     if collaborator not in project.collaborators:
-        #         send_project_invitation(project, collaborator)
-        #         return {'success': True, 'msg': 'ok'}
-        #     else:
-        #         msg = 'User alredy invited.'
-        # else:
-        #     msg = 'User not found.'
-        # return {'success': False, 'msg': msg}
+        for email in form.collabs.data:
+            collab = User.query.filter_by(email=email).first()
+            if collab:
+                if collab not in project.collaborators:
+                    send_project_invitation(project, collab)
+                    flash(f'Invitation sed to {email}.', category='success')
+                else:
+                    flash(f'{email} already collaborate.', category='info')
+            else:
+                flash(f'{email} not found.', category='danger')
 
     if project in current_user.projects:
         return render_template('project.html',
                                title=project.project_name,
                                project=project,
-                               form=form)
+                               form=form,
+                               hidden_elements=json.dumps(emails))
 
     flash('No project found!', category='warning')
     return redirect(url_for('projects.all_projects'))
@@ -129,16 +129,21 @@ def edit_project(project_id):
 
 
 @projects.route('project/collaborator/<token>')
+@login_required
 def add_collaborator(token):
     try:
         project_id, user_id = Project.project_collaborator_token(token)
         project = Project.query.get(project_id)
         user = User.query.get(user_id)
 
-        db.session.add(Team(project=project, user=user))
-        db.session.commit()
+        if user == current_user:
+            db.session.add(Team(project=project, user=user))
+            db.session.commit()
 
-        flash(f'Great! You are now collaborating with {project.project_name!r}', category="success")
+            flash(f'Great! You are now collaborating with {project.project_name!r}', category="success")
+        else:
+            raise InvalidAccessErr
+
     except Exception as e:
         flash('Expired/invalid token!', category='danger')
 

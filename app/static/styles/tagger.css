@@ -1,0 +1,45 @@
+#hidden_elements {
+    display: none;
+}
+
+.tags_container {
+    height:2.5em;
+    background-color: white;
+}
+
+.tag_container {
+    height: 100%;
+    cursor: pointer;
+}
+
+.tag {
+    background-color: #e7ecef;
+    border-radius: 1em;
+    padding: 0em 0.4em;
+}
+
+#search-wrapper {
+    position: relative;
+    flex: 1;
+    height: 100%;
+}
+
+#label_input {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+    border: none;
+    background-color: transparent;
+    padding: 0;
+}
+
+#label_input:focus {
+    outline: none;
+    border-color: #aaa;
+}
+
+#text_suggest {
+    color: rgb(199, 194, 194);
+}
