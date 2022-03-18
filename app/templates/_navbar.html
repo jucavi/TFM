@@ -12,14 +12,12 @@
         {% if current_user.is_active %}
         <li class="nav-item">
           <div class="nav-link position-relative">
-            {% set new_messages = current_user.inbox_messages() %}
-            <a class="inbox-messages" href="{{ url_for('message.all_messages') }}">
+            {% set new_messages = current_user.inbox_messages %}
+            <a id="inbox_messages" class="inbox-messages" href="{{ url_for('message.all_messages') }} ">
               Inbox
-              {% if new_messages %}
-                <small class="badge rounded-pill auth-bg">
-                  {{ new_messages }}
-                </small>
-              {% endif %}
+              <span id="new_messages" class="badge rounded-pill auth-bg" style="display: none;">
+                {{ new_messages }}
+              </span>
             </a>
           </div>
         </li>

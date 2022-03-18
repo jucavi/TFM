@@ -77,3 +77,8 @@ def show_message(message_id):
 
     flash('No message found.')
     return redirect(request.referrer)
+
+
+@message.route('/__inbox_messages')
+def __inbox_messages():
+    return {'inbox_messages_count': current_user.inbox_messages}

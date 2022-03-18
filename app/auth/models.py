@@ -93,6 +93,7 @@ class User(UserMixin, db.Model):
                                     backref='recipient', lazy='dynamic')
     last_message_read_time = Column(db.DateTime)
 
+    @property
     def inbox_messages(self):
         last_read_time = self.last_message_read_time or datetime(2022, 1, 1)
         return Message.query.filter_by(recipient=self).filter(Message.timestamp > last_read_time).count()
