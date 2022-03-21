@@ -18,11 +18,8 @@ message = Blueprint('message',
 def belongs_to_user(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        print(kwargs)
         message_id = kwargs.get('message_id')
         message = Message.query.get(message_id)
-        print(message not in current_user.messages_sent or message not in current_user.messages_received)
-        print(message)
         if (message in current_user.messages_sent) or (message in current_user.messages_received):
             return func(*args, **kwargs)
         abort(404)
