@@ -1,10 +1,11 @@
 from datetime import datetime
-from flask import Blueprint, render_template, flash, redirect, url_for, request
+from flask import Blueprint, render_template, flash, redirect, url_for, request, abort
 from flask_login import login_required, current_user
 from app.message.forms import MessageForm
 from app.message.models import Message
 from app.auth.models import User
 from app import db
+from functools import wraps
 import json
 
 
@@ -12,6 +13,20 @@ message = Blueprint('message',
                     __name__,
                     static_folder='static',
                     template_folder='templates')
+
+
+def belongs_to_user(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        print(kwargs)
+        message_id = kwargs.get('message_id')
+        message = Message.query.get(message_id)
+        print(message not in current_user.messages_sent or message not in current_user.messages_received)
+        print(message)
+        if (message in current_user.messages_sent) or (message in current_user.messages_received):
+            return func(*args, **kwargs)
+        abort(404)
+    return wrapper
 
 
 @message.route('/send', methods=['GET', 'POST'])
@@ -58,15 +73,16 @@ def all_messages():
     db.session.commit()
 
     messages = current_user.messages_received.order_by(Message.timestamp.desc())
-    return render_template('_inbox_messages.html', messages=messages)
+    print(messages)
+    return render_template('messages.html', messages=messages)
 
 
 @message.route('/message/<uuid:message_id>')
 @login_required
+@belongs_to_user
 def show_message(message_id):
     message = Message.query.get(message_id)
-    if message in current_user.messages_received:
-        print('im in')
+    if message:
         message.read = True
         db.session.add(message)
         db.session.commit()
@@ -77,6 +93,13 @@ def show_message(message_id):
 
     flash('No message found.')
     return redirect(request.referrer)
+
+
+@message.route('/sent')
+@login_required
+def sent():
+    messages = current_user.messages_sent.order_by(Message.timestamp.desc())
+    return render_template('messages.html', messages=messages)
 
 
 @message.route('/__inbox_messages')

@@ -128,7 +128,7 @@ def new_password(token):
     user = User.check_resert_password_token(token)
 
     if not user:
-        flash('Expired/invalid token!', category='danger')
+        flash('Expired/invalid access token!', category='danger')
         return redirect(url_for('auth.request_new_password'))
 
     form  = SetNewPasswordForm()

@@ -145,6 +145,6 @@ def add_collaborator(token):
             raise InvalidAccessErr
 
     except Exception as e:
-        flash('Expired/invalid token!', category='danger')
+        flash('Expired/invalid access token!', category='danger')
 
     return redirect(url_for('home.index'))
