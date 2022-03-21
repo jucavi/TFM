@@ -47,6 +47,7 @@ def create_app(environment='develop'):
         from app.auth.models import User
         from app.project.models import Project, Team
         from app.message.models import Message
+        from app.dataset.models import Folder, File, FolderContent
 
         #blueprints
         app.register_blueprint(home.home)
@@ -62,7 +63,10 @@ def create_app(environment='develop'):
                'User': User,
                'Project': Project,
                'Team': Team,
-               'Message': Message
+               'Message': Message,
+               'Folder': Folder,
+               'File': File,
+               'FolderContent': FolderContent
                }
 
     return app
