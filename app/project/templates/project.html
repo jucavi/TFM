@@ -1,9 +1,6 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <!-- <script type="text/javascript">
-    axios.defaults.headers.common["X-CSRFToken"] = "{{ csrf_token() }}";
-  </script> -->
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/tagger.css') }}">
   <link rel="stylesheet" href="{{ url_for('.static', filename='styles/collabs.css') }}">
 {% endblock header %}
@@ -14,49 +11,64 @@
 
 {% block content %}
   <h1>{{ project.project_name }}</h1>
-  <div>Collaborators</div>
-  {% if project.collaborators %}
-    {% for collaborator in project.collaborators if collaborator != current_user %}
-      <div>{{ collaborator.username }}</div>
+
+  <section>
+    <div>Owner</div>
+    {% for owner in project.owner %}
+      <div>{{ owner.username }}</div>
     {% endfor %}
-  {% else %}
-    <div>You haven't invited any collaborators yet</div>
-  {% endif %}
+
+    {% if project.collaborators %}
+    <div>Collaborators</div>
+      {% for collaborator in project.collaborators if collaborator != current_user %}
+        <div>{{ collaborator.username }}</div>
+      {% endfor %}
+    {% else %}
+      <div>You haven't invited any collaborators yet</div>
+    {% endif %}
 
 
-  {% if current_user in project.owner %}
-    {% from "_formhelpers.html" import render_field %}
-    <form id="add_collabs" method=post>
-      {{ form.csrf_token }}
-      {{ render_field(form.collabs) }}
-      
-      {% include 'common/_tagger.html' %}
+    {% if current_user in project.owner %}
+      {% from "_formhelpers.html" import render_field %}
+      <form id="add_collabs" method=post>
+        {{ form.csrf_token }}
+        {{ render_field(form.collabs) }}
 
-      <div class="pt-1 mb-4">
-        {{ form.submit(class='btn auth-btn-bg btn-lg btn-font') }}
-      </div>
-    </form>
-  {% endif %}
+        {% include 'common/_tagger.html' %}
 
+        <div class="pt-1 mb-4">
+          {{ form.submit(class='btn auth-btn-bg btn-lg btn-font') }}
+        </div>
+      </form>
+    {% endif %}
+  </section>
 
+  <section>
+    <div>Project</div>
+    <ul>
+      <li>{{ project.project_name }}</li>
+      <li>{{ project.project_desc }}</li>
+      <li>{{ project.created }}</li>
+      <li>{{ project.updated }}</li>
+    </ul>
 
-  <div>Project</div>
-  <ul>
-    <li>{{ project.project_name }}</li>
-    <li>{{ project.project_desc }}</li>
-    <li>{{ project.created }}</li>
-    <li>{{ project.updated }}</li>
-  </ul>
+    {% if current_user in project.owner %}
+      <a href="{{ url_for('projects.edit_project', project_id=project.id)}}">Edit</a>
+      <a href="{{ url_for('projects.delete_project', project_id=project.id)}}">Delete</a>
+    {% endif %}
+  </section>
 
-  {% if current_user in project.owner %}
-    <a href="{{ url_for('projects.edit_project', project_id=project.id)}}">Edit</a>
-    <a href="{{ url_for('projects.delete_project', project_id=project.id)}}">Delete</a>
-  {% endif %}
+  <section>
+    <ul id="tree" class="fa-ul">
+      <input id="tree_root" type="hidden" value="{{ root }}">
+    </ul>
+  </section>
 {% endblock content %}
 
 {% block customjs %}
   <script src="{{ url_for('static', filename='js/tagger.js') }}"></script>
   <script src="{{ url_for('.static', filename='js/collabs.js') }}"></script>
+  <script src="{{ url_for('.static', filename='js/file_handler.js') }}"></script>
 {% endblock customjs %}
 
 {% block footer %}

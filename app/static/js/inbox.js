@@ -11,6 +11,10 @@ function updateNewMessages(n) {
 }
 
 setInterval(async function () {
-  const { data } = await axios.get(url);
-  updateNewMessages(data.inbox_messages_count);
+  try {
+    const { data } = await axios.get(url);
+    updateNewMessages(data.inbox_messages_count);
+  } catch (e) {
+    console.log('Error:', e)
+  }
 }, 60000)

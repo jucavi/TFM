@@ -1,9 +1,9 @@
 from xml.dom import InvalidAccessErr
-from flask import Blueprint, flash, render_template, redirect, url_for, request
+from flask import Blueprint, flash, render_template, redirect, url_for
 from flask_login import login_required, current_user
 from app.project.forms import NewProjectForm, EditProjectForm, AddCollabForm
 from app.auth.models import User
-from app.project.models import Project, Team
+from app.project.models import Project, Team, Folder, File, FolderContent
 from app.helpers.mail import send_project_invitation
 from app import db
 import json
@@ -25,7 +25,7 @@ def new_project():
         project_desc = form.project_desc.data
         db_project = Project.query.filter_by(project_name=project_name).first()
         if not db_project:
-            project = Project(project_name=project_name, project_desc=project_desc)
+            project = Project(project_name, project_desc)
             user = current_user
 
             team = Team(project=project, user=user, is_owner=True)
@@ -58,7 +58,7 @@ def all_projects():
 @projects.route('project/<uuid:project_id>', methods=['GET', 'POST'])
 @login_required
 def show_project(project_id):
-    project = Project.query.get(project_id)
+    project = Project.query.get_or_404(project_id)
     form = AddCollabForm()
     emails = {'elements': [user.email for user in User.query.all() if user != current_user]}
 
@@ -75,11 +75,13 @@ def show_project(project_id):
                 flash(f'{email!r} not found.', category='danger')
 
     if project in current_user.projects:
+        root = project.root_folder
         return render_template('project.html',
                                title=project.project_name,
                                project=project,
                                form=form,
-                               hidden_elements=json.dumps(emails))
+                               hidden_elements=json.dumps(emails),
+                               root=json.dumps({'id': root.id.hex, 'name': root.foldername}))
 
     flash('No project found!', category='warning')
     return redirect(url_for('projects.all_projects'))
@@ -88,7 +90,7 @@ def show_project(project_id):
 @projects.route('delete/<uuid:project_id>')
 @login_required
 def delete_project(project_id):
-    project = Project.query.get(project_id)
+    project = Project.query.get_or_404(project_id)
 
     if current_user.is_owner(project):
         db.session.delete(project)
@@ -104,7 +106,7 @@ def delete_project(project_id):
 @login_required
 def edit_project(project_id):
     form = EditProjectForm()
-    project = Project.query.get(project_id)
+    project = Project.query.get_or_404(project_id)
 
     if current_user.is_owner(project):
         if form.validate_on_submit():
@@ -133,8 +135,8 @@ def edit_project(project_id):
 def add_collaborator(token):
     try:
         project_id, user_id = Project.project_collaborator_token(token)
-        project = Project.query.get(project_id)
-        user = User.query.get(user_id)
+        project = Project.query.get_or_404(project_id)
+        user = User.query.get_or_404(user_id)
 
         if user == current_user:
             db.session.add(Team(project=project, user=user))
@@ -148,3 +150,34 @@ def add_collaborator(token):
         flash('Expired/invalid access token!', category='danger')
 
     return redirect(url_for('home.index'))
+
+
+@projects.route('project/<uuid:project_id>/files/<folder_id>')
+@login_required
+def show_folder_content(project_id, folder_id):
+    project = Project.query.get_or_404(project_id)
+
+    if project in current_user.projects:
+        folder = Folder.query.get_or_404(folder_id)
+        return folder.toJSON()
+
+
+@projects.route('project/<uuid:project_id>/newfolder/<parent_id>')
+@login_required
+def new_folder(project_id, parent_id):
+    project = Project.query.get_or_404(project_id)
+    parent = Folder.query.get_or_404(parent_id)
+
+    if project in current_user.projects and parent.project == project:
+        db.session.add(Folder(foldername='temp', project=project, parent=parent))
+        db.session.commit()
+        return redirect(url_for('projects.show_project', project_id=project.id))
+
+
+@projects.route('project/<uuid:project_id>/newfile/<parent_id>')
+@login_required
+def new_file(project_id, parent_id):
+    project = Project.query.get_or_404(project_id)
+    parent = Folder.query.get_or_404(parent_id)
+
+    pass
