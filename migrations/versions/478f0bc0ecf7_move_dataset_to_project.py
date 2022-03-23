@@ -1,8 +1,8 @@
-"""Dataset
+"""Move dataset to project
 
-Revision ID: 521768d5dff0
+Revision ID: 478f0bc0ecf7
 Revises: 7999f423e027
-Create Date: 2022-03-21 18:51:28.385125
+Create Date: 2022-03-23 17:04:01.102999
 
 """
 from alembic import op
@@ -11,7 +11,7 @@ import sqlalchemy_utils
 
 
 # revision identifiers, used by Alembic.
-revision = '521768d5dff0'
+revision = '478f0bc0ecf7'
 down_revision = '7999f423e027'
 branch_labels = None
 depends_on = None
@@ -29,7 +29,7 @@ def upgrade():
     op.create_index(op.f('ix_file_id'), 'file', ['id'], unique=False)
     op.create_table('folder',
     sa.Column('id', sqlalchemy_utils.types.uuid.UUIDType(binary=False), nullable=False),
-    sa.Column('foldername', sa.String(length=50), nullable=True),
+    sa.Column('foldername', sa.String(length=50), nullable=False),
     sa.Column('parent_id', sqlalchemy_utils.types.uuid.UUIDType(binary=False), nullable=True),
     sa.Column('project_id', sqlalchemy_utils.types.uuid.UUIDType(binary=False), nullable=True),
     sa.ForeignKeyConstraint(['parent_id'], ['folder.id'], ),

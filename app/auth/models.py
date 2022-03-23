@@ -15,29 +15,29 @@ class User(UserMixin, db.Model):
     __tablename__ = 'user'
     id = Column(UUIDType(binary=False),
                 primary_key=True,
-                index = True,
+                index=True,
                 default=uuid.uuid4)
 
     firstname = Column(String(40),
-                       index = True,
-                       nullable = False)
+                       index=True,
+                       nullable=False)
 
     lastname = Column(String(40),
-                      index = True,
-                      nullable = False)
+                      index=True,
+                      nullable=False)
 
     username = Column(String(40),
-                      index = True,
-                      unique = True,
-                      nullable = False)
+                      index=True,
+                      unique=True,
+                      nullable=False)
 
     email = Column(String(40),
-                   index = True,
-                   unique = True,
-                   nullable = False)
+                   index=True,
+                   unique=True,
+                   nullable=False)
 
     password = Column(String(250),
-                      index = True,
+                      index=True,
                       unique=False,
                       nullable=False)
 
@@ -95,7 +95,7 @@ class User(UserMixin, db.Model):
 
     @property
     def inbox_messages(self):
-        last_read_time = self.last_message_read_time or datetime(2022, 1, 1)
+        last_read_time=self.last_message_read_time or datetime(2022, 1, 1)
         return Message.query.filter_by(recipient=self).filter(Message.timestamp > last_read_time).count()
 
 

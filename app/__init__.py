@@ -45,9 +45,8 @@ def create_app(environment='develop'):
 
         # models
         from app.auth.models import User
-        from app.project.models import Project, Team
+        from app.project.models import Project, Team, Folder, File, FolderContent
         from app.message.models import Message
-        from app.dataset.models import Folder, File, FolderContent
 
         #blueprints
         app.register_blueprint(home.home)
