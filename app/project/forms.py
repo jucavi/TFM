@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, TextAreaField
+from wtforms import StringField, SubmitField, TextAreaField, FieldList
 from wtforms.validators import DataRequired
 
 class ProjectBasicForm(FlaskForm):
@@ -15,3 +15,8 @@ class NewProjectForm(ProjectBasicForm):
 
 class EditProjectForm(ProjectBasicForm):
     submit = SubmitField('Edit Project')
+
+
+class AddCollabForm(FlaskForm):
+    collabs = FieldList(StringField())
+    submit = SubmitField('Add People')

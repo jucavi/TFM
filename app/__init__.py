@@ -1,4 +1,4 @@
-from flask import Flask, flash, redirect, url_for
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect
@@ -35,28 +35,38 @@ def create_app(environment='develop'):
     mail.init_app(app)
 
     with app.app_context():
+        # routes
         from app.home import home
         from app.auth import auth
         from app.project import project
+        from app.message import message
+        from app.errors import handler
 
+
+        # models
         from app.auth.models import User
-        from app.project.models import Project, Team
+        from app.project.models import Project, Team, Folder, File, FolderContent
+        from app.message.models import Message
 
-        app.register_blueprint(home.home_bp)
-        app.register_blueprint(auth.auth_bp)
-        app.register_blueprint(project.project_bp, url_prefix='/projects')
+        #blueprints
+        app.register_blueprint(home.home)
+        app.register_blueprint(auth.auth)
+        app.register_blueprint(project.projects, url_prefix='/projects')
+        app.register_blueprint(message.message, url_prefix='/messages')
+        app.register_blueprint(handler.errors)
 
-
-    @app.errorhandler(404)
-    def invalid_route(e):
-        # TODO kepp in actual page
-        flash('Invalid route!', category='warning')
-        return redirect(url_for('home.workspace'))
 
     @app.shell_context_processor
     def make_shell_context():
-       return {'db': db, 'mail': mail, 'app': app}
-
+       return {'db': db,
+               'User': User,
+               'Project': Project,
+               'Team': Team,
+               'Message': Message,
+               'Folder': Folder,
+               'File': File,
+               'FolderContent': FolderContent
+               }
 
     return app
 

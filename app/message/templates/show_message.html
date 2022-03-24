@@ -1,0 +1,11 @@
+<section>
+  {% if message.read  %}
+  <div style="background-color: red;">
+  {% else %}
+  <div>
+  {% endif%}
+    From: {{ message.author.username }}
+    Subject: {{ message.subject }}
+    {{ message.body }}
+  </div>
+</section>

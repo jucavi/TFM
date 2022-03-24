@@ -1,29 +1,27 @@
 {% extends 'base.html' %}
 
 {% block navbar %}
-{% include '_navbar.html'%}
-{% endblock %}
-
-{% block header %}
-  <h1>Projects</h1>
+  {% include '_navbar.html'%}
 {% endblock %}
 
 {% block content %}
   <div>Your Projects</div>
   {% if projects_owner %}
     {% for project in projects_owner %}
-      <div><a href="{{ url_for('project.view', project_id=project.id) }}">{{ project.project_name }}</a></div>
+      <div><a href="{{ url_for('projects.show_project', project_id=project.id) }}">{{ project.project_name }}</a></div>
     {% endfor %}
   {% endif %}
 
   <div>Collaborating</div>
   {% if projects_guest %}
     {% for project in projects_guest%}
-      <div><a href="{{ url_for('project.view', project_id=project.id) }}">{{ project.project_name }}</a></div>
+      <div><a href="{{ url_for('projects.show_project', project_id=project.id) }}">{{ project.project_name }}</a></div>
     {% endfor %}
   {% endif %}
+
+  <div class="inbox"></div>
 {% endblock %}
 
 {% block footer %}
-{% include '_footer.html' %}
+  {% include '_footer.html' %}
 {% endblock %}

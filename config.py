@@ -22,7 +22,7 @@ class Config:
     # MAIL_PASSWORD = environ.get('MAIL_PASSWORD')
     # MAIL_DEFAULT_SENDER = environ.get('MAIL_DEFAULT_SENDER')
     # MAIL_MAX_EMAILS = None
-    # MAIL_ASCII_ATTACHMENTS = False
+    # MAIL_ASCII_ATTACHMENTS = True
 
 
 

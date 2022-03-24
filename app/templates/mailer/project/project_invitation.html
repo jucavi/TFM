@@ -1,0 +1,11 @@
+<div>
+  <h3>Hi {{ user.firstname }},</h3>
+  <p>
+    {{ project.owner[0].username|capitalize }} send you an invitation to collaborate in "{{ project.project_name }}"
+  </p>
+  <p>
+    Please follow this link if you want to colaborate:
+    <a href="{{ url_for('projects.add_collaborator', token=token, _external=True) }}">
+      click here</a>.
+  </p>
+</div>

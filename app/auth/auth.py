@@ -6,16 +6,14 @@ from flask_login import current_user, login_required, login_user, logout_user
 from app.helpers.mail import send_password_reset_email
 
 
-auth_bp = Blueprint(
-    'auth',
-    __name__,
-    static_folder='static',
-    template_folder='templates',
-    static_url_path="/auth/static"
-)
+auth = Blueprint('auth',
+                    __name__,
+                    static_folder='static',
+                    template_folder='templates',
+                    static_url_path="/auth/static")
 
 
-@auth_bp.route('/signup', methods=['GET', 'POST'])
+@auth.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = SignUpForm()
     if form.validate_on_submit():
@@ -33,8 +31,8 @@ def signup():
                     firstname=firstname,
                     lastname=lastname,
                     username=username,
-                    email=email,
-                )
+                    email=email)
+
                 user.set_password(password)
 
                 db.session.add(user)
@@ -44,13 +42,16 @@ def signup():
                 return redirect(url_for('auth.login'))
 
         flash('User already exists!', category='warning')
-    return render_template('signup.html', form=form, title='Sign Up')
+
+    return render_template('signup.html',
+                           form=form,
+                           title='Sign Up')
 
 
-@auth_bp.route('/login', methods=['GET', 'POST'])
+@auth.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('home.workspace'))
+        return redirect(url_for('home.index'))
 
     form = LogInForm()
     if form.validate_on_submit():
@@ -58,21 +59,23 @@ def login():
         if user and user.check_password(form.password.data):
             login_user(user)
 
-            return redirect(url_for('home.workspace'))
+            return redirect(url_for('home.index'))
         flash('Invalid username/password.', category='warning')
 
-    return render_template('login.html', form=form, title='Log In')
+    return render_template('login.html',
+                           form=form,
+                           title='Log In')
 
 
 
-@auth_bp.route('/logout')
+@auth.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('auth.login'))
 
 
-@auth_bp.route('/profile', methods=['GET', 'POST'])
+@auth.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
     form = EditProfileForm(current_user.username, current_user.email)
@@ -94,10 +97,13 @@ def profile():
         form.username.data = current_user.username
         form.email.data = current_user.email
 
-    return render_template('profile.html', form=form, title='Edit Profile', back=request.referrer)
+    return render_template('profile.html',
+                           form=form,
+                           title='Edit Profile',
+                           back=request.referrer)
 
 
-@auth_bp.route('/request_new_password', methods=['GET', 'POST'])
+@auth.route('/request_new_password', methods=['GET', 'POST'])
 def request_new_password():
     form  = RequestNewPasswordForm()
 
@@ -109,18 +115,20 @@ def request_new_password():
             send_password_reset_email(user)
             flash(f'We sent a recovery link to you at {user.email}', category='success')
 
-            return redirect(url_for('home.home'))
+            return redirect(url_for('home.index'))
         flash(f'Not user found by {email}!')
 
-    return render_template('request_new_password.html', form=form, title='Reset Password', back=request.referrer)
+    return render_template('request_new_password.html',
+                           form=form, title='Reset Password',
+                           back=request.referrer)
 
 
-@auth_bp.route('/new_password/<token>', methods=['GET', 'POST'])
+@auth.route('/new_password/<token>', methods=['GET', 'POST'])
 def new_password(token):
     user = User.check_resert_password_token(token)
 
     if not user:
-        flash('Expired/invalid token!', category='danger')
+        flash('Expired/invalid access token!', category='danger')
         return redirect(url_for('auth.request_new_password'))
 
     form  = SetNewPasswordForm()
@@ -131,7 +139,10 @@ def new_password(token):
 
         return redirect(url_for('auth.login'))
 
-    return render_template('new_password.html', form=form, title='New Password', back=request.referrer)
+    return render_template('new_password.html',
+                           form=form,
+                           title='New Password',
+                           back=request.referrer)
 
 
 @login_manager.user_loader
