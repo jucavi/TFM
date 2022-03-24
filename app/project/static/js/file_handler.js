@@ -39,7 +39,7 @@ async function expandCollapseToggler(event) {
   const folderContent = this.querySelector('.folder_content');
   const content = event.target.parentElement.lastChild;
   if (folderContent.innerHTML === '') {
-    const url = `${document.URL}/files/${this.id}`;
+    const url = `${document.URL}/data/${this.id}`;
     try {
       const { data } = await axios.get(url);
       addTreeView(data.children, data.files, folderContent);

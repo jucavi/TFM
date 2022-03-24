@@ -152,7 +152,7 @@ def add_collaborator(token):
     return redirect(url_for('home.index'))
 
 
-@projects.route('project/<uuid:project_id>/files/<folder_id>')
+@projects.route('project/<uuid:project_id>/data/<folder_id>')
 @login_required
 def show_folder_content(project_id, folder_id):
     project = Project.query.get_or_404(project_id)
