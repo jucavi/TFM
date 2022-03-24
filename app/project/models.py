@@ -110,11 +110,7 @@ class Team(db.Model):
                         lazy=True)
     project = relationship('Project',
                            backref=backref('team', cascade='all, delete-orphan'))
-
-class Object:
-    def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__,
-            sort_keys=True, indent=4)
+    
 
 class Folder(db.Model):
     __tablename__ = 'folder'
