@@ -111,12 +111,21 @@ def edit_project(project_id):
 
     if current_user.is_owner(project):
         if form.validate_on_submit():
-            project.project_name = form.project_name.data
+            edited_project_name = form.project_name.data
+            if edited_project_name != project.project_name:
+                not_unique_name = Project.query.filter_by(project_name=edited_project_name).first()
+
+                # if project_name change change root folder name too
+                root.foldername = edited_project_name
+
+                if not_unique_name:
+                    flash('Proyect name already exists.', category='danger')
+                    return redirect(url_for('projects.edit_project', project_id=project_id))
+
+
+            project.project_name = edited_project_name
             project.project_desc = form.project_desc.data
             project.updated_at = datetime.utcnow()
-
-            # if project_name change
-            root.foldername = project.project_name
 
             db.session.add(root)
             db.session.commit()

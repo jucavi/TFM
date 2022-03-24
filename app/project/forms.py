@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField, FieldList
-from wtforms.validators import DataRequired, Email
+from wtforms.validators import DataRequired
 
 class ProjectBasicForm(FlaskForm):
     project_name = StringField('Project name', validators=[DataRequired()])
