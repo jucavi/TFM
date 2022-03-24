@@ -37,7 +37,10 @@ function addTreeView(children, files, folderContent) {
 async function expandCollapseToggler(event) {
   event.stopPropagation();
   const folderContent = this.querySelector('.folder_content');
+  console.log(folderContent)
+
   const content = event.target.parentElement.lastChild;
+  console.log(content)
   if (folderContent.innerHTML === '') {
     const url = `${document.URL}/data/${this.id}`;
     try {

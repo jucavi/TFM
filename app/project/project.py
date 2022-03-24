@@ -1,5 +1,5 @@
 from xml.dom import InvalidAccessErr
-from flask import Blueprint, flash, render_template, redirect, url_for
+from flask import Blueprint, flash, render_template, redirect, url_for, request
 from flask_login import login_required, current_user
 from app.project.forms import NewProjectForm, EditProjectForm, AddCollabForm
 from app.auth.models import User
@@ -162,22 +162,30 @@ def show_folder_content(project_id, folder_id):
         return folder.toJSON()
 
 
-@projects.route('project/<uuid:project_id>/newfolder/<parent_id>')
+@projects.route('project/<uuid:project_id>/folder/<parent_id>')
 @login_required
 def new_folder(project_id, parent_id):
     project = Project.query.get_or_404(project_id)
     parent = Folder.query.get_or_404(parent_id)
+    name = request.args.get('name')
+    print(name)
 
-    if project in current_user.projects and parent.project == project:
-        db.session.add(Folder(foldername='temp', project=project, parent=parent))
+    if project in current_user.projects and parent.project == project and name:
+        db.session.add(Folder(foldername=name, project=project, parent=parent))
         db.session.commit()
         return redirect(url_for('projects.show_project', project_id=project.id))
 
 
-@projects.route('project/<uuid:project_id>/newfile/<parent_id>')
+@projects.route('project/<uuid:project_id>/file/<parent_id>')
 @login_required
 def new_file(project_id, parent_id):
     project = Project.query.get_or_404(project_id)
     parent = Folder.query.get_or_404(parent_id)
+    name = request.args.get('name')
 
-    pass
+    if project in current_user.projects and parent.project == project and name:
+        file = File(filename=name)
+
+        db.session.add(FolderContent(folder=parent, file=file))
+        db.session.commit()
+        return redirect(url_for('projects.show_project', project_id=project.id))

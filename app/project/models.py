@@ -184,7 +184,7 @@ class File(db.Model):
                            viewonly=True)
 
     def __repr__(self):
-        return f'<Folder: {self.filename}>'
+        return f'<File: {self.filename}>'
 
 
 class FolderContent(db.Model):
