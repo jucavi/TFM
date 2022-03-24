@@ -107,6 +107,7 @@ def delete_project(project_id):
 def edit_project(project_id):
     form = EditProjectForm()
     project = Project.query.get_or_404(project_id)
+    root = project.root_folder
 
     if current_user.is_owner(project):
         if form.validate_on_submit():
@@ -114,6 +115,10 @@ def edit_project(project_id):
             project.project_desc = form.project_desc.data
             project.updated_at = datetime.utcnow()
 
+            # if project_name change
+            root.foldername = project.project_name
+
+            db.session.add(root)
             db.session.commit()
             flash('Your changes have been saved.', category='success')
 
