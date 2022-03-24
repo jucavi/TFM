@@ -54,12 +54,12 @@ class Project(db.Model):
     def updated(self):
         return local_time(self.updated_at)
 
-    def collaborator_token(self, user, expires=7*24*60*60):
+    def collaborator_token(self, user, expires=7):
         return jwt.encode(
             {
                 'project_id': self.id.hex,
                 'user_id': user.id.hex,
-                'exp': datetime.now(tz=timezone.utc) + timedelta(seconds=expires)
+                'exp': datetime.now(tz=timezone.utc) + timedelta(days=expires)
             },
             current_app.config['SECRET_KEY'],
             algorithm='HS256'

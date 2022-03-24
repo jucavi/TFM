@@ -51,11 +51,11 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password, password)
 
-    def set_reset_password_token(self, expires=600):
+    def set_reset_password_token(self, expires=10):
         return jwt.encode(
             {
                 'reset_password': self.id.hex,
-                'exp': datetime.now(tz=timezone.utc) + timedelta(seconds=expires)
+                'exp': datetime.now(tz=timezone.utc) + timedelta(minutes=expires)
             },
             current_app.config['SECRET_KEY'],
             algorithm='HS256'
