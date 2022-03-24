@@ -81,7 +81,7 @@ def show_project(project_id):
                                project=project,
                                form=form,
                                hidden_elements=json.dumps(emails),
-                               root=json.dumps({'id': root.id.hex, 'name': root.foldername}))
+                               root=root)
 
     flash('No project found!', category='warning')
     return redirect(url_for('projects.all_projects'))

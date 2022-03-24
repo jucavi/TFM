@@ -60,7 +60,11 @@
 
   <section>
     <ul id="tree" class="fa-ul">
-      <input id="tree_root" type="hidden" value="{{ root }}">
+      <!-- <input id="tree_root" type="hidden" value="{#{ root }#}"> -->
+      <div id="{{ root.id }}"class="folder_wrapper">
+        <li class="folder">{{root.foldername}}</li>
+        <ul class="folder_content fa-ul"></ul>
+      </div>
     </ul>
   </section>
 {% endblock content %}
