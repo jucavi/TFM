@@ -54,7 +54,7 @@ class Project(db.Model):
     def updated(self):
         return local_time(self.updated_at)
 
-    def collaborator_token(self, user, expires=604800):
+    def collaborator_token(self, user, expires=7*24*60*60):
         return jwt.encode(
             {
                 'project_id': self.id.hex,

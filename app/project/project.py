@@ -1,4 +1,3 @@
-from xml.dom import InvalidAccessErr
 from flask import Blueprint, flash, render_template, redirect, url_for, request
 from flask_login import login_required, current_user
 from app.project.forms import NewProjectForm, EditProjectForm, AddCollabForm
@@ -8,12 +7,16 @@ from app.helpers.mail import send_project_invitation
 from app import db
 import json
 from datetime import datetime
+from sqlalchemy.exc import IntegrityError
 
 projects = Blueprint('projects',
                        __name__,
                        static_folder='static',
                        template_folder='templates',
                        static_url_path="/project/static")
+
+class InvalidToken(Exception):
+    pass
 
 @projects.route('/new', methods=['GET', 'POST'])
 @login_required
@@ -23,8 +26,7 @@ def new_project():
     if form.validate_on_submit():
         project_name = form.project_name.data
         project_desc = form.project_desc.data
-        db_project = Project.query.filter_by(project_name=project_name).first()
-        if not db_project:
+        try:
             project = Project(project_name, project_desc)
             user = current_user
 
@@ -35,8 +37,9 @@ def new_project():
 
             flash('Project successfully created.', category='success')
             return redirect(url_for('projects.all_projects'))
-
-        flash('Project name already exists.', category='warning')
+        except IntegrityError:
+            db.session.rollback()
+            flash('Project name already exists.', category='warning')
 
     return render_template('new_project.html',
                            form=form,
@@ -111,27 +114,24 @@ def edit_project(project_id):
 
     if current_user.is_owner(project):
         if form.validate_on_submit():
-            edited_project_name = form.project_name.data
-            if edited_project_name != project.project_name:
-                not_unique_name = Project.query.filter_by(project_name=edited_project_name).first()
-
+            try:
+                project_name = form.project_name.data
                 # if project_name change change root folder name too
-                root.foldername = edited_project_name
+                root.foldername = project_name
 
-                if not_unique_name:
-                    flash('Proyect name already exists.', category='danger')
-                    return redirect(url_for('projects.edit_project', project_id=project_id))
+                project.project_name = project_name
+                project.project_desc = form.project_desc.data
+                project.updated_at = datetime.utcnow()
 
+                db.session.add(root)
+                db.session.commit()
 
-            project.project_name = edited_project_name
-            project.project_desc = form.project_desc.data
-            project.updated_at = datetime.utcnow()
-
-            db.session.add(root)
-            db.session.commit()
-            flash('Your changes have been saved.', category='success')
-
-            return redirect(url_for('projects.all_projects'))
+                flash('Your changes have been saved.', category='success')
+                return redirect(url_for('projects.all_projects'))
+            except IntegrityError:
+                db.session.rollback()
+                flash('Proyect name already exists.', category='danger')
+                return redirect(url_for('projects.edit_project', project_id=project_id))
         else:
             form.project_name.data = project.project_name
             form.project_desc.data = project.project_desc
@@ -158,9 +158,9 @@ def add_collaborator(token):
 
             flash(f'Great! You are now collaborating with {project.project_name!r}', category="success")
         else:
-            raise InvalidAccessErr
+            raise InvalidToken
 
-    except Exception as e:
+    except InvalidToken:
         flash('Expired/invalid access token!', category='danger')
 
     return redirect(url_for('home.index'))
@@ -182,7 +182,6 @@ def new_folder(project_id, parent_id):
     project = Project.query.get_or_404(project_id)
     parent = Folder.query.get_or_404(parent_id)
     name = request.args.get('name')
-    print(name)
 
     if project in current_user.projects and parent.project == project and name:
         db.session.add(Folder(foldername=name, project=project, parent=parent))
