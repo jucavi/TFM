@@ -110,7 +110,7 @@ class Team(db.Model):
                         lazy=True)
     project = relationship('Project',
                            backref=backref('team', cascade='all, delete-orphan'))
-    
+
 
 class Folder(db.Model):
     __tablename__ = 'folder'
@@ -149,8 +149,8 @@ class Folder(db.Model):
         return files
 
     def toJSON(self):
-        children = [{'id': child.id.hex, 'name':child.foldername} for child in self.children]
-        files = [{'id': file.id.hex, 'name':file.filename} for file in self.files]
+        children = self.children_to_json()
+        files = self.files_to_json()
         return json.dumps({
             'id': self.id.hex,
             'name': self.foldername,
