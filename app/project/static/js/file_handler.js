@@ -10,11 +10,11 @@ function addTreeView(children, files, folderContent) {
     const divWrapper = document.createElement('div');
     divWrapper.classList.add('folder_wrapper');
     divWrapper.setAttribute('id', child.id);
-    divWrapper.addEventListener('click', expandCollapseToggler);
 
     const li = document.createElement('li');
     li.classList.add('folder');
     li.innerText = child.name;
+    li.addEventListener('click', expandCollapseToggler);
     divWrapper.append(li);
 
 
@@ -36,16 +36,14 @@ function addTreeView(children, files, folderContent) {
 
 async function expandCollapseToggler(event) {
   event.stopPropagation();
-  const folderContent = this.querySelector('.folder_content');
-  console.log(folderContent)
+  const id = event.target.parentNode.id;
+  const content = event.target.parentNode.lastChild
 
-  const content = event.target.parentElement.lastChild;
-  console.log(content)
-  if (folderContent.innerHTML === '') {
-    const url = `${document.URL}/data/${this.id}`;
+  if (content.innerHTML === '') {
+    const url = `${document.URL}/data/${id}`;
     try {
       const { data } = await axios.get(url);
-      addTreeView(data.children, data.files, folderContent);
+      addTreeView(data.children, data.files, content);
     } catch (e) {
       console.log('Error in getContent:', e);
     }
