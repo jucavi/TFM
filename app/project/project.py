@@ -15,9 +15,6 @@ projects = Blueprint('projects',
                        template_folder='templates',
                        static_url_path="/project/static")
 
-class InvalidToken(Exception):
-    pass
-
 @projects.route('/new', methods=['GET', 'POST'])
 @login_required
 def new_project():
@@ -158,9 +155,9 @@ def add_collaborator(token):
 
             flash(f'Great! You are now collaborating with {project.project_name!r}', category="success")
         else:
-            raise InvalidToken
+            raise Exception
 
-    except InvalidToken:
+    except Exception:
         flash('Expired/invalid access token!', category='danger')
 
     return redirect(url_for('home.index'))
@@ -186,7 +183,8 @@ def new_folder(project_id, parent_id):
     if project in current_user.projects and parent.project == project and name:
         db.session.add(Folder(foldername=name, project=project, parent=parent))
         db.session.commit()
-        return redirect(url_for('projects.show_project', project_id=project.id))
+
+    return redirect(url_for('projects.show_project', project_id=project.id))
 
 
 @projects.route('project/<uuid:project_id>/file/<parent_id>')
@@ -201,4 +199,5 @@ def new_file(project_id, parent_id):
 
         db.session.add(FolderContent(folder=parent, file=file))
         db.session.commit()
-        return redirect(url_for('projects.show_project', project_id=project.id))
+
+    return redirect(url_for('projects.show_project', project_id=project.id))
