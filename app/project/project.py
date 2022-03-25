@@ -59,29 +59,31 @@ def all_projects():
 @login_required
 def show_project(project_id):
     project = Project.query.get_or_404(project_id)
-    form = AddCollabForm()
+    collab_form = AddCollabForm()
     emails = {'elements': [user.email for user in User.query.all() if user != current_user]}
-
-    if form.validate_on_submit():
-        for email in form.collabs.data:
-            collab = User.query.filter_by(email=email).first()
-            if collab:
-                if collab not in project.collaborators:
-                    send_project_invitation(project, collab)
-                    flash(f'Invitation sed to {email!r}.', category='success')
-                else:
-                    flash(f'{email!r} already collaborate.', category='info')
-            else:
-                flash(f'{email!r} not found.', category='danger')
 
     if project in current_user.projects:
         root = project.root_folder
+
+        if collab_form.validate_on_submit():
+            for email in collab_form.collabs.data:
+                collab = User.query.filter_by(email=email).first()
+                if collab:
+                    if collab not in project.collaborators:
+                        send_project_invitation(project, collab)
+                        flash(f'Invitation sed to {email!r}.', category='success')
+                    else:
+                        flash(f'{email!r} already collaborate.', category='info')
+                else:
+                    flash(f'{email!r} not found.', category='danger')
+
         return render_template('project.html',
                                title=project.project_name,
                                project=project,
-                               form=form,
+                               collab_form=collab_form,
                                hidden_elements=json.dumps(emails),
                                root=root)
+
 
     flash('No project found!', category='warning')
     return redirect(url_for('projects.all_projects'))
@@ -173,16 +175,29 @@ def show_folder_content(project_id, folder_id):
         return folder.toJSON()
 
 
-@projects.route('project/<uuid:project_id>/folder/<parent_id>')
+@projects.route('project/<uuid:project_id>/folder/<parent_id>', methods=['PUT', 'POST', 'DELETE'])
 @login_required
 def new_folder(project_id, parent_id):
     project = Project.query.get_or_404(project_id)
     parent = Folder.query.get_or_404(parent_id)
-    name = request.args.get('name')
+    name = request.form.get('name')
 
-    if project in current_user.projects and parent.project == project and name:
-        db.session.add(Folder(foldername=name, project=project, parent=parent))
+    # TODO check unique folder an file name  UPS..
+    if request.method == 'POST':
+        if project in current_user.projects and parent.project == project and name:
+            if request.method == 'POST':
+                db.session.add(Folder(foldername=name, project=project, parent=parent))
+                db.session.commit()
+                return {'success': True}
+
+    if request.method == 'DELETE':
+        if parent.id == project.root_folder.id:
+            return {'success': False}
+
+        db.session.delete(parent)
         db.session.commit()
+        return {'success': True}
+
 
     return redirect(url_for('projects.show_project', project_id=project.id))
 

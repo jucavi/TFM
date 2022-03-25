@@ -20,6 +20,9 @@
 
   <!-- Axios -->
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script type="text/javascript">
+    axios.defaults.headers.common["X-CSRFToken"] = "{{ csrf_token() }}";
+  </script>
 
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/main.css') }}">
 

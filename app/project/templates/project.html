@@ -12,7 +12,7 @@
 {% block content %}
   <h1>{{ project.project_name }}</h1>
 
-  <section>
+  <section id="project_team">
     <div>Owner</div>
     {% for owner in project.owner %}
       <div>{{ owner.username }}</div>
@@ -30,20 +30,20 @@
 
     {% if current_user in project.owner %}
       {% from "_formhelpers.html" import render_field %}
-      <form id="add_collabs" method=post>
-        {{ form.csrf_token }}
-        {{ render_field(form.collabs) }}
+      <form id="add_collabs" method='POST'>
+        {{ collab_form.csrf_token }}
+        {{ render_field(collab_form.collabs) }}
 
         {% include 'common/_tagger.html' %}
 
         <div class="pt-1 mb-4">
-          {{ form.submit(class='btn auth-btn-bg btn-lg btn-font') }}
+          {{ collab_form.submit(class='btn auth-btn-bg btn-font') }}
         </div>
       </form>
     {% endif %}
   </section>
 
-  <section>
+  <section id="project_info">
     <div>Project</div>
     <ul>
       <li>{{ project.project_name }}</li>
@@ -58,15 +58,22 @@
     {% endif %}
   </section>
 
-  <section>
-    <ul id="tree" class="fa-ul">
-      <!-- <input id="tree_root" type="hidden" value="{#{ root }#}"> -->
-      <div id="{{ root.id }}"class="folder_wrapper">
-        <li class="folder">{{root.foldername}}</li>
-        <ul class="folder_content fa-ul"></ul>
+  <section id="project_data">
+    <div class="data_conainer d-flex">
+      <ul id="{{ root.project.id }}" class="tree fa-ul">
+        <div id="{{ root.id }}"class="folder_wrapper">
+          <li class="folder">{{root.foldername}}</li>
+          <ul class="folder_content fa-ul"></ul>
+        </div>
+      </ul>
+      <div class="menu ps-3">
+        <a href="" id="new_folder"><span class="badge rounded-pill auth-bg">New Folder</span></i></a>
+        <a href="" id="delete_folder"><span class="badge rounded-pill auth-bg">Delete Folder</span></i></a>
       </div>
-    </ul>
+    </div>
   </section>
+
+  {% include 'common/_folder_modal.html' %}
 {% endblock content %}
 
 {% block customjs %}
