@@ -24,15 +24,15 @@ async function expandCollapseToggler(event) {
   }
 }
 
-function createLink(name, url) {
-  const a = document.createElement('a');
-  a.innerText = name;
-  a.href = url;
-  a.classList.add('btn');
-  a.classList.add('btn-info');
+// function createLink(name, url) {
+//   const a = document.createElement('a');
+//   a.innerText = name;
+//   a.href = url;
+//   a.classList.add('btn');
+//   a.classList.add('btn-info');
 
-  return a;
-}
+//   return a;
+// }
 
 function addFolders(children, folderContent) {
   for (let child of children) {
@@ -40,19 +40,20 @@ function addFolders(children, folderContent) {
     divWrapper.classList.add('folder_wrapper');
     divWrapper.setAttribute('id', child.id);
 
-    const url = `${baseURL}/folder/${child.id}?name=${child.name}-newFolderJS`
-    const renameLink = createLink('Rename', '#');
-    const deleteLink = createLink('Delete', '#');
-    const addFolderLink = createLink('Add Folder', url);
+    // const url = `${baseURL}/folder/${child.id}?name=${child.name}-newFolderJS`
+    // const renameLink = createLink('Rename', '#');
+    // const deleteLink = createLink('Delete', '#');
+    // const addFolderLink = createLink('Add Folder', url);
 
     const li = document.createElement('li');
     li.classList.add('folder');
     li.innerText = child.name;
     li.addEventListener('click', expandCollapseToggler);
     divWrapper.append(li);
-    divWrapper.append(addFolderLink);
-    divWrapper.append(renameLink);
-    divWrapper.append(deleteLink);
+
+    // divWrapper.append(addFolderLink);
+    // divWrapper.append(renameLink);
+    // divWrapper.append(deleteLink);
 
     const ul = document.createElement('ul');
     ul.classList.add('folder_content');
