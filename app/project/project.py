@@ -115,7 +115,7 @@ def edit_project(project_id):
         if form.validate_on_submit():
             try:
                 project_name = form.project_name.data
-                # if project_name change change root folder name too
+                # if project_name change change root folder name change too
                 root.foldername = project_name
 
                 project.project_name = project_name
@@ -174,45 +174,45 @@ def show_folder_content(project_id, folder_id):
         folder = Folder.query.get_or_404(folder_id)
         return folder.toJSON()
 
+    return {'success': False, 'msg': 'No project found.'}
 
-@projects.route('project/<uuid:project_id>/folder/<parent_id>', methods=['PUT', 'POST', 'DELETE'])
+
+@projects.route('project/<uuid:project_id>/folder/<folder_id>', methods=['PUT', 'POST', 'DELETE'])
 @login_required
-def new_folder(project_id, parent_id):
+def new_folder(project_id, folder_id):
     project = Project.query.get_or_404(project_id)
-    parent = Folder.query.get_or_404(parent_id)
+    folder = Folder.query.get_or_404(folder_id)
     name = request.form.get('name')
 
-    # TODO check unique folder an file name  UPS..
-    if request.method == 'POST':
-        if project in current_user.projects and parent.project == project and name:
+    if project.has_access(current_user, folder):
+        if request.method == 'DELETE' and folder.id != project.root_folder.id:
+            db.session.delete(folder)
+
+        elif folder.is_valid_folder(name):
             if request.method == 'POST':
-                db.session.add(Folder(foldername=name, project=project, parent=parent))
-                db.session.commit()
-                return {'success': True}
+                db.session.add(Folder(foldername=name, project=project, parent=folder))
 
-    if request.method == 'DELETE':
-        if parent.id == project.root_folder.id:
-            return {'success': False}
+            elif request.method == 'PUT' and folder.id != project.root_folder.id:
+                folder.foldername = name
+        else:
+            return {'success': False, 'msg': 'Invalid name.' }
 
-        db.session.delete(parent)
         db.session.commit()
         return {'success': True}
 
+    return {'success': False, 'msg': 'Access denied.' }
 
-    return redirect(url_for('projects.show_project', project_id=project.id))
 
 
-@projects.route('project/<uuid:project_id>/file/<parent_id>')
+@projects.route('project/<uuid:project_id>/<folder_id>/files')
 @login_required
-def new_file(project_id, parent_id):
+def files(project_id, folder_id):
     project = Project.query.get_or_404(project_id)
-    parent = Folder.query.get_or_404(parent_id)
-    name = request.args.get('name')
+    folder = Folder.query.get_or_404(folder_id)
 
-    if project in current_user.projects and parent.project == project and name:
-        file = File(filename=name)
+    if project.has_access(current_user, folder):
+        files = folder.files_to_json
+    else:
+        flash('Access denied')
 
-        db.session.add(FolderContent(folder=parent, file=file))
-        db.session.commit()
-
-    return redirect(url_for('projects.show_project', project_id=project.id))
+    return files

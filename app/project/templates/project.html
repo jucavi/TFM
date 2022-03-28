@@ -68,9 +68,11 @@
       </ul>
       <div class="menu ps-3">
         <a href="" id="new_folder"><span class="badge rounded-pill auth-bg">New Folder</span></i></a>
+        <a href="" id="rename_folder"><span class="badge rounded-pill auth-bg">Rename Folder</span></i></a>
         <a href="" id="delete_folder"><span class="badge rounded-pill auth-bg">Delete Folder</span></i></a>
       </div>
     </div>
+    <a href="{{ url_for('projects.files', project_id=project.id, folder_id='folder_id')}}" id="files" hidden></a>
   </section>
 
   {% include 'common/_folder_modal.html' %}

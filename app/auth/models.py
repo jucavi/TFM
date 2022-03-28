@@ -75,6 +75,9 @@ class User(UserMixin, db.Model):
     def is_owner(self, project):
         return project in self.projects_owner
 
+    def has_access(self, project):
+        return project in self.projects
+
     projects_owner = relationship('Project',
                                   secondary='team',
                                   primaryjoin=('and_(User.id==Team.user_id, Team.is_owner==True)'),

@@ -3,17 +3,6 @@ const projectID = tree.id;
 const baseURL = `http://localhost:5000/projects/project/${projectID}`;
 let currentDirectoryID;
 
-// Add folder
-const newFolderAnchor = document.querySelector('#new_folder');
-const newFolderModal = document.querySelector('#newFolderModal');
-const title = document.querySelector('#newFolderModalLabel');
-const modal = bootstrap.Modal.getOrCreateInstance(newFolderModal);
-const folderNameInput = document.querySelector('#folder_name');
-
-newFolderModal.addEventListener('shown.bs.modal', function (event) {
-  folderNameInput.focus();
-});
-
 function removeAllChildNodes(parent) {
   while (parent.firstChild) {
     parent.removeChild(parent.firstChild);
@@ -31,30 +20,69 @@ sendButton.addEventListener('click', async function (event) {
   folderNameInput.value = '';
 
   if (name !== '') {
-    await axios.post(`${baseURL}/folder/${currentDirectoryID}`, formData);
-
-    // open and rebuild tree
     const currentWrapper = document.getElementById(currentDirectoryID);
-    const content = currentWrapper.lastElementChild;
-    removeAllChildNodes(content);
-
-    try {
-      const { data } = await axios.get(`${baseURL}/data/${currentDirectoryID}`);
-      addTreeView(data.children, data.files, content);
-    } catch (e) {
-      console.log('Error in getContent:', e);
+    if (this.innerText === 'Update') {
+      await axios.put(`${baseURL}/folder/${currentDirectoryID}`, formData);
+      const content = currentWrapper.parentNode;
+      // console.log(content)
+      try {
+        const { data } = await axios.get(
+          `${baseURL}/data/${content.parentNode.id}`
+        );
+        // open and rebuild tree
+        removeAllChildNodes(content);
+        addTreeView(data.children, data.files, content);
+      } catch (e) {
+        console.log('Error in getContent:', e);
+      }
+    } else {
+      await axios.post(`${baseURL}/folder/${currentDirectoryID}`, formData);
+      const content = currentWrapper.lastElementChild;
+      try {
+        const { data } = await axios.get(
+          `${baseURL}/data/${currentDirectoryID}`
+        );
+        // open and rebuild tree
+        removeAllChildNodes(content);
+        addTreeView(data.children, data.files, content);
+      } catch (e) {
+        console.log('Error in getContent:', e);
+      }
     }
-
-    // close modal
-    modal.hide();
   }
+  // close modal
+  modal.hide();
+});
+
+// Add folder
+const newFolderAnchor = document.querySelector('#new_folder');
+const newFolderModal = document.querySelector('#FolderModal');
+const title = document.querySelector('#FolderModalLabel');
+const modal = bootstrap.Modal.getOrCreateInstance(newFolderModal);
+const folderNameInput = document.querySelector('#folder_name');
+
+newFolderModal.addEventListener('shown.bs.modal', function (event) {
+  folderNameInput.focus();
 });
 
 newFolderAnchor.addEventListener('click', function (event) {
   event.preventDefault();
   event.stopImmediatePropagation();
   const currentWrapper = document.getElementById(currentDirectoryID);
-  title.innerText = `/${currentWrapper.firstElementChild.innerText}/`;
+  title.innerText = `/${currentWrapper.firstElementChild.innerText}/<New folder>`;
+  sendButton.innerText = 'Create';
+  modal.show();
+});
+
+// Renamefolder
+const renameFolderAnchor = document.querySelector('#rename_folder');
+renameFolderAnchor.addEventListener('click', async function (event) {
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  const currentWrapper = document.getElementById(currentDirectoryID);
+  title.innerText = `Reneame /${currentWrapper.firstElementChild.innerText}/`;
+  folderNameInput.value = currentWrapper.firstElementChild.innerText;
+  sendButton.innerText = 'Update';
   modal.show();
 });
 
@@ -74,11 +102,9 @@ deleteFolderAnchor.addEventListener('click', async function (event) {
   );
 
   if (data.success == true) {
-    console.log('deleted');
     try {
       currentDirectoryID = parent.id;
       const { data } = await axios.get(`${baseURL}/data/${currentDirectoryID}`);
-
       node.remove();
     } catch (e) {
       console.log('Error in getContent:', e);
@@ -91,6 +117,7 @@ window.onload = function () {
   const root = tree.querySelector('li');
   currentDirectoryID = root.parentNode.id;
   root.addEventListener('click', expandCollapseToggler);
+  root.addEventListener('dblclick', openFiles);
 };
 
 async function expandCollapseToggler(event) {
@@ -122,6 +149,7 @@ function addDirectory(children, folderContent) {
     li.classList.add('folder');
     li.innerText = child.name;
     li.addEventListener('click', expandCollapseToggler);
+    li.addEventListener('dblclick', openFiles);
     divWrapper.append(li);
 
     const ul = document.createElement('ul');
@@ -145,4 +173,12 @@ function addFiles(files, folderContent) {
 function addTreeView(children, files, folderContent) {
   addDirectory(children, folderContent);
   addFiles(files, folderContent);
+}
+
+// View files
+const go = document.querySelector('#files');
+function openFiles(event) {
+  event.stopPropagation();
+  go.href = go.href.replace('folder_id', currentDirectoryID);
+  window.open(go.href, '_self');
 }

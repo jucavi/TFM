@@ -84,6 +84,9 @@ class Project(db.Model):
                 return folder
         return None
 
+    def has_access(self, user, folder):
+        return self in user.projects and folder.project == self
+
     def __repr__(self):
         return f'<Project: {self.project_name!r}>'
 
@@ -140,23 +143,35 @@ class Folder(db.Model):
                         secondary='folder_content',
                         viewonly=True)
 
+    @property
     def children_to_json(self):
         children = [{'id': child.id.hex, 'name':child.foldername} for child in self.children]
-        return children
+        return json.dumps(children, indent=4)
 
+    @property
     def files_to_json(self):
         files = [{'id': file.id.hex, 'name':file.filename} for file in self.files]
-        return files
+        return json.dumps(files, indent=4)
 
     def toJSON(self):
-        children = self.children_to_json()
-        files = self.files_to_json()
+        children = self.children_to_json
+        files = self.files_to_json
         return json.dumps({
             'id': self.id.hex,
             'name': self.foldername,
             'children': children,
             'files': files
         }, indent=4)
+
+    def is_valid_folder(self, foldername):
+        if not foldername:
+            return False
+        return not any(filter(lambda folder: folder.foldername == foldername, self.children))
+
+    def is_valid_fille(self, filename):
+        if not filename:
+            return False
+        return not any(filter(lambda file: file.filename == filename, self.files))
 
     def __repr__(self):
         return f'<Folder: {self.foldername}>'
