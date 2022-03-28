@@ -211,8 +211,8 @@ def files(project_id, folder_id):
     folder = Folder.query.get_or_404(folder_id)
 
     if project.has_access(current_user, folder):
-        files = folder.files_to_json
+        files = folder.files
     else:
         flash('Access denied')
 
-    return files
+    return 'files'

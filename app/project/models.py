@@ -146,12 +146,12 @@ class Folder(db.Model):
     @property
     def children_to_json(self):
         children = [{'id': child.id.hex, 'name':child.foldername} for child in self.children]
-        return json.dumps(children, indent=4)
+        return children
 
     @property
     def files_to_json(self):
         files = [{'id': file.id.hex, 'name':file.filename} for file in self.files]
-        return json.dumps(files, indent=4)
+        return files
 
     def toJSON(self):
         children = self.children_to_json

@@ -70,7 +70,6 @@ def all_messages():
     db.session.commit()
 
     messages = current_user.messages_received.order_by(Message.timestamp.desc())
-    print(messages)
     return render_template('messages.html', messages=messages)
 
 
