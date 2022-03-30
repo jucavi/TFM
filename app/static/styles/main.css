@@ -1,17 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600&family=Open+Sans:wght@300;400;500;600&family=Raleway:wght@800&display=swap');
 
-/* sidebar */
-@media (min-width: 576px) {
-    .h-sm-100 {
-        height: 100%;
-    }
-}
-
-/* inbox messages
-#new_messages {
-    display: none;
-} */
-
 body {
     font-family: 'Montserrat', sans-serif;
     line-height: 1.8;
@@ -51,7 +39,7 @@ body {
 }
 
 hr {
-  border-color: #a35c48 !important;;
+  border-color: #fb8500 !important;;
 }
 
 #logo {
@@ -74,26 +62,13 @@ a, a:visited, a:active {
     text-decoration: none;
 }
 
-.auth-btn-bg:hover {
-    color: #f2cc8f !important;
+.btn-bg:hover {
+    color: #e9c46a !important;
 }
 
-/*
-.custom-toggler .navbar-toggler-icon {
-    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(33, 37, 41, 1)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
+.text-muted {
+    color: #284b6a !important;
 }
-
-.custom-toggler.navbar-toggler {
-    border-color: #212529;
-}
-
-.custom-toggler .navbar-toggler-icon:hover {
-    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(224, 122, 95, 0.8)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
-}
-
-.custom-toggler.navbar-toggler:hover {
-    border-color:  #e07a5f !important;
-} */
 
 .message {
     margin: .2em;
@@ -108,14 +83,10 @@ a, a:visited, a:active {
 }
 
 .auth-bg {
-    background-color: #f2cc8f;
+    background-color: #e9c46a;
 }
 
-.auth-card-img-border {
-    border-radius: 1rem 0 0 1rem;
-}
-
-.auth-btn-bg {
+.btn-bg {
     background-color: #264653;
     color: white;
 }
@@ -133,7 +104,7 @@ a, a:visited, a:active {
 }
 
 a, a:visited, a:active {
-    color: #3d405b;;
+    color: #3d405b;
     text-decoration: none;
 }
 
@@ -154,33 +125,8 @@ a, a:visited, a:active {
     font-weight: 200;
 }
 
-td {
-  /* border: 2px solid #ccd2ff; */
-  position: relative;
-  padding: 18px;
-}
-
 tr:hover,
 tr:focus-within {
-  background: #f2f3ff;
+  background: #e5e5e5;
   outline: none;
-}
-
-td > .row-link {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  text-decoration: none;
-  color: inherit;
-/*
-  &:focus {
-    outline: 0;
-  } */
-}
-
-td > a:not(.row-link) {
-  position: relative;
-  z-index: 1;
 }

@@ -60,7 +60,7 @@ def login():
             login_user(user)
 
             return redirect(url_for('home.index'))
-        flash('Invalid username/password.', category='warning')
+        flash('Invalid username/password.', category='danger')
 
     return render_template('login.html',
                            form=form,
@@ -99,8 +99,7 @@ def profile():
 
     return render_template('profile.html',
                            form=form,
-                           title='Edit Profile',
-                           back=request.referrer)
+                           title='Edit Profile')
 
 
 @auth.route('/request_new_password', methods=['GET', 'POST'])
@@ -116,11 +115,10 @@ def request_new_password():
             flash(f'We sent a recovery link to you at {user.email}', category='success')
 
             return redirect(url_for('home.index'))
-        flash(f'Not user found by {email}!')
+        flash(f'Not user found by {email}!', category='danger')
 
     return render_template('request_new_password.html',
-                           form=form, title='Reset Password',
-                           back=request.referrer)
+                           form=form, title='Reset Password')
 
 
 @auth.route('/new_password/<token>', methods=['GET', 'POST'])
@@ -141,8 +139,7 @@ def new_password(token):
 
     return render_template('new_password.html',
                            form=form,
-                           title='New Password',
-                           back=request.referrer)
+                           title='New Password')
 
 
 @login_manager.user_loader
