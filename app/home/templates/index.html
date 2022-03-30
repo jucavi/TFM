@@ -5,7 +5,17 @@
 {% endblock navbar %}
 
 {% block content %}
-  <h1>Home Page</h1>
+<div class="container text-center pt-5">
+  <h1 clas="mb-5">Home Page</h1>
+  <div class="border rounded p-5">
+    <div class="">
+      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Reiciendis est dicta molestias. Explicabo animi, tempora cum ducimus ab ex facere debitis. A asperiores dolorum ut nisi, qui fugit doloribus doloremque!
+      Lorem ipsum dolor sit amet consectetur, adipisicing elit. At aspernatur nostrum adipisci. Optio quaerat quis nihil dolor cumque quam ab fugiat in et asperiores, harum numquam laborum magnam odio facilis!
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam nesciunt accusamus placeat quam aspernatur dolore eius, officiis quod alias sunt ullam veritatis aperiam reprehenderit laboriosam dolorem. Quae consectetur laudantium quis!
+    </div>
+    <a class="btn link-btn btn-bg btn-font mt-3" href="{{ url_for('projects.new_project') }}">Start Now</a>
+  </div>
+</div>
 {% endblock content %}
 
 {% block footer %}

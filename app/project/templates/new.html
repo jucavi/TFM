@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col col-xm-10 col-md-8 col-lg-6">
+          <div class="card auth-bg">
+            <div class="d-flex align-items-center">
+              <div class="card-body p-4 p-lg-5">
+
+                <h4 class="text-center fw-normal my-3 pb-3">
+                  {{ action }}
+                </h4>
+
+                {% from "_formhelpers.html" import render_field %}
+                <form method=post>
+                  {{ form.csrf_token }}
+
+                  <dl>
+                    {{ render_field(form.project_name, class='form-control form-control-lg', placeholder='Poject name') }}
+                    {{ render_field(form.project_desc, class='form-control form-control-lg', rows='5', placeholder='Description') }}
+                  </dl>
+
+                  <div class="pt-1 mb-4">
+                    {{ form.submit(class='btn btn-bg btn-lg btn-block btn-font w-100') }}
+                  </div>
+                </form>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}

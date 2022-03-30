@@ -45,6 +45,10 @@ class User(UserMixin, db.Model):
                             secondary='team',
                             viewonly=True)
 
+    @property
+    def full_name(self):
+        return f'{self.firstname.capitalize()} {self.lastname.capitalize()}'
+
     def set_password(self, password):
         self.password = generate_password_hash(password)
 

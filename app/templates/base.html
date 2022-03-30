@@ -36,15 +36,16 @@
 </head>
 
 <body>
-  {%- block navbar -%} {%- endblock -%}
+  {%- include '_navbar.html' -%}
 
   {%- include '_messages.html' -%}
 
-  <main role="main" id="content" class="pb-5">
+  <main class="m-5 pb-5">
     {%- block content -%}{%- endblock -%}
-  </main role="main">
+  </main>
 
-  {%- block footer -%} {%- endblock -%}
+
+  {%- include '_footer.html' -%}
 
   <!-- Bootstrap Bundle with Popper -->
   <script

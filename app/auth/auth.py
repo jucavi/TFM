@@ -89,7 +89,7 @@ def profile():
         db.session.commit()
         flash('Your changes have been saved.', category='success')
 
-        return redirect(url_for('auth.profile'))
+        return redirect(url_for('home.index'))
 
     elif request.method == 'GET':
         form.firstname.data = current_user.firstname

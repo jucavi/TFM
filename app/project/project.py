@@ -1,6 +1,6 @@
 from flask import Blueprint, flash, render_template, redirect, url_for, request
 from flask_login import login_required, current_user
-from app.project.forms import NewProjectForm, EditProjectForm, AddCollabForm
+from app.project.forms import NewProjectForm, EditProjectForm, AddCollabForm, UploadFileForm
 from app.auth.models import User
 from app.project.models import Project, Team, Folder, File, FolderContent
 from app.helpers.mail import send_project_invitation
@@ -38,7 +38,8 @@ def new_project():
             db.session.rollback()
             flash('Project name already exists.', category='warning')
 
-    return render_template('new_project.html',
+    return render_template('new.html',
+                           action='Create new project',
                            form=form,
                            title='New project')
 
@@ -135,7 +136,8 @@ def edit_project(project_id):
             form.project_name.data = project.project_name
             form.project_desc.data = project.project_desc
 
-            return render_template('edit_project.html',
+            return render_template('new.html',
+                                   action='Edit project',
                                    form=form,
                                    title='Edit Project')
 
@@ -209,10 +211,51 @@ def new_folder(project_id, folder_id):
 def files(project_id, folder_id):
     project = Project.query.get_or_404(project_id)
     folder = Folder.query.get_or_404(folder_id)
+    form = UploadFileForm()
 
     if project.has_access(current_user, folder):
         files = folder.files
     else:
-        flash('Access denied')
+        flash('Access denied.')
+        return redirect(url_for('projects.show_project', project_id=project.id))
 
-    return 'files'
+    return render_template('files.html',
+                           files=files,
+                           form=form,
+                           project=project,
+                           folder=folder)
+
+
+@projects.route('/project/<uuid:project_id>/<uuid:folder_id>/files/upload', methods=['POST'])
+def upload_files(project_id, folder_id):
+    project = Project.query.get_or_404(project_id)
+    folder = Folder.query.get_or_404(folder_id)
+
+    try:
+        upload = request.files['file']
+        print(upload)
+        print(upload.mimetype)
+        print(upload.name)
+        print(upload.content_type)
+        print(upload.content_length)
+        print(upload.__sizeof__())
+        print(dir(upload))
+        name = upload.filename
+        data = upload.read()
+        if project.has_access(current_user, folder):
+            if folder.is_valid_file(name):
+                pass
+                # file = File(filename=name, data=data)
+                # FolderContent(folder=folder, file=file)
+                # db.session.add(file)
+                # db.session.commit()
+            else:
+                flash('Invalid name or file already exists.')
+        else:
+            flash('Access denied')
+    except Exception as e:
+        print(e)
+
+    return redirect(url_for('projects.files',
+                            project_id=project_id,
+                            folder_id=folder.id))

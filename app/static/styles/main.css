@@ -2,6 +2,7 @@
 
 body {
     font-family: 'Montserrat', sans-serif;
+    color: #293241;
     line-height: 1.8;
     background-color: #f8f9fb;
 }
@@ -30,7 +31,8 @@ body {
 }
 
 .nav-bg {
-    background-color: #e7ecef;
+    background-color: #edf2f4 !important;
+    /* background-color: #e7ecef; */
 }
 
 .dropdown-item {
@@ -39,7 +41,7 @@ body {
 }
 
 hr {
-  border-color: #fb8500 !important;;
+  border-color: #293241 !important;;
 }
 
 #logo {
@@ -57,14 +59,25 @@ hr {
     font-weight: 200;
 }
 
-a, a:visited, a:active {
+/* a, a:visited, a:active {
     color: inherit;
+    text-decoration: none;
+} */
+
+.btn-bg:hover, .link-btn:hover {
+    color: #ee6c4d !important;
+}
+
+.btn-bg, .link-btn {
+    background-color: #3d5a80;
+    color: white;
+}
+
+.link-btn, .link-btn:visited, .link-btn:active {
+    color: white;
     text-decoration: none;
 }
 
-.btn-bg:hover {
-    color: #e9c46a !important;
-}
 
 .text-muted {
     color: #284b6a !important;
@@ -78,17 +91,8 @@ a, a:visited, a:active {
     padding: 0;
 }
 
-.auth-card-border {
-    border-radius: 1rem;
-}
-
 .auth-bg {
-    background-color: #e9c46a;
-}
-
-.btn-bg {
-    background-color: #264653;
-    color: white;
+    background-color: #98c1d9;
 }
 
 .btn-font {
@@ -129,4 +133,11 @@ tr:hover,
 tr:focus-within {
   background: #e5e5e5;
   outline: none;
+}
+
+.card{
+    /* box-shadow: 0 0 5px 0 rgba(22, 22, 26, .25); */
+    box-shadow: 0 0 5px 0 rgba(61, 90, 128, .25);
+    border: .1em solid rgba(61, 90, 128, .25);
+    border-radius: 1em;
 }
