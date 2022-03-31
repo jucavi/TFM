@@ -1,9 +1,6 @@
 {% extends 'base.html' %}
 
-{% block header %}
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles/tagger.css') }}">
-  <link rel="stylesheet" href="{{ url_for('.static', filename='styles/collabs.css') }}">
-{% endblock header %}
+
 
 {% block navbar %}
   {% include '_navbar.html' %}
@@ -37,7 +34,7 @@
         {% include 'common/_tagger.html' %}
 
         <div class="pt-1 mb-4">
-          {{ collab_form.submit(class='btn auth-btn-bg btn-font') }}
+          {{ collab_form.submit(class='btn btn-bg btn-font') }}
         </div>
       </form>
     {% endif %}

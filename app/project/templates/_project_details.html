@@ -1,0 +1,48 @@
+<section  class="row" id="left_column">
+  <div class="col-3">
+    <div class="d-flex flex-column">
+      <h2>{{ project.project_name|title }}</h2>
+      <small class="sm-font">Created: {{ project.created }}</small>
+      <small class="sm-font">Last update: {{ project.updated }}</small>
+
+      <section id="project_team">
+        <div class="d-flex flex-column">
+          <h4 class="mt-3">Owner</h4>
+          <div class="ms-3 d-flex flex-column">
+            {% for owner in project.owner %}
+              <div>{{ owner.full_name }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="d-flex flex-column my-2">
+            {% if project.collaborators %}
+              <h4 class="mt-3">Collaborators</h4>
+              <div class="ms-3 d-flex flex-column">
+                {% for collaborator in project.collaborators if collaborator != current_user %}
+                  <div>{{ collaborator.full_name }}</div>
+                {% endfor %}
+              </div>
+              {% else %}
+                <small class="">You haven't invited any collaborators yet</small>
+              {% endif %}
+            </div>
+
+
+          {% if current_user in project.owner %}
+            {% from "_formhelpers.html" import render_field %}
+            <form id="add_collabs" method='POST' class="form-control">
+              {{ collab_form.csrf_token }}
+              {{ render_field(collab_form.collabs) }}
+
+              {% include 'common/_tagger.html' %}
+
+              <div class="pt-1 mb-4">
+                {{ collab_form.submit(class='btn btn-bg btn-font') }}
+              </div>
+            </form>
+          {% endif %}
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
