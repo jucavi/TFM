@@ -15,7 +15,7 @@
             {% set new_messages = current_user.inbox_messages %}
             <a id="inbox_messages"  href="{{ url_for('message.all_messages') }} ">
               Inbox
-              <span id="new_messages" class="badge rounded-pill auth-bg" style="display: none;">
+              <span id="new_messages" class="badge rounded-pill notification-bg" style="display: none;">
                 {{ new_messages }}
               </span>
             </a>
