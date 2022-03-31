@@ -48,11 +48,15 @@ class Project(db.Model):
 
     @property
     def created(self):
-        return local_time(self.created_at)
+        return local_time(self.created_at).strftime("%b %d %Y, %H:%M:%S")
 
     @property
     def updated(self):
-        return local_time(self.updated_at)
+        return local_time(self.updated_at).strftime("%b %d %Y, %H:%M:%S")
+
+    @property
+    def project_owner(self):
+        return self.owner[0].full_name
 
     def collaborator_token(self, user, expires=7):
         return jwt.encode(
@@ -144,18 +148,16 @@ class Folder(db.Model):
                         viewonly=True)
 
     @property
-    def children_to_json(self):
-        children = [{'id': child.id.hex, 'name':child.foldername} for child in self.children]
-        return children
+    def children_to_list_dict(self):
+        return  [{'id': child.id.hex, 'name':child.foldername} for child in self.children]
 
     @property
-    def files_to_json(self):
-        files = [{'id': file.id.hex, 'name':file.filename} for file in self.files]
-        return files
+    def files_to_list_dict(self):
+        return [{'id': file.id.hex, 'name':file.filename} for file in self.files]
 
     def toJSON(self):
-        children = self.children_to_json
-        files = self.files_to_json
+        children = self.children_to_list_dict
+        files = self.files_to_list_dict
         return json.dumps({
             'id': self.id.hex,
             'name': self.foldername,
@@ -168,7 +170,7 @@ class Folder(db.Model):
             return False
         return not any(filter(lambda folder: folder.foldername == foldername, self.children))
 
-    def is_valid_fille(self, filename):
+    def is_valid_file(self, filename):
         if not filename:
             return False
         return not any(filter(lambda file: file.filename == filename, self.files))

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <link rel="stylesheet"
+    href="{{ url_for('static', filename='styles/tagger.css') }}">
+  <link rel="stylesheet"
+    href="{{ url_for('.static', filename='styles/collabs.css') }}">
+{% endblock header %}
+
+{% block content %}
+  {% include '_project_details.html' %}
+{% endblock content %}
+
+{% block customjs %}
+  <script src="{{ url_for('static', filename='js/tagger.js') }}"></script>
+  <script src="{{ url_for('.static', filename='js/collabs.js') }}"></script>
+{% endblock customjs %}

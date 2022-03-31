@@ -78,7 +78,7 @@ def show_project(project_id):
                 else:
                     flash(f'{email!r} not found.', category='danger')
 
-        return render_template('project.html',
+        return render_template('show.html',
                                title=project.project_name,
                                project=project,
                                collab_form=collab_form,
@@ -158,13 +158,15 @@ def add_collaborator(token):
             db.session.commit()
 
             flash(f'Great! You are now collaborating with {project.project_name!r}', category="success")
+            return redirect(url_for('projects.show_project', project_id=project_id))
         else:
             raise Exception
 
     except Exception:
         flash('Expired/invalid access token!', category='danger')
 
-    return redirect(url_for('home.index'))
+    return redirect(url_for('projects.all_projects'))
+
 
 
 @projects.route('project/<uuid:project_id>/data/<folder_id>')
