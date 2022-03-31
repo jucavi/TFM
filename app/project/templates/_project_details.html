@@ -1,5 +1,5 @@
-<section  class="row" id="left_column">
-  <div class="col-3">
+<section id="left_content" class="col-3" >
+  <div>
     <div class="d-flex flex-column">
       <h2>{{ project.project_name|title }}</h2>
       <small class="sm-font">Created: {{ project.created }}</small>
@@ -30,7 +30,7 @@
 
           {% if current_user in project.owner %}
             {% from "_formhelpers.html" import render_field %}
-            <form id="add_collabs" method='POST' class="form-control">
+            <form id="add_collabs" method='POST'>
               {{ collab_form.csrf_token }}
               {{ render_field(collab_form.collabs) }}
 
@@ -42,6 +42,9 @@
             </form>
           {% endif %}
         </div>
+      </section>
+      <section id="current_folder">
+        
       </section>
     </div>
   </div>

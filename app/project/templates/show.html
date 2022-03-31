@@ -8,7 +8,10 @@
 {% endblock header %}
 
 {% block content %}
-  {% include '_project_details.html' %}
+  <div id="project_container" class="row">
+    {% include '_project_details.html' %}
+    {% include '_project_content.html' %}
+  </div>
 {% endblock content %}
 
 {% block customjs %}

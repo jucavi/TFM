@@ -1,0 +1,24 @@
+#hidden_elements {
+    display: none;
+}
+
+.tags-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.tag {
+    background-color: #98c1d9;
+    border-radius: .5em;
+    color: #284b6a;
+    font-size: .8rem;
+    margin-bottom: .5rem;
+    margin-right: .5rem;
+    padding: .2rem .5rem;
+}
+
+.remove-tag {
+    cursor: pointer;
+    margin-left: 5px;
+}

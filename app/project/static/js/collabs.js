@@ -1,20 +1,24 @@
 const collabsList = document.querySelector('#collabs');
 const form = document.querySelector('#add_collabs');
 
-form.addEventListener('submit', function (event) {
+form.addEventListener('submit', function () {
   // event.preventDefault();
   const collabs = document.querySelectorAll('.tag');
 
   for (let i = 0; i < collabs.length; i++) {
-    const input = document.createElement('input');
+    const value = collabs[i].getAttribute('tag-data')
 
-    input.setAttribute('id', `collabs-${i}`);
-    input.setAttribute('name', `collabs-${i}`);
-    input.setAttribute('value', collabs[i].innerText);
+    if (value) {
+      const input = document.createElement('input');
 
-    const li = document.createElement('li');
-    li.append(input);
+      input.setAttribute('id', `collabs-${i}`);
+      input.setAttribute('name', `collabs-${i}`);
+      input.setAttribute('value', value);
 
-    collabsList.append(li);
+      const li = document.createElement('li');
+      li.append(input);
+
+      collabsList.append(li);
+    }
   }
 });
