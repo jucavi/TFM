@@ -4,6 +4,7 @@ const form = document.querySelector('#add_collabs');
 form.addEventListener('submit', function () {
   // event.preventDefault();
   const collabs = document.querySelectorAll('.tag');
+  console.log(collabs)
 
   for (let i = 0; i < collabs.length; i++) {
     const value = collabs[i].getAttribute('tag-data')

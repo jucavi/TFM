@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from app.project.forms import NewProjectForm, EditProjectForm, AddCollabForm, UploadFileForm
 from app.auth.models import User
 from app.project.models import Project, Team, Folder, File, FolderContent
-from app.helpers.mail import send_project_invitation
+from app.helpers.mail import send_email, send_project_invitation
 from app import db
 import json
 from datetime import datetime
@@ -64,11 +64,15 @@ def show_project(project_id):
     emails = {'elements': [user.email for user in User.query.all() if user != current_user]}
 
     if project in current_user.projects:
-        root = project.root_folder
+        folder = project.root_folder
 
         if collab_form.validate_on_submit():
+            print('send')
+            print(collab_form.collabs.data)
             for email in collab_form.collabs.data:
+                print(email)
                 collab = User.query.filter_by(email=email).first()
+                print(collab)
                 if collab:
                     if collab not in project.collaborators:
                         send_project_invitation(project, collab)
@@ -83,7 +87,7 @@ def show_project(project_id):
                                project=project,
                                collab_form=collab_form,
                                hidden_elements=json.dumps(emails),
-                               root=root)
+                               folder=folder)
 
 
     flash('No project found!', category='warning')
@@ -183,7 +187,7 @@ def show_folder_content(project_id, folder_id):
 
 @projects.route('project/<uuid:project_id>/folder/<folder_id>', methods=['PUT', 'POST', 'DELETE'])
 @login_required
-def new_folder(project_id, folder_id):
+def op_folder(project_id, folder_id):
     project = Project.query.get_or_404(project_id)
     folder = Folder.query.get_or_404(folder_id)
     name = request.form.get('name')
@@ -191,18 +195,22 @@ def new_folder(project_id, folder_id):
     if project.has_access(current_user, folder):
         if request.method == 'DELETE' and folder.id != project.root_folder.id:
             db.session.delete(folder)
+            msg = 'Successfully deleted.'
+
 
         elif folder.is_valid_folder(name):
             if request.method == 'POST':
                 db.session.add(Folder(foldername=name, project=project, parent=folder))
+                msg = 'Successfully created.'
 
             elif request.method == 'PUT' and folder.id != project.root_folder.id:
                 folder.foldername = name
+                msg = 'Successfully renamed.'
         else:
             return {'success': False, 'msg': 'Invalid name.' }
 
         db.session.commit()
-        return {'success': True}
+        return {'success': True, 'msg': msg}
 
     return {'success': False, 'msg': 'Access denied.' }
 

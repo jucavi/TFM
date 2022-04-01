@@ -144,24 +144,44 @@ tr:focus-within {
     font-size: 0.7em;
 }
 
-#right_content {
+#right_content, #current_folder {
     background-color:#f7f7f7;
+    border-radius: .4em;
+    border: 1px solid #d8d7d7;
+}
+
+.icon {
+    cursor: pointer;
 }
 
 @media screen and (max-width: 920px) {
-    #project_container {
+    html, body, main {
+        height: 100%;
         display: flex;
         flex-direction: column;
-        height: 100%;
     }
 
-    #project_team {
+    #left_content {
         display: flex;
         flex-direction: row;
-        height: 100%;
+        width: 100%;
+        justify-content: space-between;
+        align-items: center
     }
 
-    #left_content, #right_content {
+    #right_content {
         width: 100%;
+        min-height: 50%;
+    }
+
+    #current_folder {
+        margin-right: 5%;
+    }
+
+}
+
+@media (max-width: 780px) {
+    .icon {
+        font-size: .8rem;
     }
 }

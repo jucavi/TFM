@@ -12,9 +12,12 @@
     {% include '_project_details.html' %}
     {% include '_project_content.html' %}
   </div>
+
+  {% include 'common/_folder_modal.html' %}
 {% endblock content %}
 
 {% block customjs %}
   <script src="{{ url_for('static', filename='js/tagger.js') }}"></script>
   <script src="{{ url_for('.static', filename='js/collabs.js') }}"></script>
+  <script src="{{ url_for('.static', filename='js/dataset_ops.js') }}"></script>
 {% endblock customjs %}

@@ -1,11 +1,10 @@
 <section id="left_content" class="col-3" >
-  <div>
-    <div class="d-flex flex-column">
+    <div id="project_team" class="d-flex flex-column">
       <h2>{{ project.project_name|title }}</h2>
       <small class="sm-font">Created: {{ project.created }}</small>
       <small class="sm-font">Last update: {{ project.updated }}</small>
 
-      <section id="project_team">
+      <div>
         <div class="d-flex flex-column">
           <h4 class="mt-3">Owner</h4>
           <div class="ms-3 d-flex flex-column">
@@ -42,10 +41,20 @@
             </form>
           {% endif %}
         </div>
-      </section>
-      <section id="current_folder">
-        
-      </section>
+      </div>
     </div>
-  </div>
+    <div id="current_folder"  project_id="{{ project.id }}" folder_id="{{ folder.id }}">
+      <div class="d-flex flex-column align-items-center shadow-sm p-3">
+        <small class="text-center">Current Folder</small>
+        <div class="icon">
+          <i class="fa-solid fa-folder fa-8x"></i>
+        </div>
+        <small id="current_folder_name" class="text-center pt-0 pb-2">{{ folder.foldername }}</small>
+        <div class="btn-group btn-group-sm" role="group">
+          <a id="new_folder" href="/{{ folder.id }}" class="btn link-btn  btn-font"><i class="fa-solid fa-plus"></i></a>
+          <a id="rename_folder" href="/{{ folder.id }}" class="btn link-btn  btn-font"><i class="fa-solid fa-pen-to-square"></i></a>
+          <a id="delete_folder" href="/{{ folder.id }}" class="btn link-btn  btn-font"><i class="fa-solid fa-trash-can"></i></a>
+        </div>
+      </div>
+    </div>
 </section>
