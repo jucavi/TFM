@@ -77,7 +77,7 @@ def show_project(project_id):
                 if collab:
                     if collab not in project.collaborators:
                         send_project_invitation(project, collab)
-                        flash(f'Invitation sed to {email!r}.', category='success')
+                        flash(f'Invitation send to {email!r}.', category='success')
                     else:
                         flash(f'{email!r} already collaborate.', category='info')
                 else:

@@ -36,7 +36,7 @@
               {% include 'common/_tagger.html' %}
 
               <div class="pt-1 mb-4">
-                {{ collab_form.submit(class='btn btn-bg btn-font') }}
+                <button  type="submit" class="btn link-btn  btn-font"><i class="fa-solid fa-person-circle-plus"></i></button>
               </div>
             </form>
           {% endif %}
@@ -51,9 +51,9 @@
         </div>
         <small id="current_folder_name" class="text-center pt-0 pb-2">{{ folder.name }}</small>
         <div class="btn-group btn-group-sm" role="group">
-          <a id="new_folder" href="{{ folder.id }}" class="btn link-btn  btn-font"><i class="fa-solid fa-plus"></i></a>
-          <a id="rename_folder" href="{{ folder.id }}" class="btn link-btn  btn-font"><i class="fa-solid fa-pen-to-square"></i></a>
-          <a id="delete_folder" href="{{ folder.id }}" class="btn link-btn  btn-font"><i class="fa-solid fa-trash-can"></i></a>
+          <button id="new_folder" class="btn link-btn  btn-font"><i class="fa-solid fa-folder-plus"></i></button>
+          <button id="rename_folder" class="btn link-btn  btn-font"><i class="fa-solid fa-pen-to-square"></i></button>
+          <button id="delete_folder" class="btn link-btn  btn-font"><i class="fa-solid fa-trash-can"></i></button>
         </div>
       </div>
     </div>

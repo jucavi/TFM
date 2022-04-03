@@ -95,7 +95,9 @@ deleteConfirmation.addEventListener('click', function (event) {
       const { success, msg, category } = response.data;
       modalDelete.hide();
       flashMessage(msg, category);
-      refreshFolderContent(folderId);
+      if (success) {
+        refreshFolderContent(folderId);
+      }
     })
     .catch(function (error) {
       console.log(error);
