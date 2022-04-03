@@ -1,23 +1,27 @@
 <section id="right_content" class="col-9 shadow-sm">
   <div class="operations">
     <div class="btn-group btn-group-sm mt-2" role="group">
-      <a id='back_folder' href="{{ url_for('projects.op_folder', project_id=project.id, folder_id=folder.id) }}" class="btn link-btn  btn-font"><i class="fa-solid fa-arrow-left-long"></i></a>
+      <button id='back_folder' class="btn link-btn  btn-font"><i class="fa-solid fa-arrow-left-long"></i></button>
     </div>
   </div>
+  <div class="ms-3">
+      <div id="children"  class="row m-1">
 
-  <div id="children">
-    <div class="d-flex mt-1">
-      {% for child in folder.children|sort(attribute='folder_name') %}
-        <div class="d-flex flex-column align-items-center shadow-sm p-3 mt-3 me-3"
-          project_id="{{ project.id }}" folder_id="{{ child.id }}">
+        <div class="d-flex flex-column align-items-center shadow-sm mx-2 my-3 col-2 folder-shape"
+          project_id="{{ project.id }}" folder_id="">
           <div class="icon">
             <i class="fa-solid fa-folder fa-4x"></i>
           </div>
-          <small class="text-center">{{ child.foldername }}</small>
+          <small class="text-center"></small>
         </div>
-      {% endfor %}
+
+        <div
+          class="d-flex flex-column align-items-center shadow-sm mx-2 my-3 col-2 file-shape"
+          project_id="{{ project.id }}" file_id="">
+          <div class="icon">
+            <i class="fa-solid fa-file fa-4x"></i>
+          </div>
+          <small class="text-center"></small>
+        </div>
     </div>
-  </div>
-  <div id="files">
-  </div>
 </section>

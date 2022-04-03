@@ -1,3 +1,4 @@
+from unicodedata import category
 from flask import Blueprint, flash, render_template, redirect, url_for, request
 from flask_login import login_required, current_user
 from app.project.forms import NewProjectForm, EditProjectForm, AddCollabForm, UploadFileForm
@@ -87,7 +88,7 @@ def show_project(project_id):
                                project=project,
                                collab_form=collab_form,
                                hidden_elements=json.dumps(emails),
-                               folder=folder)
+                               folder=folder.to_dict)
 
 
     flash('No project found!', category='warning')
@@ -173,46 +174,66 @@ def add_collaborator(token):
 
 
 
-@projects.route('project/<uuid:project_id>/data/<folder_id>')
+@projects.route('project/<uuid:project_id>/content/<folder_id>')
 @login_required
-def show_folder_content(project_id, folder_id):
+def js_folder_content(project_id, folder_id):
     project = Project.query.get_or_404(project_id)
 
     if project in current_user.projects:
         folder = Folder.query.get_or_404(folder_id)
-        return folder.toJSON()
+        return {'success': True, 'msg': 'Ok', 'data': folder.to_dict}
 
-    return {'success': False, 'msg': 'No project found.'}
+    return {'success': False, 'msg': 'No project found.', 'data': {}}
 
 
-@projects.route('project/<uuid:project_id>/folder/<folder_id>', methods=['PUT', 'POST', 'DELETE'])
+@projects.route('project/<uuid:project_id>/folder/<folder_id>', methods=['GET', 'PUT', 'POST', 'DELETE'])
 @login_required
-def op_folder(project_id, folder_id):
+def js_response_folder_ops(project_id, folder_id):
     project = Project.query.get_or_404(project_id)
     folder = Folder.query.get_or_404(folder_id)
     name = request.form.get('name')
+    res =  {'success': False, 'msg': 'Access denied.', 'category': 'danger'}
 
     if project.has_access(current_user, folder):
-        if request.method == 'DELETE' and folder.id != project.root_folder.id:
-            db.session.delete(folder)
-            msg = 'Successfully deleted.'
+        if request.method == 'GET':
+            pass
 
+        if request.method == 'DELETE':
+            if folder.id != project.root_folder.id:
+                db.session.delete(folder)
+                res['success'] = 'True'
+                res['msg'] = 'Successfully deleted.'
+                res['category'] = 'success'
+                db.session.commit()
+                return res
+            else:
+                res['msg'] = 'Unable to delete root folder.'
+                return res
 
-        elif folder.is_valid_folder(name):
+        if folder.is_valid_folder(name):
             if request.method == 'POST':
                 db.session.add(Folder(foldername=name, project=project, parent=folder))
-                msg = 'Successfully created.'
+                res['success'] = 'True'
+                res['msg'] = 'Successfully created.'
+                res['category'] = 'success'
+                db.session.commit()
+                return res
 
-            elif request.method == 'PUT' and folder.id != project.root_folder.id:
+            if request.method == 'PUT' and folder.id != project.root_folder.id:
                 folder.foldername = name
-                msg = 'Successfully renamed.'
+                res['success'] = 'True'
+                res['msg'] = 'Successfully renamed.'
+                res['category'] = 'success'
+                db.session.commit()
+                return res
+            else:
+                res['msg'] = 'Unable to rename root folder.'
+                return res
         else:
-            return {'success': False, 'msg': 'Invalid name.' }
+            res['msg'] = 'Folder name already exists.'
+            return res
 
-        db.session.commit()
-        return {'success': True, 'msg': msg}
-
-    return {'success': False, 'msg': 'Access denied.' }
+    return res
 
 
 

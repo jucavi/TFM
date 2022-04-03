@@ -73,6 +73,15 @@ hr {
     text-decoration: none;
 }
 
+.btn-danger-bg:hover, .link-danger-btn:hover {
+    color: #3d5a80 !important;
+}
+
+.btn-danger-bg, .linkdanger--btn {
+    background-color: #ee6c4d;
+    color: white;
+}
+
 .text-muted {
     color: #284b6a !important;
 }
@@ -152,6 +161,10 @@ tr:focus-within {
 
 .icon {
     cursor: pointer;
+}
+
+.modal-content {
+   background-color: #e7ebf3;
 }
 
 @media screen and (max-width: 920px) {

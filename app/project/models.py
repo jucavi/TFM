@@ -148,22 +148,24 @@ class Folder(db.Model):
                         viewonly=True)
 
     @property
-    def children_to_list_dict(self):
+    def children_to_dict(self):
         return  [{'id': child.id.hex, 'name':child.foldername} for child in self.children]
 
     @property
-    def files_to_list_dict(self):
+    def files_to_dict(self):
         return [{'id': file.id.hex, 'name':file.filename} for file in self.files]
 
-    def toJSON(self):
-        children = self.children_to_list_dict
-        files = self.files_to_list_dict
-        return json.dumps({
+    @property
+    def to_dict(self):
+        children = self.children_to_dict
+        files = self.files_to_dict
+        return {
             'id': self.id.hex,
             'name': self.foldername,
+            'parent_id': self.parent_id.hex if self.parent_id else None,
             'children': children,
             'files': files
-        }, indent=4)
+        }
 
     def is_valid_folder(self, foldername):
         if not foldername:
