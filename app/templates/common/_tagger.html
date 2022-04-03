@@ -1,6 +1,12 @@
 <div id="hidden_elements">{{ hidden_elements }}</div >
 <div class="tags-wrapper d-flex flex-column" id="tags_wrapper">
-  <input type="text" list="elements" id="tag_input" class="form-control" placeholder="Add email and press enter..." />
+  <div class="d-flex">
+    <input type="text" list="elements" id="tag_input" class="form-control" placeholder="Collaborator email" />
+    <div class="ps-1">
+      <button id="add_collab" class="btn link-btn  btn-font"><i
+          class="fa-solid fa-person-circle-plus"></i></button>
+    </div>
+  </div>
   <datalist id="elements">
   </datalist>
   <div class="tags-container flex-row mt-2" id="tags_container">

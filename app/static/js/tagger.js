@@ -1,5 +1,6 @@
 const hiddenElemetsDiv = document.querySelector('#hidden_elements');
 const input = document.querySelector('#tag_input');
+const addCollabTagBtn = document.querySelector('#add_collab')
 const tagsContainer = document.querySelector('#tags_container');
 let tags = new Set();
 
@@ -69,6 +70,17 @@ input.addEventListener('keyup', function (e) {
     this.value = '';
   }
 });
+
+addCollabTagBtn.addEventListener('click', function (e) {
+  e.preventDefault();
+  const collab = input.value;
+  if (collab) {
+    tags.add(collab);
+    addTags(tags);
+    input.value = '';
+  }
+})
+
 
 // remove tag
 const handleRemoveTag = function (event) {

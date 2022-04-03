@@ -1,10 +1,13 @@
 const collabsList = document.querySelector('#collabs');
 const form = document.querySelector('#add_collabs');
 
-form.addEventListener('submit', function () {
-  // event.preventDefault();
+form.addEventListener('submit', function (event) {
   const collabs = document.querySelectorAll('.tag');
-  console.log(collabs)
+
+  // event.preventDefault();
+  while (collabsList.lastChild) {
+    collabsList.removeChild(collabsList.lastChild);
+  }
 
   for (let i = 0; i < collabs.length; i++) {
     const value = collabs[i].getAttribute('tag-data')
