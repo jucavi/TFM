@@ -159,13 +159,13 @@ async function refreshFolderContent(folderId) {
     const { name, id, parent_id, children, files } = folder.data.data;
     refreshCurrentFolder(name, id, parent_id);
 
-    for (let child of children) {
+    for (let child of children.sort((a, b) => (a.name > b.name ? 1 : -1))) {
       let folder = addChild(`${child.name}`, `${child.id}`, true);
       folder.addEventListener('click', openFolder);
       folderContentContainer.append(folder);
     }
 
-    for (let file of files) {
+    for (let file of files.sort((a, b) => (a.name > b.name ? 1 : -1))) {
       let f = addFile(`${file.name}`, `${file.name}`, true);
       folderContentContainer.appendChild(f);
     }
@@ -189,7 +189,7 @@ sendButtonModal.addEventListener('click', async function (event) {
 
         if (success) {
           modalFolder.hide();
-          flashMessage(msg, category);
+          // flashMessage(msg, category);
 
           const folderId = currentFolder.getAttribute('folder_id');
           const parentId = currentFolder.getAttribute('parent_id');

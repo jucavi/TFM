@@ -7,7 +7,6 @@ from datetime import datetime, timedelta, timezone
 from flask import current_app
 import jwt
 from app.helpers.date import local_time
-import json
 
 
 class Project(db.Model):
