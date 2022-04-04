@@ -1,8 +1,9 @@
 <table class="table table-hover">
   <thead>
     <tr>
-      <th scope="col">Read</th>
+      <th scope="col"></th>
       <th scope="col">From</th>
+      <th scope="col">Subject</th>
       <th scope="col">Body</th>
       <th scope="col">At</th>
     </tr>
@@ -19,7 +20,8 @@
           <i class="fa-solid fa-brackets-square"></i>
         {% endif %}
       </td>
-      <td class="col-2">{{message.author.username}}</td>
+      <td class="col-1">{{message.author.username}}</td>
+      <td class="col-2">{{message.subject}}</td>
 
       <td class="col-7">
         {% if message.body|length > 50 %}
@@ -29,8 +31,8 @@
         {% endif %}
       </td>
       <td class="d-flex justify-content-between">{{message.received}}<a
-          href="{{ url_for('message.delete', message_id=message.id) }}"
-          class="btn btn-sm link-btn btn-font"><i
+          href="{{ url_for('message.js_delete', message_id=message.id) }}"
+          class="btn btn-sm link-btn btn-font row_delete_link"><i
             class="fa-solid fa-trash-can"></i></a></td>
     </tr>
     {% endfor %}

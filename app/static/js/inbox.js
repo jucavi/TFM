@@ -1,5 +1,5 @@
 try {
-  const url = document.querySelector('#inbox_messages').href + '__inbox_messages';
+  const url = document.querySelector('#inbox_messages').href + '/__inbox_messages';
 
   window.onload = async function () {
       try {

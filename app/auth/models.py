@@ -107,11 +107,11 @@ class User(UserMixin, db.Model):
 
     @property
     def out_messages(self):
-        return Message.query.filter_by(author=self).filter(Message.deleted_by_author == False)
+        return Message.query.filter_by(author=self).filter(Message.deleted_by_author == False).order_by(Message.timestamp.desc()).all()
 
     @property
     def in_messages(self):
-        return Message.query.filter_by(recipient=self).filter(Message.deleted_by_recipient == False)
+        return Message.query.filter_by(recipient=self).filter(Message.deleted_by_recipient == False).order_by(Message.timestamp.desc()).all()
 
 
     def __repr__(self):

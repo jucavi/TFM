@@ -63,13 +63,13 @@ def send_message():
                            hidden_elements=json.dumps(emails))
 
 
-@message.route('/')
+@message.route('/inbox')
 @login_required
 def inbox_messages():
     current_user.last_message_read_time = datetime.utcnow()
     db.session.commit()
 
-    messages = current_user.messages_received.order_by(Message.timestamp.desc())
+    messages = current_user.in_messages
     return render_template('messages.html',
                            messages=messages,
                            title='Inbox',
@@ -97,21 +97,36 @@ def show_message(message_id):
 @message.route('/sent')
 @login_required
 def sent():
-    messages = current_user.messages_sent.order_by(Message.timestamp.desc())
+    messages = current_user.out_messages
     return render_template('messages.html',
                            messages=messages,
                            title='Messages Sent',
                            partial='_sent.html')
 
 
-@message.route('/delete/<message_id>')
+@message.route('/delete/<message_id>', methods=['DELETE'])
 @login_required
-@belongs_to_user
-def delete(message_id):
+def js_delete(message_id):
     message = Message.query.get_or_404(message_id)
-    return 'deleted'
+    if (message in current_user.messages_sent):
+        message.deleted_by_author = True
+        db.session.add(message)
+        db.session.commit()
+
+    elif (message in current_user.messages_received):
+        message.deleted_by_recipient = True
+        db.session.add(message)
+        db.session.commit()
+    else:
+        abort(403)
+
+    if message.deleted_by_author and message.deleted_by_recipient:
+        db.session.delete(message)
+
+    db.session.commit()
+    return {'success': True, 'msg': 'Ok'}
 
 
-@message.route('/__inbox_messages')
+@message.route('inbox/__inbox_messages')
 def __inbox_messages():
     return {'inbox_messages_count': current_user.inbox_messages}
