@@ -1,32 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <table class="table table-striped">
-      <thead>
-        <tr>
-          <th scope="col">From</th>
-          <th scope="col">To</th>
-          <th scope="col">Body</th>
-          <th scope="col">Body</th>
-          <th scope="col">Read</th>
-        </tr>
-      </thead>
-    <tbody>
-      {%  for message in messages %}
-        <tr>
-          {# TODO create a partial for sent and inbox #}
-          <td>{{message.author.username}}<a href="{{ url_for('message.show_message', message_id=message.id) }}"></a></td>
-          <td>{{message.recipient.username}}<a href="{{ url_for('message.show_message', message_id=message.id) }}"></a></td>
-
-          <td>{{message.body[:100]}}<a href="{{ url_for('message.show_message', message_id=message.id) }}"></a></td>
-          <td>{{message.received}}<a href="{{ url_for('message.show_message', message_id=message.id) }}"></a></td>
-
-          {# TODO in inbox add bg-color if read #}
-          <td>{{message.read}}<a href="{{ url_for('message.show_message', message_id=message.id) }}"></a></td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  {% endblock content %}
+  <div class="container border rounded p-5">
+    {% include partial %}
+  </div>
+{% endblock content %}
 
 
+{% block customjs %}
+  <script src="{{ url_for('.static', filename='js/row_link.js') }}"></script>
+{% endblock customjs %}

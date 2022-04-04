@@ -132,11 +132,11 @@ a, a:visited, a:active {
     font-weight: 200;
 }
 
-tr:hover,
+/* tr:hover,
 tr:focus-within {
   background: #e5e5e5;
   outline: none;
-}
+} */
 
 .card{
     /* box-shadow: 0 0 5px 0 rgba(22, 22, 26, .25); */
@@ -198,3 +198,6 @@ tr:focus-within {
         font-size: .8rem;
     }
 }
+
+tr > td:last-child > a {visibility:hidden;}
+tr:hover > td:last-child > a {visibility:visible;}
