@@ -199,3 +199,7 @@ tr:hover > td:last-child > a {visibility:visible;}
 .readed-tr-bg {
     background-color: #e9edf2;
 }
+
+input[type="file"] {
+    display: none;
+}
