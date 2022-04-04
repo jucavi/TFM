@@ -35,6 +35,9 @@ class Message(db.Model):
     def created(self):
         return local_time(self.timestamp)
 
+    @property
+    def date_time_format(self):
+        return local_time(self.timestamp).strftime('%d %b %Y, %H:%M')
 
     def __repr__(self):
         return f'<Message {self.subject}>'

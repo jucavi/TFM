@@ -1,11 +1,18 @@
-<section>
-  {% if message.read  %}
-    <div style="background-color: gray;">
-  {% else %}
-  <div>
-  {% endif%}
-    From: {{ message.author.username }}
-    Subject: {{ message.subject }}
-    {{ message.body }}
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container">
+    <h3 class="my-3">{{ message.subject }}</h3>
+    <div class="d-flex justify-content-between my-3">
+      <div class="d-flex align-items-center">
+        <strong>{{ message.author.full_name }}</strong>
+        <small class="ps-2">&lt;{{ message.author.email }}&gt;</small>
+      </div>
+      <small>{{ message.date_time_format }}</small>
+    </div>
+    <hr>
+    <div class="container border rounded p-5">
+      {{ message.body }}
+    </div>
   </div>
-</section>
+{% endblock content %}

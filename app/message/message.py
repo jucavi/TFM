@@ -80,18 +80,14 @@ def inbox_messages():
 @login_required
 @belongs_to_user
 def show_message(message_id):
-    message = Message.query.get(message_id)
-    if message:
-        message.read = True
-        db.session.add(message)
-        db.session.commit()
+    message = Message.query.get_or_404(message_id)
 
-        return render_template('show_message.html',
-                           message=message,
-                           title='Message')
+    message.read = True
+    db.session.add(message)
+    db.session.commit()
 
-    flash('No message found.')
-    return redirect(request.referrer)
+    return render_template('show_message.html',
+                        message=message)
 
 
 @message.route('/sent')

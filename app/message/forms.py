@@ -8,5 +8,5 @@ class MessageForm(FlaskForm):
     subject = StringField('Subject',
                           validators=[DataRequired(message='Subject required.'), Length(min=0, max=100, message='No more than 100 characters')])
     body = TextAreaField('Body',
-                            validators=[DataRequired(message='Empty message.')])
+                         validators=[DataRequired(message='Empty message.')])
     submit = SubmitField('Submit')

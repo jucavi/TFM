@@ -1,4 +1,4 @@
-<table class="table table-hover">
+<table class="table align-middle table-hover table-responsive">
   <thead>
     <tr>
       <th scope="col"></th>
@@ -13,7 +13,7 @@
     <tr
       data-href="{{ url_for('message.show_message', message_id=message.id) }}"
       class="show-delete {{ 'readed-tr-bg' if message.read else '' }}">
-      <td class="col-1">
+      <td>
         {% if message.read %}
           <i class="fa-solid fa-square-check"></i>
         {% else %}
@@ -21,7 +21,9 @@
         {% endif %}
       </td>
       <td class="col-1">{{message.author.username}}</td>
-      <td class="col-2">{{message.subject}}</td>
+      <td class="col-2">
+        {{ message.subject}}
+      </td>
 
       <td class="col-7">
         {% if message.body|length > 50 %}
@@ -30,7 +32,7 @@
           {{ message.body }}
         {% endif %}
       </td>
-      <td class="d-flex justify-content-between">{{message.received}}<a
+      <td class="d-flex justify-content-between align-items-center">{{message.received}}<a
           href="{{ url_for('message.js_delete', message_id=message.id) }}"
           class="btn btn-sm link-btn btn-font row_delete_link"><i
             class="fa-solid fa-trash-can"></i></a></td>
