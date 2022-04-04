@@ -20,6 +20,7 @@ class Message(db.Model):
     body = Column(Text())
     timestamp = Column(DateTime, index=True, default=datetime.utcnow)
     read = Column(Boolean(), default=False)
+    deleted = Column(Boolean(), default=False)
 
     @property
     def received(self):
