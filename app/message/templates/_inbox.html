@@ -1,0 +1,38 @@
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">Read</th>
+      <th scope="col">From</th>
+      <th scope="col">Body</th>
+      <th scope="col">At</th>
+    </tr>
+  </thead>
+  <tbody>
+    {%  for message in messages %}
+    <tr
+      data-href="{{ url_for('message.show_message', message_id=message.id) }}"
+      class="show-delete {{ 'readed-tr-bg' if message.read else '' }}">
+      <td class="col-1">
+        {% if message.read %}
+          <i class="fa-solid fa-square-check"></i>
+        {% else %}
+          <i class="fa-solid fa-brackets-square"></i>
+        {% endif %}
+      </td>
+      <td class="col-2">{{message.author.username}}</td>
+
+      <td class="col-7">
+        {% if message.body|length > 50 %}
+          {{ message.body[:50] }}...
+        {% else %}
+          {{ message.body }}
+        {% endif %}
+      </td>
+      <td class="d-flex justify-content-between">{{message.received}}<a
+          href="{{ url_for('message.delete', message_id=message.id) }}"
+          class="btn btn-sm link-btn btn-font"><i
+            class="fa-solid fa-trash-can"></i></a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

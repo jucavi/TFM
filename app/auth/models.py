@@ -103,7 +103,15 @@ class User(UserMixin, db.Model):
     @property
     def inbox_messages(self):
         last_read_time=self.last_message_read_time or datetime(2022, 1, 1)
-        return Message.query.filter_by(recipient=self).filter(Message.timestamp > last_read_time).count()
+        return Message.query.filter_by(recipient=self).filter(Message.timestamp > last_read_time, Message.deleted_by_author == False).count()
+
+    @property
+    def out_messages(self):
+        return Message.query.filter_by(author=self).filter(Message.deleted_by_author == False)
+
+    @property
+    def in_messages(self):
+        return Message.query.filter_by(recipient=self).filter(Message.deleted_by_recipient == False)
 
 
     def __repr__(self):

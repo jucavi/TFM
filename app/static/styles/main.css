@@ -132,12 +132,6 @@ a, a:visited, a:active {
     font-weight: 200;
 }
 
-/* tr:hover,
-tr:focus-within {
-  background: #e5e5e5;
-  outline: none;
-} */
-
 .card{
     /* box-shadow: 0 0 5px 0 rgba(22, 22, 26, .25); */
     box-shadow: 0 0 5px 0 rgba(61, 90, 128, .25);
@@ -201,3 +195,7 @@ tr:focus-within {
 
 tr > td:last-child > a {visibility:hidden;}
 tr:hover > td:last-child > a {visibility:visible;}
+
+.readed-tr-bg {
+    background-color: #e9edf2;
+}

@@ -22,7 +22,7 @@ def belongs_to_user(func):
         message = Message.query.get(message_id)
         if (message in current_user.messages_sent) or (message in current_user.messages_received):
             return func(*args, **kwargs)
-        abort(404)
+        abort(403)
     return wrapper
 
 
@@ -65,12 +65,15 @@ def send_message():
 
 @message.route('/')
 @login_required
-def all_messages():
+def inbox_messages():
     current_user.last_message_read_time = datetime.utcnow()
     db.session.commit()
 
     messages = current_user.messages_received.order_by(Message.timestamp.desc())
-    return render_template('messages.html', messages=messages)
+    return render_template('messages.html',
+                           messages=messages,
+                           title='Inbox',
+                           partial='_inbox.html')
 
 
 @message.route('/message/<uuid:message_id>')
@@ -95,7 +98,18 @@ def show_message(message_id):
 @login_required
 def sent():
     messages = current_user.messages_sent.order_by(Message.timestamp.desc())
-    return render_template('messages.html', messages=messages)
+    return render_template('messages.html',
+                           messages=messages,
+                           title='Messages Sent',
+                           partial='_sent.html')
+
+
+@message.route('/delete/<message_id>')
+@login_required
+@belongs_to_user
+def delete(message_id):
+    message = Message.query.get_or_404(message_id)
+    return 'deleted'
 
 
 @message.route('/__inbox_messages')
