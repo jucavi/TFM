@@ -28,6 +28,40 @@ const folderContentContainer = document.getElementById('children');
 // Back to parent
 const backButton = document.querySelector('#back_folder');
 
+// Files
+const inputElement = document.getElementById('file_upload');
+
+inputElement.addEventListener('change', handleFiles, false);
+async function handleFiles() {
+  const folderId = currentFolder.getAttribute('folder_id');
+  const fileList = this.files;
+  const url = `${baseURL}/${projectId}/files/${folderId}/upload`;
+
+  const formData = new FormData();
+  for (let f of fileList) {
+    formData.append('file', f);
+  }
+
+  try {
+    const { data } = await axios({
+      url: url,
+      method: 'POST',
+      data: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    
+    if (data.success) {
+      refreshFolderContent(folderId);
+    } else {
+      flashMessage(data.msg, data.category);
+    }
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 const removeChilds = (parent) => {
   while (parent.lastChild) {
     parent.removeChild(parent.lastChild);

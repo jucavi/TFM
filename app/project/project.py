@@ -228,7 +228,7 @@ def js_response_folder_ops(project_id, folder_id):
 
 
 
-@projects.route('project/<uuid:project_id>/<folder_id>/files')
+@projects.route('project/<uuid:project_id>/files/<folder_id>')
 @login_required
 def files(project_id, folder_id):
     project = Project.query.get_or_404(project_id)
@@ -248,36 +248,26 @@ def files(project_id, folder_id):
                            folder=folder)
 
 
-@projects.route('/project/<uuid:project_id>/<uuid:folder_id>/files/upload', methods=['POST'])
-def upload_files(project_id, folder_id):
+@projects.route('/project/<uuid:project_id>/files/<folder_id>/upload', methods=['POST'])
+def js_upload_files(project_id, folder_id):
     project = Project.query.get_or_404(project_id)
     folder = Folder.query.get_or_404(folder_id)
 
     try:
-        upload = request.files['file']
-        print(upload)
-        print(upload.mimetype)
-        print(upload.name)
-        print(upload.content_type)
-        print(upload.content_length)
-        print(upload.__sizeof__())
-        print(dir(upload))
-        name = upload.filename
-        data = upload.read()
-        if project.has_access(current_user, folder):
-            if folder.is_valid_file(name):
-                pass
-                # file = File(filename=name, data=data)
-                # FolderContent(folder=folder, file=file)
-                # db.session.add(file)
-                # db.session.commit()
-            else:
-                flash('Invalid name or file already exists.')
-        else:
-            flash('Access denied')
+        uploads = request.files.getlist('file')
+        for upload in uploads:
+            mimetype = upload.mimetype
+            filename = upload.filename
+            data = upload.read()
+            size = len(data)
+
+            if project.has_access(current_user, folder):
+                if folder.is_valid_file(filename):
+                    file = File(filename=filename, data=data, mimetype=mimetype, size=size)
+                    FolderContent(folder=folder, file=file)
+                    db.session.add(file)
+                    db.session.commit()
+        return {'success': True, 'msg': 'Upload all files.', 'category': 'success'}
     except Exception as e:
         print(e)
-
-    return redirect(url_for('projects.files',
-                            project_id=project_id,
-                            folder_id=folder.id))
+        return {'success': False, 'msg': e, 'category': 'danger'}
