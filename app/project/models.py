@@ -1,6 +1,6 @@
 from app import db
 from sqlalchemy_utils import UUIDType
-from sqlalchemy import Column, String, Text, DateTime, ForeignKey, Boolean, LargeBinary
+from sqlalchemy import Column, String, Text, DateTime, ForeignKey, Boolean, LargeBinary, Integer
 from sqlalchemy.orm import relationship, backref
 import uuid
 from datetime import datetime, timedelta, timezone
@@ -193,12 +193,16 @@ class File(db.Model):
 
     data = Column(LargeBinary)
 
+    size = Column(Integer())
+    
+    mimetype = Column(String(50))
+
     folders = relationship('Folder',
                            secondary='folder_content',
                            viewonly=True)
 
     def __repr__(self):
-        return f'<File: {self.filename}>'
+        return f'<File: {self.filename!r}, size: {self.size}, mimetype: {self.mimetype!r}>'
 
 
 class FolderContent(db.Model):
