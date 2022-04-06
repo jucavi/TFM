@@ -107,7 +107,7 @@ newFolder.addEventListener('click', function (event) {
   modalFolder.show();
 });
 
-renameFolder.addEventListener('click', function (event) {
+function renameFolderListener(event) {
   event.preventDefault();
   event.stopImmediatePropagation();
 
@@ -115,7 +115,9 @@ renameFolder.addEventListener('click', function (event) {
   folderNameInput.value = currentFolderName.innerText;
   sendButtonModal.innerText = 'Rename';
   modalFolder.show();
-});
+}
+
+renameFolder.addEventListener('click', renameFolderListener);
 
 const deleteConfirmation = document.querySelector('#delete_confirmation');
 deleteConfirmation.addEventListener('click', function (event) {
@@ -206,7 +208,7 @@ async function refreshFolderContent(folderId) {
   }
 }
 
-sendButtonModal.addEventListener('click', async function (event) {
+async function sendFolder(event) {
   const newName = folderNameInput.value;
 
   const formData = new FormData();
@@ -214,7 +216,7 @@ sendButtonModal.addEventListener('click', async function (event) {
   folderNameInput.value = '';
 
   if (newName !== '') {
-    const method = this.innerText === 'New' ? 'POST' : 'PUT';
+    const method = sendButtonModal.innerText === 'New' ? 'POST' : 'PUT';
     const result = folderResponse(method, formData);
 
     result
@@ -241,6 +243,13 @@ sendButtonModal.addEventListener('click', async function (event) {
       .catch(function (error) {
         console.log(error);
       });
+  }
+}
+
+sendButtonModal.addEventListener('click', sendFolder);
+folderNameInput.addEventListener('keypress', function (event) {
+  if (event.keyCode === 13) {
+    sendFolder(event)
   }
 });
 
