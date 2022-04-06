@@ -51,7 +51,7 @@ async function handleFiles() {
         'Content-Type': 'multipart/form-data',
       },
     });
-    
+
     if (data.success) {
       refreshFolderContent(folderId);
     } else {
@@ -200,7 +200,7 @@ async function refreshFolderContent(folderId) {
     }
 
     for (let file of files.sort((a, b) => (a.name > b.name ? 1 : -1))) {
-      let f = addFile(`${file.name}`, `${file.name}`, true);
+      let f = addFile(`${file.name}`, `${file.id}`, true);
       folderContentContainer.appendChild(f);
     }
   }

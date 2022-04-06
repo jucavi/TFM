@@ -196,6 +196,9 @@ a, a:visited, a:active {
 tr > td:last-child > a {visibility:hidden;}
 tr:hover > td:last-child > a {visibility:visible;}
 
+.file-shape > .rename-delete-ops  {visibility:hidden;}
+.file-shape:hover > .rename-delete-ops  {visibility:visible;}
+
 .readed-tr-bg {
     background-color: #e9edf2;
 }
