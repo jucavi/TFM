@@ -179,6 +179,8 @@ a, a:visited, a:active {
     #right_content {
         width: 100%;
         min-height: 50%;
+        margin-bottom: 5rem;
+        padding-bottom: 3rem;
     }
 
     #current_folder {

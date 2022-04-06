@@ -2,8 +2,8 @@
 let currentFolder = document.querySelector('#current_folder');
 const currentFolderName = document.querySelector('#current_folder_name');
 const newFolder = document.querySelector('#new_folder');
-const renameFolder = document.querySelector('#rename_folder');
-const deleteFolder = document.querySelector('#delete_folder');
+// const renameFolder = document.querySelector('#rename_folder');
+// const deleteFolder = document.querySelector('#delete_folder');
 
 const projectId = currentFolder.getAttribute('project_id');
 const folderId = currentFolder.getAttribute('folder_id');
@@ -14,11 +14,22 @@ const folderModal = document.querySelector('#FolderModal');
 const title = document.querySelector('#FolderModalLabel');
 const modalFolder = bootstrap.Modal.getOrCreateInstance(folderModal);
 const folderNameInput = document.querySelector('#folder_name');
-const sendButtonModal = document.querySelector('#send_folder');
+const sendButtonFolderModal = document.querySelector('#send_folder');
 
-// Delete Modal
-const deleteModal = document.querySelector('#deleteModal');
-const modalDelete = bootstrap.Modal.getOrCreateInstance(deleteModal);
+// Delete Folder Modal
+const deleteFolderModal = document.querySelector('#deleteFolderModal');
+const modalDeleteFolder =
+  bootstrap.Modal.getOrCreateInstance(deleteFolderModal);
+
+// File Modal
+const renameFileModal = document.querySelector('#FileModal');
+const modalRenameFile = bootstrap.Modal.getOrCreateInstance(renameFileModal);
+const sendButtonFileModal = document.querySelector('#send_file');
+const fileNameInput = document.querySelector('#file_name');
+
+// Delete File modal
+const deleteFileModal = document.querySelector('#deleteFileModal');
+const modalDeleteFile = bootstrap.Modal.getOrCreateInstance(deleteFileModal);
 
 // Folder content
 const folderShape = document.querySelector('.folder-shape');
@@ -35,7 +46,7 @@ inputElement.addEventListener('change', handleFiles, false);
 async function handleFiles() {
   const folderId = currentFolder.getAttribute('folder_id');
   const fileList = this.files;
-  const url = `${baseURL}/${projectId}/files/${folderId}/upload`;
+  const url = `${baseURL}/${projectId}/${folderId}/files/upload`;
 
   const formData = new FormData();
   for (let f of fileList) {
@@ -93,8 +104,8 @@ folderModal.addEventListener('shown.bs.modal', function (event) {
 });
 
 folderModal.addEventListener('hidden.bs.modal', function (event) {
-  const msgLI = document.querySelector('#modal_msg');
-  msgLI.textContent = '';
+  const folderMsgLi = document.querySelector('#folder_modal_msg');
+  folderMsgLi.textContent = '';
   folderNameInput.value = '';
 });
 
@@ -103,7 +114,7 @@ newFolder.addEventListener('click', function (event) {
   event.stopImmediatePropagation();
 
   title.innerText = 'New Folder';
-  sendButtonModal.innerText = 'New';
+  sendButtonFolderModal.innerText = 'New';
   modalFolder.show();
 });
 
@@ -113,14 +124,16 @@ function renameFolderListener(event) {
 
   title.innerText = 'Rename Folder';
   folderNameInput.value = currentFolderName.innerText;
-  sendButtonModal.innerText = 'Rename';
+  sendButtonFolderModal.innerText = 'Rename';
   modalFolder.show();
 }
 
-renameFolder.addEventListener('click', renameFolderListener);
+// renameFolder.addEventListener('click', renameFolderListener);
 
-const deleteConfirmation = document.querySelector('#delete_confirmation');
-deleteConfirmation.addEventListener('click', function (event) {
+const deleteFolderConfirmation = document.querySelector(
+  '#delete_folder_confirmation'
+);
+deleteFolderConfirmation.addEventListener('click', function (event) {
   event.stopImmediatePropagation();
   const result = folderResponse('DELETE');
 
@@ -129,7 +142,7 @@ deleteConfirmation.addEventListener('click', function (event) {
       const folderId = currentFolder.getAttribute('parent_id');
 
       const { success, msg, category } = response.data;
-      modalDelete.hide();
+      modalDeleteFolder.hide();
       flashMessage(msg, category);
       if (success) {
         refreshFolderContent(folderId);
@@ -140,10 +153,10 @@ deleteConfirmation.addEventListener('click', function (event) {
     });
 });
 
-deleteFolder.addEventListener('click', function (event) {
-  event.stopImmediatePropagation();
-  modalDelete.show();
-});
+// deleteFolder.addEventListener('click', function (event) {
+//   event.stopImmediatePropagation();
+//   modalDeleteFolder.show();
+// });
 
 const folderResponse = async function (method, data = null) {
   const folderId = currentFolder.getAttribute('folder_id');
@@ -151,7 +164,7 @@ const folderResponse = async function (method, data = null) {
   try {
     const res = await axios({
       method: method,
-      url: `${baseURL}/${projectId}/folder/${folderId}`,
+      url: `${baseURL}/${projectId}/folders/${folderId}`,
       data: data,
     });
 
@@ -208,7 +221,7 @@ async function refreshFolderContent(folderId) {
   }
 }
 
-async function sendFolder(event) {
+async function sendFolder() {
   const newName = folderNameInput.value;
 
   const formData = new FormData();
@@ -236,8 +249,8 @@ async function sendFolder(event) {
             refreshCurrentFolder(newName, folderId, parentId);
           }
         } else {
-          const msgLI = document.querySelector('#modal_msg');
-          msgLI.textContent = msg;
+          const folderMsgLi = document.querySelector('#folder_modal_msg');
+          folderMsgLi.textContent = msg;
         }
       })
       .catch(function (error) {
@@ -246,10 +259,10 @@ async function sendFolder(event) {
   }
 }
 
-sendButtonModal.addEventListener('click', sendFolder);
+sendButtonFolderModal.addEventListener('click', sendFolder);
 folderNameInput.addEventListener('keypress', function (event) {
   if (event.keyCode === 13) {
-    sendFolder(event)
+    sendFolder();
   }
 });
 
@@ -258,13 +271,149 @@ function addChild(name, folderId, clone = false) {
   child.setAttribute('folder_id', folderId);
   child.lastElementChild.innerText = name;
 
+  let linkBtns = child.querySelectorAll('button');
+  // linkBtns[0].addEventListener('click', renameFolderListener(folderId))
+
   return child;
+}
+
+function sendFile(event) {
+  const newName = fileNameInput.value;
+
+  const folderId = sendButtonFileModal.getAttribute('folder_id');
+  const fileId = sendButtonFileModal.getAttribute('file_id');
+
+  const url = `${baseURL}/${projectId}/${folderId}/files/${fileId}`;
+
+  const formData = new FormData();
+  formData.append('name', newName);
+
+  if (newName !== '') {
+    const method = 'PUT';
+    const result = fileResponse(url, method, formData);
+
+    result
+      .then(function (response) {
+        const { success, msg, category } = response.data;
+
+        if (success) {
+          fileNameInput.value = '';
+          modalRenameFile.hide();
+          // flashMessage(msg, category);
+
+          refreshFolderContent(folderId);
+        } else {
+          const fileMsgLi = document.querySelector('#file_modal_msg');
+          fileMsgLi.textContent = msg;
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+}
+
+sendButtonFileModal.addEventListener('click', sendFile);
+fileNameInput.addEventListener('keypress', function (event) {
+  if (event.keyCode === 13) {
+    sendFile(event);
+  }
+});
+
+renameFileModal.addEventListener('shown.bs.modal', function (event) {
+  fileNameInput.focus();
+});
+
+renameFileModal.addEventListener('hidden.bs.modal', function (event) {
+  const fileMsgLi = document.querySelector('#file_modal_msg');
+  fileMsgLi.textContent = '';
+  fileNameInput.value = '';
+});
+
+const fileResponse = async function (url, method, data = null) {
+  try {
+    const res = await axios({
+      url: url,
+      method: method,
+      data: data,
+    });
+
+    return res;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+async function renameFileListener(event) {
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  fileNameInput.value = this.getAttribute('data_name');
+
+  const folderId = this.getAttribute('folder_id');
+  const fileId = this.getAttribute('file_id');
+
+  sendButtonFileModal.setAttribute('folder_id', folderId);
+  sendButtonFileModal.setAttribute('file_id', fileId);
+
+  modalRenameFile.show();
+}
+
+const deleteFileConfirmation = document.querySelector('#delete_file_confirmation');
+deleteFileConfirmation.addEventListener('click', function (event) {
+  event.stopImmediatePropagation();
+
+  const folderId = this.getAttribute('folder_id');
+  const fileId = this.getAttribute('file_id');
+
+  const url = `${baseURL}/${projectId}/${folderId}/files/${fileId}`;
+  const result = fileResponse(url, 'DELETE');
+
+  result
+    .then(function (response) {
+      const { success, msg, category } = response.data;
+      modalDeleteFile.hide();
+      flashMessage(msg, category);
+      if (success) {
+        refreshFolderContent(folderId);
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+});
+
+function deleteFileListener(event) {
+  event.preventDefault();
+  event.stopImmediatePropagation();
+
+  const folderId = this.getAttribute('folder_id');
+  const fileId = this.getAttribute('file_id');
+
+  deleteFileConfirmation.setAttribute('folder_id', folderId);
+  deleteFileConfirmation.setAttribute('file_id', fileId);
+
+  modalDeleteFile.show();
 }
 
 function addFile(name, fileId, clone = false) {
   const file = clone ? fileShape.cloneNode(true) : fileShape;
-  file.setAttribute('file_id', fileId);
+  const folderId = currentFolder.getAttribute('folder_id');
+
+  // file.setAttribute('file_id', fileId);
   file.lastElementChild.innerText = name;
+
+  let linkBtns = file.querySelectorAll('button');
+  const rename = linkBtns[0];
+  rename.setAttribute('data_name', name);
+  rename.setAttribute('folder_id', folderId);
+  rename.setAttribute('file_id', fileId);
+
+  rename.addEventListener('click', renameFileListener);
+
+  const remove = linkBtns[1];
+  remove.setAttribute('folder_id', folderId);
+  remove.setAttribute('file_id', fileId);
+  remove.addEventListener('click', deleteFileListener);
 
   return file;
 }

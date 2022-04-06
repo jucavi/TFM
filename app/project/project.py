@@ -1,3 +1,5 @@
+from ast import Pass
+from stat import FILE_ATTRIBUTE_ARCHIVE
 from flask import Blueprint, flash, render_template, redirect, url_for, request, abort
 from flask_login import login_required, current_user
 from app.project.forms import NewProjectForm, EditProjectForm, AddCollabForm, UploadFileForm
@@ -180,7 +182,7 @@ def js_folder_content(project_id, folder_id):
     return {'success': False, 'msg': 'No project found.', 'data': {}}
 
 
-@projects.route('project/<uuid:project_id>/folder/<folder_id>', methods=['PUT', 'POST', 'DELETE'])
+@projects.route('project/<uuid:project_id>/folders/<folder_id>', methods=['PUT', 'POST', 'DELETE'])
 @login_required
 def js_response_folder_ops(project_id, folder_id):
     project = Project.query.get_or_404(project_id)
@@ -193,7 +195,7 @@ def js_response_folder_ops(project_id, folder_id):
             if folder.id != project.root_folder.id:
                 db.session.delete(folder)
                 res['success'] = 'True'
-                res['msg'] = 'Successfully deleted.'
+                res['msg'] = f'Folder {folder.foldername!r} successfully deleted.'
                 res['category'] = 'success'
                 db.session.commit()
                 return res
@@ -205,7 +207,7 @@ def js_response_folder_ops(project_id, folder_id):
             if request.method == 'POST':
                 db.session.add(Folder(foldername=name, project=project, parent=folder))
                 res['success'] = 'True'
-                res['msg'] = 'Successfully created.'
+                res['msg'] = f'Folder {folder.foldername!r} successfully created.'
                 res['category'] = 'success'
                 db.session.commit()
                 return res
@@ -213,7 +215,7 @@ def js_response_folder_ops(project_id, folder_id):
             if request.method == 'PUT' and folder.id != project.root_folder.id:
                 folder.foldername = name
                 res['success'] = 'True'
-                res['msg'] = 'Successfully renamed.'
+                res['msg'] = f'Folder {folder.foldername!r} successfully renamed.'
                 res['category'] = 'success'
                 db.session.commit()
                 return res
@@ -221,53 +223,89 @@ def js_response_folder_ops(project_id, folder_id):
                 res['msg'] = 'Unable to rename root folder.'
                 return res
         else:
-            res['msg'] = 'Folder name already exists.'
+            res['msg'] = f'Folder {name!r} already exists.'
             return res
 
     return res
 
 
 
-@projects.route('project/<uuid:project_id>/files/<folder_id>')
+# @projects.route('project/<uuid:project_id>/files/<folder_id>')
+# @login_required
+# def files(project_id, folder_id):
+#     project = Project.query.get_or_404(project_id)
+#     folder = Folder.query.get_or_404(folder_id)
+#     form = UploadFileForm()
+
+#     if project.has_access(current_user, folder):
+#         files = folder.files
+#     else:
+#         flash('Access denied.')
+#         return redirect(url_for('projects.show_project', project_id=project.id))
+
+#     return render_template('files.html',
+#                            files=files,
+#                            form=form,
+#                            project=project,
+#                            folder=folder)
+
+@projects.route('project/<uuid:project_id>/<folder_id>/files/<file_id>', methods=['GET', 'PUT', 'DELETE'])
 @login_required
-def files(project_id, folder_id):
+def js_response_file_ops(project_id, folder_id, file_id):
     project = Project.query.get_or_404(project_id)
     folder = Folder.query.get_or_404(folder_id)
-    form = UploadFileForm()
+    file = File.query.get_or_404(file_id)
+    name = request.form.get('name')
+    res =  {'success': False, 'msg': 'Access denied.', 'category': 'danger'}
 
     if project.has_access(current_user, folder):
-        files = folder.files
-    else:
-        flash('Access denied.')
-        return redirect(url_for('projects.show_project', project_id=project.id))
+        if request.method == 'GET':
+            return 'file'
 
-    return render_template('files.html',
-                           files=files,
-                           form=form,
-                           project=project,
-                           folder=folder)
+        if request.method == 'DELETE':
+            db.session.delete(file)
+            res['success'] = 'True'
+            res['msg'] = f'File {file.filename!r} successfully deleted.'
+            res['category'] = 'success'
+            db.session.commit()
+            return res
+
+        if folder.is_valid_file(name):
+            if request.method == 'PUT':
+                file.filename = name
+                res['success'] = 'True'
+                res['msg'] = f'File {file.filename!r} successfully renamed.'
+                res['category'] = 'success'
+                db.session.commit()
+                return res
+        else:
+            res['msg'] = f'File {name} already exists.'
+    return res
 
 
-@projects.route('/project/<uuid:project_id>/files/<folder_id>/upload', methods=['POST'])
+@projects.route('/project/<uuid:project_id>/<folder_id>/files/upload', methods=['POST'])
 def js_upload_files(project_id, folder_id):
     project = Project.query.get_or_404(project_id)
     folder = Folder.query.get_or_404(folder_id)
 
-    try:
-        uploads = request.files.getlist('file')
-        for upload in uploads:
-            mimetype = upload.mimetype
-            filename = upload.filename
-            data = upload.read()
-            size = len(data)
+    if project.has_access(current_user, folder):
+        try:
+            uploads = request.files.getlist('file')
+            for upload in uploads:
+                mimetype = upload.mimetype
+                filename = upload.filename
+                data = upload.read()
+                size = len(data)
 
-            if project.has_access(current_user, folder):
-                if folder.is_valid_file(filename):
-                    file = File(filename=filename, data=data, mimetype=mimetype, size=size)
-                    FolderContent(folder=folder, file=file)
-                    db.session.add(file)
-                    db.session.commit()
-        return {'success': True, 'msg': 'Upload all files.', 'category': 'success'}
-    except Exception as e:
-        print(e)
-        return {'success': False, 'msg': e, 'category': 'danger'}
+                if project.has_access(current_user, folder):
+                    if folder.is_valid_file(filename):
+                        file = File(filename=filename, data=data, mimetype=mimetype, size=size)
+                        FolderContent(folder=folder, file=file)
+                        db.session.add(file)
+                        db.session.commit()
+            return {'success': True, 'msg': 'Upload all files.', 'category': 'success'}
+        except Exception as e:
+            print(e)
+            return {'success': False, 'msg': e, 'category': 'danger'}
+
+    return {'success': False, 'msg': 'Acces denied.', 'category': 'danger'}

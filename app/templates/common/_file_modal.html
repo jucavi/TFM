@@ -1,0 +1,23 @@
+<div class="modal fade" id="FileModal" tabindex="-1"
+  aria-labelledby="FileModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="FileModalLabel">Rename File</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"
+          aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="text" id="file_name" class="form-control"
+          placeholder="File name">
+        <ul class="errors">
+          <li id="file_modal_msg"></li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button id="send_file" type="button"
+          class="btn btn-bg btn-font">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
