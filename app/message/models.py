@@ -28,7 +28,7 @@ class Message(db.Model):
         tn = datetime.utcnow()
         lt = local_time(self.timestamp)
         if (tn.day - self.timestamp.day) > 0:
-            return lt.strftime('%d %b')
+            return lt.strftime('%b %d')
         return lt.strftime('%H:%M')
 
     @property

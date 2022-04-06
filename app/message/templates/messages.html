@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <div class="container border rounded p-5">
-    {% include partial %}
-  </div>
+  {% if messages %}
+    <div class="container border rounded p-5">
+      {% include partial %}
+    </div>
+  {% endif %}
 {% endblock content %}
 
 
