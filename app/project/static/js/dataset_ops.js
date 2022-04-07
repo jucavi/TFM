@@ -2,9 +2,8 @@
 let currentFolder = document.querySelector('#current_folder');
 const currentFolderName = document.querySelector('#current_folder_name');
 const newFolder = document.querySelector('#new_folder');
-// const renameFolder = document.querySelector('#rename_folder');
-// const deleteFolder = document.querySelector('#delete_folder');
 
+// General
 const projectId = currentFolder.getAttribute('project_id');
 const folderId = currentFolder.getAttribute('folder_id');
 const baseURL = `http://localhost:5000/projects/project`;
@@ -123,29 +122,34 @@ function renameFolderListener(event) {
   event.stopImmediatePropagation();
 
   title.innerText = 'Rename Folder';
-  folderNameInput.value = currentFolderName.innerText;
+  folderNameInput.value = this.getAttribute('data_name');
+  const folderId = this.getAttribute('folder_id');
+  const parentId = this.getAttribute('parent_id');
+
+  sendButtonFolderModal.setAttribute('folder_id', folderId);
+  sendButtonFolderModal.setAttribute('parent_id', parentId);
   sendButtonFolderModal.innerText = 'Rename';
   modalFolder.show();
 }
-
-// renameFolder.addEventListener('click', renameFolderListener);
 
 const deleteFolderConfirmation = document.querySelector(
   '#delete_folder_confirmation'
 );
 deleteFolderConfirmation.addEventListener('click', function (event) {
   event.stopImmediatePropagation();
-  const result = folderResponse('DELETE');
+
+  const folderId = this.getAttribute('folder_id');
+  const parentId = this.getAttribute('parent_id');
+
+  const result = folderResponse('DELETE', folderId);
 
   result
     .then(function (response) {
-      const folderId = currentFolder.getAttribute('parent_id');
-
       const { success, msg, category } = response.data;
       modalDeleteFolder.hide();
       flashMessage(msg, category);
       if (success) {
-        refreshFolderContent(folderId);
+        refreshFolderContent(parentId);
       }
     })
     .catch(function (error) {
@@ -153,14 +157,19 @@ deleteFolderConfirmation.addEventListener('click', function (event) {
     });
 });
 
-// deleteFolder.addEventListener('click', function (event) {
-//   event.stopImmediatePropagation();
-//   modalDeleteFolder.show();
-// });
+function deleteFolderListener (event) {
+  event.stopImmediatePropagation();
 
-const folderResponse = async function (method, data = null) {
-  const folderId = currentFolder.getAttribute('folder_id');
+  const folderId = this.getAttribute('folder_id');
+  const parentId = this.getAttribute('parent_id');
 
+  deleteFolderConfirmation.setAttribute('folder_id', folderId);
+  deleteFolderConfirmation.setAttribute('parent_id', parentId);
+
+  modalDeleteFolder.show();
+};
+
+const folderResponse = async function (method, folderId, data = null) {
   try {
     const res = await axios({
       method: method,
@@ -209,7 +218,7 @@ async function refreshFolderContent(folderId) {
     refreshCurrentFolder(name, id, parent_id);
 
     for (let child of children.sort((a, b) => (a.name > b.name ? 1 : -1))) {
-      let folder = addChild(`${child.name}`, `${child.id}`, true);
+      let folder = addChild(`${child.name}`, `${child.id}`,  id, true);
       folder.addEventListener('click', openFolder);
       folderContentContainer.append(folder);
     }
@@ -229,8 +238,9 @@ async function sendFolder() {
   folderNameInput.value = '';
 
   if (newName !== '') {
-    const method = sendButtonModal.innerText === 'New' ? 'POST' : 'PUT';
-    const result = folderResponse(method, formData);
+    const method = sendButtonFolderModal.innerText === 'New' ? 'POST' : 'PUT';
+    const folderId = method === 'POST'  ? currentFolder.getAttribute('folder_id') : sendButtonFolderModal.getAttribute('folder_id');
+    let result = folderResponse(method, folderId, formData);
 
     result
       .then(function (response) {
@@ -243,11 +253,11 @@ async function sendFolder() {
           const folderId = currentFolder.getAttribute('folder_id');
           const parentId = currentFolder.getAttribute('parent_id');
 
-          if (method === 'POST') {
+          // if (method === 'POST') {
             refreshFolderContent(folderId);
-          } else {
-            refreshCurrentFolder(newName, folderId, parentId);
-          }
+          // } else {
+          //   refreshCurrentFolder(newName, folderId, parentId);
+          // }
         } else {
           const folderMsgLi = document.querySelector('#folder_modal_msg');
           folderMsgLi.textContent = msg;
@@ -266,13 +276,25 @@ folderNameInput.addEventListener('keypress', function (event) {
   }
 });
 
-function addChild(name, folderId, clone = false) {
+function addChild(name, folderId, parentId, clone = false) {
   let child = clone ? folderShape.cloneNode(true) : folderShape;
   child.setAttribute('folder_id', folderId);
+
+  child.children[0].children[0].classList.add('folder-bg')
   child.lastElementChild.innerText = name;
 
   let linkBtns = child.querySelectorAll('button');
-  // linkBtns[0].addEventListener('click', renameFolderListener(folderId))
+  const rename = linkBtns[0];
+  rename.setAttribute('folder_id', folderId);
+  rename.setAttribute('parent_id', parentId);
+  rename.setAttribute('data_name', name);
+
+  rename.addEventListener('click', renameFolderListener);
+
+  const remove = linkBtns[1];
+  remove.setAttribute('folder_id', folderId);
+  remove.setAttribute('parent_id', parentId);
+  remove.addEventListener('click', deleteFolderListener)
 
   return child;
 }
@@ -398,6 +420,7 @@ function deleteFileListener(event) {
 function addFile(name, fileId, clone = false) {
   const file = clone ? fileShape.cloneNode(true) : fileShape;
   const folderId = currentFolder.getAttribute('folder_id');
+  file.children[0].children[0].classList.add('file-bg');
 
   // file.setAttribute('file_id', fileId);
   file.lastElementChild.innerText = name;

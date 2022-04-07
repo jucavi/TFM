@@ -98,6 +98,14 @@ hr {
     background-color: #c4d7e2;
 }
 
+.folder-bg {
+    color: #70a6c5;
+}
+
+.file-bg {
+    color: #d1b776;
+}
+
 .btn-font {
     font-weight: 200 !important;
 }
@@ -185,6 +193,7 @@ a, a:visited, a:active {
 
     #current_folder {
         margin-right: 5%;
+        margin-left: 1rem;
     }
 
 }
