@@ -38,6 +38,9 @@ const folderContentContainer = document.getElementById('children');
 // Back to parent
 const backButton = document.querySelector('#back_folder');
 
+// workbench link
+const workLink = document.querySelector('#data_work');
+
 // Files
 const inputElement = document.getElementById('file_upload');
 
@@ -481,4 +484,10 @@ function backParentFolder(event) {
   }
 }
 
+
 window.onload = refreshFolderContent(folderId);
+
+workLink.addEventListener('click', function () {
+  const folderId = currentFolder.getAttribute('folder_id');
+  window.location.href = `${baseURL}/workbench/${projectId}/${folderId}`
+});

@@ -309,3 +309,15 @@ def js_upload_files(project_id, folder_id):
             return {'success': False, 'msg': e, 'category': 'danger'}
 
     return {'success': False, 'msg': 'Acces denied.', 'category': 'danger'}
+
+
+@projects.route('/project/workbench/<uuid:project_id>/<folder_id>')
+def workbench(project_id, folder_id):
+    project = Project.query.get_or_404(project_id)
+    folder = Folder.query.get_or_404(folder_id)
+
+    if project.has_access(current_user, folder):
+        files = folder.files
+        return render_template('workbench.html', files=files)
+
+    return abort(403)
