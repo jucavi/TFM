@@ -1,8 +1,6 @@
-from ast import Pass
-from stat import FILE_ATTRIBUTE_ARCHIVE
-from flask import Blueprint, flash, render_template, redirect, url_for, request, abort
+from flask import Blueprint, flash, render_template, redirect, send_file, url_for, request, abort
 from flask_login import login_required, current_user
-from app.project.forms import NewProjectForm, EditProjectForm, AddCollabForm, UploadFileForm
+from app.project.forms import NewProjectForm, EditProjectForm, AddCollabForm
 from app.auth.models import User
 from app.project.models import Project, Team, Folder, File, FolderContent
 from app.helpers.mail import send_project_invitation
@@ -10,6 +8,7 @@ from app import db
 import json
 from datetime import datetime
 from sqlalchemy.exc import IntegrityError
+from io import BytesIO
 
 projects = Blueprint('projects',
                        __name__,
@@ -260,7 +259,8 @@ def js_response_file_ops(project_id, folder_id, file_id):
 
     if project.has_access(current_user, folder):
         if request.method == 'GET':
-            return 'file'
+            print(file)
+            return send_file(BytesIO(file.data), download_name=file.filename, as_attachment=True, mimetype=file.mimetype)
 
         if request.method == 'DELETE':
             db.session.delete(file)
