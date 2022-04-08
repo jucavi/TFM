@@ -1,91 +1,93 @@
 const hiddenElemetsDiv = document.querySelector('#hidden_elements');
-// { elements: [list of hidden elements] }
-const tagContainer = document.querySelector('.tag_container');
-const input = document.querySelector('#label_input');
-let tags = [];
+const input = document.querySelector('#tag_input');
+const addCollabTagBtn = document.querySelector('#add_collab')
+const tagsContainer = document.querySelector('#tags_container');
+let tags = new Set();
 
-const elements = (window.onload = function (hiddenElementsDiv) {
+// Getting elements send from flask, add to <datalist> as options and remove from html
+window.onload = (function (hiddenElementsDiv) {
   try {
     const elements = JSON.parse(hiddenElementsDiv.innerHTML).elements;
-
+    const datalist = document.querySelector('#elements');
     hiddenElemetsDiv.innerHTML = '';
+
+    for (let element of elements) {
+      const option = document.createElement('option');
+
+      option.value = element;
+      datalist.appendChild(option);
+    }
     return elements;
   } catch (e) {
     return [];
   }
 })(hiddenElemetsDiv);
 
-function bestMatch(elements, input) {
-  if (!input) return [];
+function newTag(tagLabel) {
+  const tag = document.createElement('span');
+  const tagContent = document.createTextNode(tagLabel);
+  tag.setAttribute('class', 'tag');
+  tag.setAttribute('tag-data', tagLabel);
+  tag.appendChild(tagContent);
 
-  return elements.filter((element) => {
-    return element.startsWith(input);
-  });
+
+  const close = document.createElement('span');
+  close.setAttribute('class', 'remove-tag');
+  close.innerHTML = 'x';
+  close.onclick = handleRemoveTag;
+
+  tag.appendChild(close);
+  return tag
 }
 
-function createTags(label) {
-  const div = document.createElement('div');
-  div.setAttribute('class', 'tag border my-1 me-1');
-  const span = document.createElement('span');
-  span.setAttribute('class', 'label_value');
-  span.innerHTML = label;
-  const closeBtn = document.createElement('i');
-  closeBtn.setAttribute('class', 'fa-solid fa-xmark ps-3');
-  closeBtn.setAttribute('tag-data', label);
-
-  div.appendChild(span);
-  div.appendChild(closeBtn);
-  return div;
-}
-
-function reset() {
-  document.querySelectorAll('.tag').forEach(function (tag) {
-    tag.parentElement.removeChild(tag);
-  });
+function reset(parent) {
+  while (parent.firstChild) {
+    parent.removeChild(parent.firstChild);
+  }
 }
 
 function addTags() {
-  reset();
+  reset(tagsContainer);
   for (let tag of [...tags].reverse()) {
-    const input = createTags(tag);
-    tagContainer.prepend(input);
+    const divTag = newTag(tag);
+    tagsContainer.prepend(divTag);
   }
   input.value = '';
   input.focus();
 }
 
+// Prevent default form behavior
 input.addEventListener('keydown', function (e) {
   if (e.key === 'Enter') e.preventDefault();
 });
 
-let find = false;
+// add tag
 input.addEventListener('keyup', function (e) {
-  const completeDiv = document.querySelector('#text_suggest');
-  match = bestMatch(elements, input.value);
-
-  completeDiv.innerText = match[0] ? match[0] : '';
-
-  if (e.key === 'Enter') {
-    if (this.value) {
-      if (find === false) {
-        e.preventDefault();
-        this.value = match[0] || this.value;
-        find = true;
-      } else {
-        tags.push(this.value);
-        addTags();
-        completeDiv.innerText = '';
-        find = false;
-      }
-    }
+  e.preventDefault();
+  if (e.key === 'Enter' && this.value) {
+    tags.add(this.value);
+    addTags(tags);
+    this.value = '';
   }
 });
 
-document.addEventListener('click', function (event) {
-  if (event.target.tagName === 'I') {
-    const label = event.target.getAttribute('tag-data');
-    const index = tags.indexOf(label);
-    tags = [...tags.slice(0, index), ...tags.slice(index + 1)];
+addCollabTagBtn.addEventListener('click', function (e) {
+  e.preventDefault();
+  const collab = input.value;
+  if (collab) {
+    tags.add(collab);
+    addTags(tags);
+    input.value = '';
+  }
+})
+
+
+// remove tag
+const handleRemoveTag = function (event) {
+  const label = event.target.parentNode.getAttribute('tag-data');
+  if (label) {
+    tags.delete(label)
     addTags();
   }
-});
+};
+

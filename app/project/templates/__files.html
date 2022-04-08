@@ -1,0 +1,19 @@
+<h1>File Upload</h1>
+{% from "_formhelpers.html" import render_field %}
+<form id="upload" method="POST" enctype="multipart/form-data" action="{{ url_for('projects.upload_files', project_id=project.id, folder_id=folder.id) }}">
+  {{ form.csrf_token }}
+
+  <dl>
+    {{ render_field(form.file) }}
+  </dl>
+
+  <div class="pt-1 mb-4">
+    {{ form.submit(class='btn btn-bg btn-lg btn-block btn-font w-100') }}
+  </div>
+</form>
+
+<ul>
+  {% for file in files %}
+    <li>{{file}}</li>
+  {% endfor %}
+</ul>

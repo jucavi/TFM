@@ -1,4 +1,4 @@
-from flask import Blueprint, flash, render_template, redirect, url_for, request
+from flask import Blueprint, flash, render_template, redirect, send_file, url_for, request, abort
 from flask_login import login_required, current_user
 from app.project.forms import NewProjectForm, EditProjectForm, AddCollabForm
 from app.auth.models import User
@@ -8,6 +8,7 @@ from app import db
 import json
 from datetime import datetime
 from sqlalchemy.exc import IntegrityError
+from io import BytesIO
 
 projects = Blueprint('projects',
                        __name__,
@@ -38,7 +39,8 @@ def new_project():
             db.session.rollback()
             flash('Project name already exists.', category='warning')
 
-    return render_template('new_project.html',
+    return render_template('new.html',
+                           action='Create new project',
                            form=form,
                            title='New project')
 
@@ -59,32 +61,33 @@ def all_projects():
 @login_required
 def show_project(project_id):
     project = Project.query.get_or_404(project_id)
-    form = AddCollabForm()
+    collab_form = AddCollabForm()
     emails = {'elements': [user.email for user in User.query.all() if user != current_user]}
 
-    if form.validate_on_submit():
-        for email in form.collabs.data:
-            collab = User.query.filter_by(email=email).first()
-            if collab:
-                if collab not in project.collaborators:
-                    send_project_invitation(project, collab)
-                    flash(f'Invitation sed to {email!r}.', category='success')
-                else:
-                    flash(f'{email!r} already collaborate.', category='info')
-            else:
-                flash(f'{email!r} not found.', category='danger')
-
     if project in current_user.projects:
-        root = project.root_folder
-        return render_template('project.html',
+        folder = project.root_folder
+
+        if collab_form.validate_on_submit():
+            for email in collab_form.collabs.data:
+                collab = User.query.filter_by(email=email).first()
+
+                if collab:
+                    if collab not in project.collaborators:
+                        send_project_invitation(project, collab)
+                        flash(f'Invitation send to {email!r}.', category='success')
+                    else:
+                        flash(f'{email!r} already collaborate.', category='info')
+                else:
+                    flash(f'{email!r} not found.', category='danger')
+
+        return render_template('show.html',
                                title=project.project_name,
                                project=project,
-                               form=form,
+                               collab_form=collab_form,
                                hidden_elements=json.dumps(emails),
-                               root=root)
+                               folder=folder.to_dict)
 
-    flash('No project found!', category='warning')
-    return redirect(url_for('projects.all_projects'))
+    return abort(403)
 
 
 @projects.route('delete/<uuid:project_id>')
@@ -95,11 +98,12 @@ def delete_project(project_id):
     if current_user.is_owner(project):
         db.session.delete(project)
         db.session.commit()
-        flash(f'Project {project.project_name} successfully deleted.', category='success')
-    else:
-        flash('No project found!', category='warning')
 
-    return redirect(url_for('projects.all_projects'))
+        flash(f'Project {project.project_name} successfully deleted.', category='success')
+        return redirect(url_for('projects.all_projects'))
+    else:
+        return abort(403)
+
 
 
 @projects.route('/edit/<uuid:project_id>', methods=['GET', 'POST'])
@@ -113,7 +117,7 @@ def edit_project(project_id):
         if form.validate_on_submit():
             try:
                 project_name = form.project_name.data
-                # if project_name change change root folder name too
+                # if project_name change change root folder name change too
                 root.foldername = project_name
 
                 project.project_name = project_name
@@ -133,12 +137,12 @@ def edit_project(project_id):
             form.project_name.data = project.project_name
             form.project_desc.data = project.project_desc
 
-            return render_template('edit_project.html',
+            return render_template('new.html',
+                                   action='Edit project',
                                    form=form,
                                    title='Edit Project')
 
-    flash('No project found!', category='warning')
-    return redirect(url_for('projects.all_projects'))
+    return abort(403)
 
 
 @projects.route('project/collaborator/<token>')
@@ -154,50 +158,166 @@ def add_collaborator(token):
             db.session.commit()
 
             flash(f'Great! You are now collaborating with {project.project_name!r}', category="success")
+            return redirect(url_for('projects.show_project', project_id=project_id))
         else:
             raise Exception
 
     except Exception:
         flash('Expired/invalid access token!', category='danger')
 
-    return redirect(url_for('home.index'))
+    return redirect(url_for('projects.show_project', project_id=project_id))
 
 
-@projects.route('project/<uuid:project_id>/data/<folder_id>')
+
+@projects.route('project/<uuid:project_id>/content/<folder_id>')
 @login_required
-def show_folder_content(project_id, folder_id):
+def js_folder_content(project_id, folder_id):
     project = Project.query.get_or_404(project_id)
 
     if project in current_user.projects:
         folder = Folder.query.get_or_404(folder_id)
-        return folder.toJSON()
+        return {'success': True, 'msg': 'Ok', 'data': folder.to_dict}
+
+    return {'success': False, 'msg': 'No project found.', 'data': {}}
 
 
-@projects.route('project/<uuid:project_id>/folder/<parent_id>')
+@projects.route('project/<uuid:project_id>/folders/<folder_id>', methods=['PUT', 'POST', 'DELETE'])
 @login_required
-def new_folder(project_id, parent_id):
+def js_response_folder_ops(project_id, folder_id):
     project = Project.query.get_or_404(project_id)
-    parent = Folder.query.get_or_404(parent_id)
-    name = request.args.get('name')
+    folder = Folder.query.get_or_404(folder_id)
+    name = request.form.get('name')
+    res =  {'success': False, 'msg': 'Access denied.', 'category': 'danger'}
 
-    if project in current_user.projects and parent.project == project and name:
-        db.session.add(Folder(foldername=name, project=project, parent=parent))
-        db.session.commit()
+    if project.has_access(current_user, folder):
+        if request.method == 'DELETE':
+            if folder.id != project.root_folder.id:
+                db.session.delete(folder)
+                res['success'] = 'True'
+                res['msg'] = f'Folder {folder.foldername!r} successfully deleted.'
+                res['category'] = 'success'
+                db.session.commit()
+                return res
+            else:
+                res['msg'] = 'Unable to delete root folder.'
+                return res
 
-    return redirect(url_for('projects.show_project', project_id=project.id))
+        if folder.is_valid_folder(name):
+            if request.method == 'POST':
+                db.session.add(Folder(foldername=name, project=project, parent=folder))
+                res['success'] = 'True'
+                res['msg'] = f'Folder {folder.foldername!r} successfully created.'
+                res['category'] = 'success'
+                db.session.commit()
+                return res
+
+            if request.method == 'PUT' and folder.id != project.root_folder.id:
+                folder.foldername = name
+                res['success'] = 'True'
+                res['msg'] = f'Folder {folder.foldername!r} successfully renamed.'
+                res['category'] = 'success'
+                db.session.commit()
+                return res
+            else:
+                res['msg'] = 'Unable to rename root folder.'
+                return res
+        else:
+            res['msg'] = f'Folder {name!r} already exists.'
+            return res
+
+    return res
 
 
-@projects.route('project/<uuid:project_id>/file/<parent_id>')
+
+# @projects.route('project/<uuid:project_id>/files/<folder_id>')
+# @login_required
+# def files(project_id, folder_id):
+#     project = Project.query.get_or_404(project_id)
+#     folder = Folder.query.get_or_404(folder_id)
+#     form = UploadFileForm()
+
+#     if project.has_access(current_user, folder):
+#         files = folder.files
+#     else:
+#         flash('Access denied.')
+#         return redirect(url_for('projects.show_project', project_id=project.id))
+
+#     return render_template('files.html',
+#                            files=files,
+#                            form=form,
+#                            project=project,
+#                            folder=folder)
+
+@projects.route('project/<uuid:project_id>/<folder_id>/files/<file_id>', methods=['GET', 'PUT', 'DELETE'])
 @login_required
-def new_file(project_id, parent_id):
+def js_response_file_ops(project_id, folder_id, file_id):
     project = Project.query.get_or_404(project_id)
-    parent = Folder.query.get_or_404(parent_id)
-    name = request.args.get('name')
+    folder = Folder.query.get_or_404(folder_id)
+    file = File.query.get_or_404(file_id)
+    name = request.form.get('name')
+    res =  {'success': False, 'msg': 'Access denied.', 'category': 'danger'}
 
-    if project in current_user.projects and parent.project == project and name:
-        file = File(filename=name)
+    if project.has_access(current_user, folder):
+        if request.method == 'GET':
+            print(file)
+            return send_file(BytesIO(file.data), download_name=file.filename, as_attachment=True, mimetype=file.mimetype)
 
-        db.session.add(FolderContent(folder=parent, file=file))
-        db.session.commit()
+        if request.method == 'DELETE':
+            db.session.delete(file)
+            res['success'] = 'True'
+            res['msg'] = f'File {file.filename!r} successfully deleted.'
+            res['category'] = 'success'
+            db.session.commit()
+            return res
 
-    return redirect(url_for('projects.show_project', project_id=project.id))
+        if folder.is_valid_file(name):
+            if request.method == 'PUT':
+                file.filename = name
+                res['success'] = 'True'
+                res['msg'] = f'File {file.filename!r} successfully renamed.'
+                res['category'] = 'success'
+                db.session.commit()
+                return res
+        else:
+            res['msg'] = f'File {name} already exists.'
+    return res
+
+
+@projects.route('/project/<uuid:project_id>/<folder_id>/files/upload', methods=['POST'])
+def js_upload_files(project_id, folder_id):
+    project = Project.query.get_or_404(project_id)
+    folder = Folder.query.get_or_404(folder_id)
+
+    if project.has_access(current_user, folder):
+        try:
+            uploads = request.files.getlist('file')
+            for upload in uploads:
+                mimetype = upload.mimetype
+                filename = upload.filename
+                data = upload.read()
+                size = len(data)
+
+                if project.has_access(current_user, folder):
+                    if folder.is_valid_file(filename):
+                        file = File(filename=filename, data=data, mimetype=mimetype, size=size)
+                        FolderContent(folder=folder, file=file)
+                        db.session.add(file)
+                        db.session.commit()
+            return {'success': True, 'msg': 'Upload all files.', 'category': 'success'}
+        except Exception as e:
+            print(e)
+            return {'success': False, 'msg': e, 'category': 'danger'}
+
+    return {'success': False, 'msg': 'Acces denied.', 'category': 'danger'}
+
+
+@projects.route('/project/workbench/<uuid:project_id>/<folder_id>')
+def workbench(project_id, folder_id):
+    project = Project.query.get_or_404(project_id)
+    folder = Folder.query.get_or_404(folder_id)
+
+    if project.has_access(current_user, folder):
+        files = folder.files
+        return render_template('workbench.html', files=files)
+
+    return abort(403)

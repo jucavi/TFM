@@ -20,19 +20,24 @@ class Message(db.Model):
     body = Column(Text())
     timestamp = Column(DateTime, index=True, default=datetime.utcnow)
     read = Column(Boolean(), default=False)
+    deleted_by_recipient = Column(Boolean(), default=False)
+    deleted_by_author = Column(Boolean(), default=False)
 
     @property
     def received(self):
         tn = datetime.utcnow()
         lt = local_time(self.timestamp)
         if (tn.day - self.timestamp.day) > 0:
-            return lt.strftime('%d %b')
+            return lt.strftime('%b %d')
         return lt.strftime('%H:%M')
 
     @property
     def created(self):
         return local_time(self.timestamp)
 
+    @property
+    def date_time_format(self):
+        return local_time(self.timestamp).strftime('%d %b %Y, %H:%M')
 
     def __repr__(self):
         return f'<Message {self.subject}>'

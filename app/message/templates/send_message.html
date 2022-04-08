@@ -5,11 +5,8 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/tagger.css') }}">
 {% endblock header %}
 
-{% block navbar %}
-  {% include '_navbar.html'%}
-{% endblock navbar %}
-
 {% block content %}
+  <div class="container">
     {% from "_formhelpers.html" import render_field %}
     <form id="send_message" method="POST">
       {{ form.csrf_token }}
@@ -20,21 +17,18 @@
         {{ render_field(form.recipients) }}
 
 
-        {{ render_field(form.subject, class='form-control form-control-lg') }}
+        {{ render_field(form.subject, class='form-control form-control-lg', placeholder='Subject') }}
         {{ render_field(form.body, class='form-control form-control-lg', rows='5') }}
       </dl>
 
       <div class="pt-1 mb-4">
-        {{ form.submit(class='btn auth-btn-bg btn-lg btn-block btn-font w-100') }}
+        {{ form.submit(class='btn btn-bg btn-lg btn-block btn-font w-100') }}
       </div>
     </form>
+  </div>
 {% endblock content %}
 
 {% block customjs %}
   <script src="{{ url_for('.static', filename='js/message.js') }}"></script>
   <script src="{{ url_for('static', filename='js/tagger.js') }}"></script>
 {% endblock customjs %}
-
-{% block footer %}
-  {% include '_footer.html' %}
-{% endblock footer %}

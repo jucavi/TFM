@@ -45,6 +45,10 @@ class User(UserMixin, db.Model):
                             secondary='team',
                             viewonly=True)
 
+    @property
+    def full_name(self):
+        return f'{self.firstname.capitalize()} {self.lastname.capitalize()}'
+
     def set_password(self, password):
         self.password = generate_password_hash(password)
 
@@ -75,6 +79,9 @@ class User(UserMixin, db.Model):
     def is_owner(self, project):
         return project in self.projects_owner
 
+    def has_access(self, project):
+        return project in self.projects
+
     projects_owner = relationship('Project',
                                   secondary='team',
                                   primaryjoin=('and_(User.id==Team.user_id, Team.is_owner==True)'),
@@ -96,7 +103,15 @@ class User(UserMixin, db.Model):
     @property
     def inbox_messages(self):
         last_read_time=self.last_message_read_time or datetime(2022, 1, 1)
-        return Message.query.filter_by(recipient=self).filter(Message.timestamp > last_read_time).count()
+        return Message.query.filter_by(recipient=self).filter(Message.timestamp > last_read_time, Message.deleted_by_author == False).count()
+
+    @property
+    def out_messages(self):
+        return Message.query.filter_by(author=self).filter(Message.deleted_by_author == False).order_by(Message.timestamp.desc()).all()
+
+    @property
+    def in_messages(self):
+        return Message.query.filter_by(recipient=self).filter(Message.deleted_by_recipient == False).order_by(Message.timestamp.desc()).all()
 
 
     def __repr__(self):

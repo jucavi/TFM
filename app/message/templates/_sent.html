@@ -1,0 +1,29 @@
+<table class="table align-middle table-hover table-responsive">
+  <thead>
+    <tr>
+      <th scope="col">To</th>
+      <th scope="col">Subject</th>
+      <th scope="col">Body</th>
+      <th scope="col">At</th>
+    </tr>
+  </thead>
+  <tbody>
+    {%  for message in messages %}
+      <tr data-href="{{ url_for('message.show_message', message_id=message.id) }}" class="show-delete">
+        <td class="col-1">{{message.recipient.username }}</td>
+        <td class="col-2">
+          {{ message.subject}}
+        </td>
+        <td class="col-7">
+          {% if message.body|length > 50 %}
+            {{ message.body[:50]}}...
+          {% else %}
+            {{ message.body}}
+          {% endif %}
+        </td>
+        <td class="d-flex justify-content-between align-items-center">{{ message.received }}<a href="{{ url_for('message.js_delete', message_id=message.id) }}" class="btn btn-sm link-btn ms-2 btn-font row_delete_link"><i
+            class="fa-solid fa-trash-can"></i></a></td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>

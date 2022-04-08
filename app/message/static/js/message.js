@@ -5,16 +5,24 @@ form.addEventListener('submit', function (event) {
   // event.preventDefault();
   const recipients = document.querySelectorAll('.tag');
 
+  while (recipientsList.lastChild) {
+    recipientsList.removeChild(recipientsList.lastChild);
+  }
+
   for (let i = 0; i < recipients.length; i++) {
-    const input = document.createElement('input');
+    const value = recipients[i].getAttribute('tag-data');
 
-    input.setAttribute('id', `recipients-${i}`);
-    input.setAttribute('name', `recipients-${i}`);
-    input.setAttribute('value', recipients[i].innerText);
+    if (value) {
+      const input = document.createElement('input');
 
-    const li = document.createElement('li');
-    li.append(input);
+      input.setAttribute('id', `recipients-${i}`);
+      input.setAttribute('name', `recipients-${i}`);
+      input.setAttribute('value', value);
 
-    recipientsList.append(li);
+      const li = document.createElement('li');
+      li.append(input);
+
+      recipientsList.append(li);
+    }
   }
 });

@@ -5,7 +5,47 @@
 {% endblock navbar %}
 
 {% block content %}
-  <h1>Home Page</h1>
+<div class="container text-center">
+    <div class="card mb-1">
+      <div class="row g-0">
+        <div class="col-lg-6">
+          <img src="{{ url_for('static', filename='img/roberto-sorin-x649mR6yBIs-unsplash.jpg') }}" class="img-fluid rounded-start" >
+        </div>
+        <div class="col-lg-6 d-flex align-items-center">
+          <div class="card-body">
+            <h1 class="card-text">Create projects</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card mb-1">
+      <div class="row g-0 flex-column-reverse flex-lg-row">
+        <div class="col-lg-6 d-flex align-items-center">
+          <div class="card-body">
+            <h1 class="card-text">Invite people</h1>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <img src="{{ url_for('static', filename='img/remi-walle-UOwvwZ9Dy6w-unsplash.jpg') }}" class="img-fluid rounded-end" >
+        </div>
+      </div>
+    </div>
+    <div class="card mb-4">
+      <div class="row g-0">
+        <div class="col-lg-6">
+          <img
+            src="{{ url_for('static', filename='img/dan-cristian-padure-h3kuhYUCE9A-unsplash.jpg') }}"
+            class="img-fluid rounded-start">
+        </div>
+        <div class="col-lg-6 d-flex align-items-center">
+          <div class="card-body">
+            <h1 class="card-text">Process your data</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+    <a class="btn link-btn btn-bg btn-font mt-3" href="{{ url_for('projects.all_projects') }}">Start Now</a>
+</div>
 {% endblock content %}
 
 {% block footer %}

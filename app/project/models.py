@@ -1,13 +1,12 @@
 from app import db
 from sqlalchemy_utils import UUIDType
-from sqlalchemy import Column, String, Text, DateTime, ForeignKey, Boolean, LargeBinary
+from sqlalchemy import Column, String, Text, DateTime, ForeignKey, Boolean, LargeBinary, Integer
 from sqlalchemy.orm import relationship, backref
 import uuid
 from datetime import datetime, timedelta, timezone
 from flask import current_app
 import jwt
 from app.helpers.date import local_time
-import json
 
 
 class Project(db.Model):
@@ -48,11 +47,15 @@ class Project(db.Model):
 
     @property
     def created(self):
-        return local_time(self.created_at)
+        return local_time(self.created_at).strftime("%b %d %Y, %H:%M:%S")
 
     @property
     def updated(self):
-        return local_time(self.updated_at)
+        return local_time(self.updated_at).strftime("%b %d %Y, %H:%M:%S")
+
+    @property
+    def project_owner(self):
+        return self.owner[0].full_name
 
     def collaborator_token(self, user, expires=7):
         return jwt.encode(
@@ -83,6 +86,9 @@ class Project(db.Model):
             if folder.foldername == self.project_name:
                 return folder
         return None
+
+    def has_access(self, user, folder):
+        return self in user.projects and folder.project == self
 
     def __repr__(self):
         return f'<Project: {self.project_name!r}>'
@@ -140,23 +146,35 @@ class Folder(db.Model):
                         secondary='folder_content',
                         viewonly=True)
 
-    def children_to_json(self):
-        children = [{'id': child.id.hex, 'name':child.foldername} for child in self.children]
-        return children
+    @property
+    def children_to_dict(self):
+        return  [{'id': child.id.hex, 'name':child.foldername} for child in self.children]
 
-    def files_to_json(self):
-        files = [{'id': file.id.hex, 'name':file.filename} for file in self.files]
-        return files
+    @property
+    def files_to_dict(self):
+        return [{'id': file.id.hex, 'name':file.filename} for file in self.files]
 
-    def toJSON(self):
-        children = self.children_to_json()
-        files = self.files_to_json()
-        return json.dumps({
+    @property
+    def to_dict(self):
+        children = self.children_to_dict
+        files = self.files_to_dict
+        return {
             'id': self.id.hex,
             'name': self.foldername,
+            'parent_id': self.parent_id.hex if self.parent_id else None,
             'children': children,
             'files': files
-        }, indent=4)
+        }
+
+    def is_valid_folder(self, foldername):
+        if not foldername:
+            return False
+        return not any(filter(lambda folder: folder.foldername == foldername, self.children))
+
+    def is_valid_file(self, filename):
+        if not filename:
+            return False
+        return not any(filter(lambda file: file.filename == filename, self.files))
 
     def __repr__(self):
         return f'<Folder: {self.foldername}>'
@@ -175,12 +193,16 @@ class File(db.Model):
 
     data = Column(LargeBinary)
 
+    size = Column(Integer())
+    
+    mimetype = Column(String(50))
+
     folders = relationship('Folder',
                            secondary='folder_content',
                            viewonly=True)
 
     def __repr__(self):
-        return f'<File: {self.filename}>'
+        return f'<File: {self.filename!r}, size: {self.size}, mimetype: {self.mimetype!r}>'
 
 
 class FolderContent(db.Model):

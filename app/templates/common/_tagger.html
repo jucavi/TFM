@@ -1,9 +1,14 @@
-<div id="hidden_elements">{{ hidden_elements }}</div>
-<div class="tags_container">
-  <div class="tag_container border border-dark p-1 d-flex align-items-center">
-    <div id="search-wrapper" class="d-flex align-items-center">
-      <div id="text_suggest"></div>
-      <input type="text" id="label_input">
+<div id="hidden_elements">{{ hidden_elements }}</div >
+<div class="tags-wrapper d-flex flex-column" id="tags_wrapper">
+  <div class="d-flex">
+    <input type="text" list="elements" id="tag_input" class="form-control" placeholder="Add email and press enter" />
+    <div class="ps-1">
+      <button id="add_collab" class="btn link-btn  btn-font"><i
+          class="fa-solid fa-person-circle-plus"></i></button>
     </div>
+  </div>
+  <datalist id="elements">
+  </datalist>
+  <div class="tags-container flex-row mt-2" id="tags_container">
   </div>
 </div>

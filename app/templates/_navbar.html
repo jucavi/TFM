@@ -11,11 +11,11 @@
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
         {% if current_user.is_active %}
         <li class="nav-item">
-          <div class="nav-link position-relative">
+          <div class="nav-link position-relative inbox-messsages">
             {% set new_messages = current_user.inbox_messages %}
-            <a id="inbox_messages" class="inbox-messages" href="{{ url_for('message.all_messages') }} ">
+            <a id="inbox_messages"  href="{{ url_for('message.inbox_messages') }} ">
               Inbox
-              <span id="new_messages" class="badge rounded-pill auth-bg" style="display: none;">
+              <span id="new_messages" class="badge rounded-pill notification-bg" style="display: none;">
                 {{ new_messages }}
               </span>
             </a>
@@ -25,13 +25,15 @@
           <a class="nav-link dropdown-toggle" id="userActions" href="#" role="button"
             data-bs-toggle="dropdown" aria-expanded="false">
             <i class="fa-regular fa-lg fa-circle-user"></i>
-            {{ current_user.username}}
+            {{ current_user.username|title }}
           </a>
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userActions">
             <a class="dropdown-item" href="{{ url_for('projects.new_project') }}">New project</a>
             <a class="dropdown-item" href="{{ url_for('projects.all_projects') }}">Projects</a>
+            <hr class="my-0 mx-2">
             <a class="dropdown-item" href="{{ url_for('message.send_message') }}">Send Message</a>
             <a class="dropdown-item" href="{{ url_for('message.sent') }}">Messages Sent</a>
+            <hr class="my-0 mx-2">
             <a class="dropdown-item" href="{{ url_for('auth.profile') }}">Profile</a>
             <hr class="my-0 mx-2">
             <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a>
