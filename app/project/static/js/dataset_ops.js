@@ -6,7 +6,8 @@ const newFolder = document.querySelector('#new_folder');
 // General
 const projectId = currentFolder.getAttribute('project_id');
 const folderId = currentFolder.getAttribute('folder_id');
-const baseURL = `http://localhost:5000/projects/project`;
+// const baseURL = `http://localhost:5000/projects/project`;
+const baseURL = `https://tfm-flask-tft.herokuapp.com/projects/project`;
 
 // Folder Modal
 const folderModal = document.querySelector('#FolderModal');
