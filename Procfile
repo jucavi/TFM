@@ -1,1 +1,1 @@
-web: flask db upgrade; gunicorn -w 4 "app:create_app(environment='production')"
+web: gunicorn -w 4 "app:create_app()"
