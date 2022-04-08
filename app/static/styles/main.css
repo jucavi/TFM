@@ -219,3 +219,8 @@ tr:hover > td:last-child > a {visibility:visible;}
 input[type="file"] {
     display: none;
 }
+
+.card-text {
+    font-weight: 400;
+    color: #293241;
+}
