@@ -144,7 +144,7 @@ a, a:visited, a:active {
     /* box-shadow: 0 0 5px 0 rgba(22, 22, 26, .25); */
     box-shadow: 0 0 5px 0 rgba(61, 90, 128, .25);
     border: .1em solid rgba(61, 90, 128, .25);
-    border-radius: 1em;
+    /* border-radius: 1em; */
 }
 
 .notification-bg {
@@ -218,4 +218,9 @@ tr:hover > td:last-child > a {visibility:visible;}
 
 input[type="file"] {
     display: none;
+}
+
+.card-text {
+    font-weight: 400;
+    color: #293241;
 }

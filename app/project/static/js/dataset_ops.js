@@ -38,6 +38,9 @@ const folderContentContainer = document.getElementById('children');
 // Back to parent
 const backButton = document.querySelector('#back_folder');
 
+// workbench link
+const workLink = document.querySelector('#data_work');
+
 // Files
 const inputElement = document.getElementById('file_upload');
 
@@ -89,11 +92,38 @@ const contentFolderResponse = async function (folderId) {
   }
 };
 
-async function openFolder(event) {
+function openFolder(event) {
   event.stopPropagation();
   event.stopImmediatePropagation();
   const folderId = this.getAttribute('folder_id');
   refreshFolderContent(folderId);
+}
+
+function openFile(event) {
+  event.stopPropagation();
+  event.stopImmediatePropagation();
+  const folderId = this.getAttribute('folder_id');
+  const fileId = this.getAttribute('file_id');
+  const url = `${baseURL}/${projectId}/${folderId}/files/${fileId}`;
+
+  // console.log(this)
+
+  axios({
+    url: url,
+    method: 'GET',
+    responseType: 'blob'
+  })
+  .then((response) => {
+    const url = window.URL
+      .createObjectURL(new Blob([response.data]));
+    const filename = response.headers['content-disposition'].split('=')[1];
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  })
 }
 
 const flashMsg = document.querySelector('#flash_messages');
@@ -225,6 +255,7 @@ async function refreshFolderContent(folderId) {
 
     for (let file of files.sort((a, b) => (a.name > b.name ? 1 : -1))) {
       let f = addFile(`${file.name}`, `${file.id}`, true);
+      f.addEventListener('click', openFile);
       folderContentContainer.appendChild(f);
     }
   }
@@ -420,6 +451,8 @@ function deleteFileListener(event) {
 function addFile(name, fileId, clone = false) {
   const file = clone ? fileShape.cloneNode(true) : fileShape;
   const folderId = currentFolder.getAttribute('folder_id');
+  file.setAttribute('file_id', fileId)
+  file.setAttribute('folder_id', folderId)
   file.children[0].children[0].classList.add('file-bg');
 
   // file.setAttribute('file_id', fileId);
@@ -451,4 +484,10 @@ function backParentFolder(event) {
   }
 }
 
+
 window.onload = refreshFolderContent(folderId);
+
+workLink.addEventListener('click', function () {
+  const folderId = currentFolder.getAttribute('folder_id');
+  window.location.href = `${baseURL}/workbench/${projectId}/${folderId}`
+});

@@ -1,12 +1,17 @@
 <section id="right_content" class="col-9 shadow-sm pb-4">
   <div class="operations d-flex justify-content-between">
     <div class="btn-group btn-group-sm mt-2" role="group">
-      <button id='back_folder' class="btn link-btn  btn-font"><i class="fa-solid fa-arrow-left-long"></i></button>
+      <button id='back_folder' class="btn link-btn  btn-font" data-bs-toggle="tooltip" title="Back"><i class="fa-solid fa-arrow-left-long"></i></button>
     </div>
     <div class="btn-group btn-group-sm mt-2" role="group">
-      <button id="new_folder" class="btn link-btn  btn-font"><i class="fa-solid fa-folder-plus"></i></button>
+      <button id="data_work" class="btn link-btn  btn-font" data-bs-toggle="tooltip" title="Workbench">
+        <i class="fa-solid fa-square-poll-horizontal"></i>
+      </button>
+      <button id="new_folder" class="btn link-btn  btn-font" data-bs-toggle="tooltip" title="New Folder">
+        <i class="fa-solid fa-folder-plus"></i>
+      </button>
       <input id="file_upload" type="file" multiple>
-      <label for="file_upload" class="btn link-btn  btn-font">
+      <label for="file_upload" class="btn link-btn  btn-font" data-bs-toggle="tooltip" title="Add File">
         <i class="fa-solid fa-file-circle-plus"></i>
       </label>
     </div>
@@ -46,6 +51,5 @@
         </div>
         <small class="text-center mt-auto"></small>
       </div>
-
     </div>
 </section>

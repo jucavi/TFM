@@ -5,16 +5,46 @@
 {% endblock navbar %}
 
 {% block content %}
-<div class="container text-center pt-5">
-  <h1 clas="mb-5">Home Page</h1>
-  <div class="border rounded p-5">
-    <div class="">
-      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Reiciendis est dicta molestias. Explicabo animi, tempora cum ducimus ab ex facere debitis. A asperiores dolorum ut nisi, qui fugit doloribus doloremque!
-      Lorem ipsum dolor sit amet consectetur, adipisicing elit. At aspernatur nostrum adipisci. Optio quaerat quis nihil dolor cumque quam ab fugiat in et asperiores, harum numquam laborum magnam odio facilis!
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam nesciunt accusamus placeat quam aspernatur dolore eius, officiis quod alias sunt ullam veritatis aperiam reprehenderit laboriosam dolorem. Quae consectetur laudantium quis!
+<div class="container text-center">
+    <div class="card mb-1">
+      <div class="row g-0">
+        <div class="col-lg-6">
+          <img src="{{ url_for('static', filename='img/roberto-sorin-x649mR6yBIs-unsplash.jpg') }}" class="img-fluid rounded-start" >
+        </div>
+        <div class="col-lg-6 d-flex align-items-center">
+          <div class="card-body">
+            <h1 class="card-text">Create projects</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card mb-1">
+      <div class="row g-0 flex-column-reverse flex-lg-row">
+        <div class="col-lg-6 d-flex align-items-center">
+          <div class="card-body">
+            <h1 class="card-text">Invite people</h1>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <img src="{{ url_for('static', filename='img/remi-walle-UOwvwZ9Dy6w-unsplash.jpg') }}" class="img-fluid rounded-end" >
+        </div>
+      </div>
+    </div>
+    <div class="card mb-4">
+      <div class="row g-0">
+        <div class="col-lg-6">
+          <img
+            src="{{ url_for('static', filename='img/dan-cristian-padure-h3kuhYUCE9A-unsplash.jpg') }}"
+            class="img-fluid rounded-start">
+        </div>
+        <div class="col-lg-6 d-flex align-items-center">
+          <div class="card-body">
+            <h1 class="card-text">Process your data</h1>
+          </div>
+        </div>
+      </div>
     </div>
     <a class="btn link-btn btn-bg btn-font mt-3" href="{{ url_for('projects.all_projects') }}">Start Now</a>
-  </div>
 </div>
 {% endblock content %}
 
