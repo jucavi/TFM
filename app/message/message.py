@@ -31,6 +31,7 @@ def belongs_to_user(func):
 def send_message():
     form = MessageForm()
     emails = {'elements': [user.email for user in User.query.all() if user != current_user]}
+    reply_to = None
 
     if form.validate_on_submit():
         send = False
@@ -55,6 +56,14 @@ def send_message():
             db.session.commit()
             flash('Your message(s) has been sent.', category='success')
         return redirect(url_for('projects.all_projects'))
+
+    reply_to = request.args.get('reply_to')
+    subject = request.args.get('subject')
+    body = request.args.get('body')
+
+    if reply_to:
+        form.subject.data = f'RE: {subject}'
+        form.body.data = f'\n\n---\nFrom: <{reply_to}>\n\n {body} \n---'
 
 
     return render_template('send_message.html',

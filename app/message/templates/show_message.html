@@ -8,11 +8,22 @@
         <strong>{{ message.author.full_name }}</strong>
         <small class="ps-2">&lt;{{ message.author.email }}&gt;</small>
       </div>
-      <small>{{ message.date_time_format }}</small>
+      <div class="d-flex align-items-center">
+        <small>{{ message.date_time_format }}</small>
+        <div class="btn-group btn-group-sm ms-2" role="group">
+          <a id='reply' class="btn link-btn group-xs btn-font"
+            data-bs-toggle="tooltip" title="Reply"
+            href="{{ url_for('message.send_message', reply_to=message.author.email, subject=message.subject, body=message.body) }}">
+            <i class="fa-solid fa-reply fa-xs"></i>
+          </a>
+        </div>
+      </div>
     </div>
     <hr>
     <div class="container border rounded p-5">
-      {{ message.body }}
+      {% for line in message.body.split('\n') %}
+        <p>{{ line }}</p>
+      {% endfor %}
     </div>
   </div>
 {% endblock content %}

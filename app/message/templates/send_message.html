@@ -13,8 +13,8 @@
 
       <dl>
         {% include 'common/_tagger.html' %}
-
-        {{ render_field(form.recipients) }}
+        
+        {{ render_field(form.recipients, class='form-control form-control-lg') }}
 
 
         {{ render_field(form.subject, class='form-control form-control-lg', placeholder='Subject') }}

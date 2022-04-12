@@ -224,3 +224,7 @@ input[type="file"] {
     font-weight: 400;
     color: #293241;
 }
+
+.group-xs {
+    padding: 0 .4rem !important;
+}
