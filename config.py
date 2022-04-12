@@ -31,9 +31,7 @@ class ProdConfig(Config):
     DEBUG = False
     TESTING = False
 
-    SQLALCHEMY_DATABASE_URI = environ.get('DATABASE_URL', '').replace(
-        'postgres://', 'postgresql://') or 'sqlite:///' + path.join(basedir, 'production.db')
-
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + path.join(basedir, 'production.db')
 
 
 class DevConfig(Config):
