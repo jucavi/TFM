@@ -24,6 +24,15 @@ class Config:
     MAIL_MAX_EMAILS = None
     MAIL_ASCII_ATTACHMENTS = True
 
+    # Mailtrap conf
+    # MAIL_SERVER = 'smtp.mailtrap.io'
+    # MAIL_PORT = 2525
+    # MAIL_USERNAME = '8d723d7c957936'
+    # MAIL_PASSWORD = '83ebc0b9992ffd'
+    # MAIL_DEFAULT_SENDER = 'tft@mailtrap.io'
+    # MAIL_USE_TLS = True
+    # MAIL_USE_SSL = False
+
 
 
 class ProdConfig(Config):
