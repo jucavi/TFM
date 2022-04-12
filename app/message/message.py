@@ -124,5 +124,6 @@ def js_delete(message_id):
 
 
 @message.route('inbox/__inbox_messages')
+@login_required
 def __inbox_messages():
     return {'inbox_messages_count': current_user.inbox_messages}
