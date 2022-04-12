@@ -5,4 +5,5 @@ def distance(dt):
     return current_dt - dt
 
 def local_time(timestamp):
-    return timestamp.replace(tzinfo=timezone.utc).astimezone(tz=None)
+    lt = timestamp.astimezone()
+    return lt + lt.utcoffset()
