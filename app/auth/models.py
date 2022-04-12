@@ -47,7 +47,7 @@ class User(UserMixin, db.Model):
 
     @property
     def full_name(self):
-        return f'{self.firstname.capitalize()} {self.lastname.capitalize()}'
+        return f'{self.firstname.title()} {self.lastname.title()}'
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
