@@ -21,7 +21,7 @@ def populate():
     seed.seed()
 
 
-def create_app(environment='development'):
+def create_app(environment='production'):
     from config import config
 
     app = Flask(__name__)
