@@ -6,4 +6,4 @@ def distance(dt):
 
 def local_time(timestamp):
     lt = timestamp.astimezone()
-    return lt + lt.utcoffset()
+    return timestamp + lt.utcoffset()
