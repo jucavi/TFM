@@ -44,8 +44,8 @@ class DevConfig(Config):
     # Mailtrap conf
     MAIL_SERVER = 'smtp.mailtrap.io'
     MAIL_PORT = 2525
-    MAIL_USERNAME = '8d723d7c957936'
-    MAIL_PASSWORD = '83ebc0b9992ffd'
+    MAIL_USERNAME = '8d723d7c957936' # crete a new acount in mailtrap.io
+    MAIL_PASSWORD = '83ebc0b9992ffd' # crete a new acount in mailtrap.io
     MAIL_DEFAULT_SENDER = 'tft@mailtrap.io'
     MAIL_USE_TLS = True
     MAIL_USE_SSL = False
