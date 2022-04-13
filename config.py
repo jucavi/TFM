@@ -49,7 +49,7 @@ class DevConfig(Config):
     DEBUG = True
     TESTING = False
 
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + path.join(basedir, 'development.db')
+    SQLALCHEMY_DATABASE_URI = environ.get('DATABASE_URL')
 
     # Mailtrap conf
     MAIL_SERVER = 'smtp.mailtrap.io'
