@@ -1,5 +1,6 @@
 from app import db
 from sqlalchemy_utils import UUIDType
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy import Column, String, Text, DateTime, ForeignKey, Boolean, LargeBinary, Integer
 from sqlalchemy.orm import relationship, backref
 import uuid
@@ -11,7 +12,7 @@ from app.helpers.date import local_time
 
 class Project(db.Model):
     __tablename__ = 'project'
-    id = Column(UUIDType(binary=False),
+    id = Column(UUID(as_uuid=True),
                 primary_key=True,
                 index = True,
                 default=uuid.uuid4)
@@ -97,15 +98,15 @@ class Project(db.Model):
 class Team(db.Model):
     __tablename__ = 'team'
 
-    id = Column(UUIDType(binary=False),
+    id = Column(UUID(as_uuid=True),
                 primary_key=True,
                 index = True,
                 default=uuid.uuid4)
 
-    user_id = Column(UUIDType(binary=False),
+    user_id = Column(UUID(as_uuid=True),
                      ForeignKey('user.id'))
 
-    project_id = Column(UUIDType(binary=False),
+    project_id = Column(UUID(as_uuid=True),
                         ForeignKey('project.id'))
 
     is_owner = Column(Boolean,
@@ -121,7 +122,7 @@ class Team(db.Model):
 class Folder(db.Model):
     __tablename__ = 'folder'
 
-    id = Column(UUIDType(binary=False),
+    id = Column(UUID(as_uuid=True),
                 primary_key=True,
                 index=True,
                 default=uuid.uuid4)
@@ -130,10 +131,10 @@ class Folder(db.Model):
                   index=True,
                   nullable=False)
 
-    parent_id = Column(UUIDType(binary=False),
+    parent_id = Column(UUID(as_uuid=True),
                      ForeignKey('folder.id'))
 
-    project_id = Column(UUIDType(binary=False),
+    project_id = Column(UUID(as_uuid=True),
                      ForeignKey('project.id'))
 
     children = relationship('Folder',
@@ -183,7 +184,7 @@ class Folder(db.Model):
 class File(db.Model):
     __tablename__ = 'file'
 
-    id = Column(UUIDType(binary=False),
+    id = Column(UUID(as_uuid=True),
                 primary_key=True,
                 index=True,
                 default=uuid.uuid4)
@@ -194,7 +195,7 @@ class File(db.Model):
     data = Column(LargeBinary)
 
     size = Column(Integer())
-    
+
     mimetype = Column(String(50))
 
     folders = relationship('Folder',
@@ -208,15 +209,15 @@ class File(db.Model):
 class FolderContent(db.Model):
     __tablename__ = 'folder_content'
 
-    id = Column(UUIDType(binary=False),
+    id = Column(UUID(as_uuid=True),
                 primary_key=True,
                 index=True,
                 default=uuid.uuid4)
 
-    folder_id = Column(UUIDType(binary=False),
+    folder_id = Column(UUID(as_uuid=True),
                      ForeignKey('folder.id'))
 
-    file_id = Column(UUIDType(binary=False),
+    file_id = Column(UUID(as_uuid=True),
                      ForeignKey('file.id'))
 
     folder = relationship(Folder, backref='folder_content')

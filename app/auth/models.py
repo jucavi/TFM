@@ -1,6 +1,7 @@
 from app import db
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy_utils import UUIDType
 import uuid
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -13,7 +14,7 @@ from app.message.models import Message
 class User(UserMixin, db.Model):
 
     __tablename__ = 'user'
-    id = Column(UUIDType(binary=False),
+    id = Column(UUID(as_uuid=True),
                 primary_key=True,
                 index=True,
                 default=uuid.uuid4)

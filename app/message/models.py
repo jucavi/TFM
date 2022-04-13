@@ -1,5 +1,6 @@
 from app import db
 from sqlalchemy_utils import UUIDType
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy import Column, DateTime, ForeignKey, Boolean, String, Text
 import uuid
 from datetime import datetime
@@ -9,13 +10,13 @@ class Message(db.Model):
     __tablename__ = 'message'
 
     id = Column(
-        UUIDType(binary=False),
+        UUID(as_uuid=True),
         primary_key=True,
         index = True,
         default=uuid.uuid4
     )
-    sender_id = Column(UUIDType(binary=False), ForeignKey('user.id'))
-    recipient_id = Column(UUIDType(binary=False), ForeignKey('user.id'))
+    sender_id = Column(UUID(as_uuid=True), ForeignKey('user.id'))
+    recipient_id = Column(UUID(as_uuid=True), ForeignKey('user.id'))
     subject = Column(String(100))
     body = Column(Text())
     timestamp = Column(DateTime, index=True, default=datetime.utcnow)
