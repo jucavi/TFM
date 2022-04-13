@@ -40,7 +40,7 @@ class ProdConfig(Config):
     DEBUG = False
     TESTING = False
 
-    SQLALCHEMY_DATABASE_URI = environ.get('DATABASE_URL')
+    SQLALCHEMY_DATABASE_URI = environ.get('DATABASE_URL').replace("postgres://", "postgresql://", 1)
 
 
 
