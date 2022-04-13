@@ -5,6 +5,13 @@
     <div class="container border rounded p-5">
       {% include partial %}
     </div>
+  {% else %}
+    <div class="border rounded p-5 shadow-lg">
+      <h1 clas="mb-5">Messages</h1>
+      <div class="">
+        <p>You don't have messages.</p>
+      </div>
+    </div>
   {% endif %}
 {% endblock content %}
 
